@@ -11,6 +11,11 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
+  experimental: {
+    outputFileTracingIncludes: {
+      './src/lib/content.ts': ['./content/posts'],
+    },
+  },
 };
 
 const withMDX = createMDX({
