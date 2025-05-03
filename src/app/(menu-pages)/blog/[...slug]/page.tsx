@@ -58,14 +58,14 @@ export async function generateMetadata({
 }
 
 export function generateStaticParams() {
-  const contentDir = path.join(process.cwd(), 'content');
+  const contentDir = path.join(process.cwd(),'posts');
   const allFiles = getAllContentFiles(contentDir);
 
   console.log('allFiles', allFiles);
-
   return allFiles.map((file) => ({
     slug: [...file.split('/')],
   }));
 }
 
 export const dynamicParams = false;
+export const dynamic = 'force-static';

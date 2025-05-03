@@ -2,8 +2,8 @@ import { getAllContentFiles } from '@/lib/content';
 import Link from 'next/link';
 import path from 'path';
 
-export default function BlogPage() {
-  const contentDir = path.join(process.cwd(), 'content', 'posts');
+export default async function BlogPage() {
+  const contentDir = path.join(process.cwd(), 'posts');
   const allFiles = getAllContentFiles(contentDir);
   return (
     <div className="rounded bg-white p-4 dark:bg-gray-900">
@@ -32,3 +32,5 @@ export default function BlogPage() {
     </div>
   );
 }
+
+export const dynamic = 'force-static';

@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 export type ContentFile = {
@@ -23,11 +22,7 @@ export function getAllContentFiles(
     };
   } = {},
 ): string[] {
-  const contentDir = dir || path.join(process.cwd(), 'content', 'posts');
-
-  if (!fileList.length) {
-    fileList = [];
-  }
+  const contentDir = dir || path.join(process.cwd(), 'posts');
 
   const files = fs.readdirSync(contentDir);
 
@@ -56,7 +51,7 @@ export function getAllContentFiles(
       !shouldExcludePath
     ) {
       // content/posts 폴더를 기준으로 상대 경로를 계산하고 소문자로 변환
-      const baseDir = path.join(process.cwd(), 'content', 'posts');
+      const baseDir = path.join(process.cwd(), 'posts');
       const relativePath = path.relative(baseDir, filePath);
       const slug = relativePath
         .replace(/\.(md|mdx)$/, '')
@@ -69,12 +64,14 @@ export function getAllContentFiles(
         (s) => s.toLowerCase() === slug.toLowerCase(),
       );
       if (!existingSlug) {
+        console.log('here4', slug);
         fileList.push(slug);
       }
     }
   });
+  console.log('dir', dir);
   console.log('contentDir', contentDir);
-  console.log('fileList',fileList);
+  console.log('fileList2', fileList);
   return fileList;
 }
 
@@ -83,17 +80,12 @@ export async function getContentData(slug: string): Promise<ContentFile> {
   const normalizedSlug = slug.split('/').join(path.sep);
 
   // content/posts 디렉토리를 포함한 전체 경로로 수정
-  const fullPath = path.join(
-    process.cwd(),
-    'content',
-    'posts',
-    normalizedSlug + '.md',
-  );
+  const fullPath = path.join(process.cwd(), 'posts', normalizedSlug + '.md');
 
   // 파일이 존재하는지 확인
   if (!fs.existsSync(fullPath)) {
     // 파일을 찾지 못한 경우, 대소문자 구분 없이 디렉토리를 검색
-    const contentDir = path.join(process.cwd(), 'content', 'posts');
+    const contentDir = path.join(process.cwd(), 'posts');
     const allFiles = getAllContentFiles(contentDir);
 
     // 대소문자를 구분하지 않고 일치하는 파일 찾기
@@ -105,7 +97,6 @@ export async function getContentData(slug: string): Promise<ContentFile> {
       // 찾은 파일의 실제 경로를 사용
       const actualPath = path.join(
         process.cwd(),
-        'content',
         'posts',
         matchingFile + '.md',
       );
@@ -121,10 +112,6 @@ export async function getContentData(slug: string): Promise<ContentFile> {
 
   // gray-matter로 frontmatter와 content 분리
   const { data, content } = matter(fileContents);
-
-  console.log('data', data);
-  console.log('content', content);
-
 
   return {
     slug,
@@ -142,7 +129,7 @@ export async function getContentData(slug: string): Promise<ContentFile> {
 export async function getSortedContentData(
   dir: string = 'posts',
 ): Promise<ContentFile[]> {
-  const contentDir = path.join(process.cwd(), 'content', dir);
+  const contentDir = path.join(process.cwd(), dir);
   const fileNames = getAllContentFiles(contentDir);
 
   const allContentData = await Promise.all(
