@@ -1,5 +1,6 @@
 import remarkGfm from 'remark-gfm';
 import createMDX from '@next/mdx';
+import createNextIntlPlugin from 'next-intl/plugin';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -11,8 +12,14 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
+  experimental: {
+    outputFileTracingIncludes: {
+      './src/lib/content.ts': ['./posts/*'],
+    },
+  },
 };
 
+const withNextIntl = createNextIntlPlugin();
 const withMDX = createMDX({
   // Add markdown plugins here, as desired
   options: {
@@ -22,4 +29,4 @@ const withMDX = createMDX({
 });
 
 // Wrap MDX and Next.js config with each other
-export default withMDX(nextConfig);
+export default withMDX(withNextIntl(nextConfig));

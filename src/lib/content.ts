@@ -12,6 +12,10 @@ export type ContentFile = {
   [key: string]: string | MDXRemoteSerializeResult | undefined;
 };
 
+export function getCategorys(){
+  return ['100 Resources', 'test']
+}
+
 export function getAllContentFiles(
   dir?: string,
   fileList: string[] = [],
@@ -64,14 +68,10 @@ export function getAllContentFiles(
         (s) => s.toLowerCase() === slug.toLowerCase(),
       );
       if (!existingSlug) {
-        console.log('here4', slug);
         fileList.push(slug);
       }
     }
-  });
-  console.log('dir', dir);
-  console.log('contentDir', contentDir);
-  console.log('fileList2', fileList);
+  })
   return fileList;
 }
 

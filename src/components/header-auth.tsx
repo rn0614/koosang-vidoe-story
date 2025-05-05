@@ -1,12 +1,12 @@
 import { signOutAction } from '@/app/api/auth/actions';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from './ui/button';
 import { createClient } from '@/utils/supabase/server';
-import { detectPlatform } from '@/lib/user-agent';
+import { getTranslations } from 'next-intl/server';
 
 export default async function AuthButton() {
   const supabase = await createClient();
-  const platform = await detectPlatform();
+  const t = await getTranslations('main-menu');
 
   const {
     data: { user },
@@ -24,10 +24,10 @@ export default async function AuthButton() {
   ) : (
     <div className="flex gap-2">
       <Button asChild size="sm" variant={'outline'}>
-        <Link href="/sign-in">Sign in</Link>
+        <Link href="/sign-in">{t('sign-in')}</Link>
       </Button>
       <Button asChild size="sm" variant={'default'}>
-        <Link href="/sign-up">Sign up</Link>
+        <Link href="/sign-up">{t('sign-up')}</Link>
       </Button>
     </div>
   );

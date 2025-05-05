@@ -1,0 +1,16 @@
+{
+    "title": "메인 메뉴",
+    "dashboard": "대시보드",
+    "blog": "블로그",
+    "game": "게임",
+    "note": "노트",
+    "about": "소개",
+    "blogResources": "코딩자료",
+    "blogTest": "test",
+    "boardgame": "보드게임",
+    "mincraft": "미니크래프트",
+    "services": "서비스",
+    "contact": "연락처",
+    "sign-in": "로그인",
+    "sign-up": "회원가입"
+}

@@ -1,7 +1,7 @@
 // src/components/ResponsiveAppLogo.tsx
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export default function ResponsiveAppLogo() {
   const [show, setShow] = useState(true);
