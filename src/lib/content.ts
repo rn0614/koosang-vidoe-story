@@ -59,7 +59,6 @@ export function getAllContentFiles(
       const relativePath = path.relative(baseDir, filePath);
       const slug = relativePath
         .replace(/\.(md|mdx)$/, '')
-        .toLowerCase()
         .split(path.sep)
         .join('/');
 
