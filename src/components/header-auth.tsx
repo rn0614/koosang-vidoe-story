@@ -6,7 +6,7 @@ import { getTranslations } from 'next-intl/server';
 
 export default async function AuthButton() {
   const supabase = await createClient();
-  const t = await getTranslations('main-menu');
+  const t = await getTranslations('main_menu');
 
   const {
     data: { user },

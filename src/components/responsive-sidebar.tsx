@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl';
 import { SidebarMenu } from './sidebar-menu';
 
 export function ResponsiveSidebar() {
-  const t = useTranslations('main-menu');
+  const t = useTranslations('main_menu');
   return (
     <>
       {/* 모바일: Drawer 트리거(햄버거 버튼) */}

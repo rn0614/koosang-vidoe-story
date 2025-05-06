@@ -4,7 +4,7 @@ import { MenuItem } from '@/types/menu';
 import { DrawerClose } from './ui/drawer';
 
 export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
-  const t = useTranslations('main-menu');
+  const t = useTranslations('main_menu');
   return (
     <ul className="flex flex-col gap-2 p-4">
       {menu.map((item) => (
