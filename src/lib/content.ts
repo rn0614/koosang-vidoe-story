@@ -13,7 +13,7 @@ export type ContentFile = {
 };
 
 export function getCategorys(){
-  return ['100resources', 'test']
+  return ['t100resources', 'test']
 }
 
 export function getAllContentFiles(
@@ -82,6 +82,7 @@ export async function getContentData(slug: string): Promise<ContentFile> {
   // content/posts 디렉토리를 포함한 전체 경로로 수정
   const fullPath = path.join(process.cwd(), 'posts', normalizedSlug + '.md');
 
+  console.log(fullPath,'fullPath1')
   // 파일이 존재하는지 확인
   if (!fs.existsSync(fullPath)) {
     // 파일을 찾지 못한 경우, 대소문자 구분 없이 디렉토리를 검색
@@ -105,6 +106,7 @@ export async function getContentData(slug: string): Promise<ContentFile> {
       }
     }
 
+    console.log(matchingFile,'matchingFile1')
     throw new Error(`getContentData File not found: ${fullPath}`);
   }
 
