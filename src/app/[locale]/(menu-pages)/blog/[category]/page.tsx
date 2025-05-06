@@ -1,4 +1,4 @@
-import { getAllContentFiles } from '@/lib/content';
+import { getAllContentFiles, getCategorys } from '@/lib/content';
 import { Link } from '@/i18n/navigation';
 import path from 'path';
 
@@ -44,5 +44,11 @@ export default async function CategoryPage({
   );
 }
 
-export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  // 빌드 시점에 posts 폴더를 읽어서 모든 카테고리 반환
+  const categorys = getCategorys();
+  return categorys.map(category => ({ category }));
+}
+
 export const dynamic = 'force-static';
