@@ -11,7 +11,9 @@ export default async function BlogPage({
 }) {
   const param = await params;
   const { category, slug } = param;
-  const decodeSlug = [category, ...slug].map(decodeURIComponent).join('/');
+  const decodeSlug = [category, ...slug]
+    .map((slug) => decodeURIComponent(slug))
+    .join(path.sep);
   const post = await getContentData(decodeSlug);
 
   return (
@@ -66,7 +68,7 @@ export function generateStaticParams() {
         category,
         slug,
       };
-    })
+    }),
   );
 }
 

@@ -77,7 +77,7 @@ export function getAllContentFiles(
 
 export async function getContentData(slug: string): Promise<ContentFile> {
   // 슬래시를 시스템 경로 구분자로 변환
-  const normalizedSlug = slug.split('/').join(path.sep);
+  const normalizedSlug = slug.split(path.sep).map(part => decodeURIComponent(part)).join(path.sep);
 
   // content/posts 디렉토리를 포함한 전체 경로로 수정
   const fullPath = path.join(process.cwd(), 'posts', normalizedSlug + '.md');
@@ -101,6 +101,7 @@ export async function getContentData(slug: string): Promise<ContentFile> {
         'posts',
         matchingFile + '.md',
       );
+      console.log(actualPath,'actualPath')
       if (fs.existsSync(actualPath)) {
         return getContentData(matchingFile);
       }
