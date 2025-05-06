@@ -14,7 +14,7 @@ const nextConfig = {
   },
   experimental: {
     outputFileTracingIncludes: {
-      './src/lib/content.ts': ['./posts/*'],
+      '../lib/content.ts': ['../../posts/*'],
     },
   },
 };
