@@ -84,34 +84,9 @@ export async function getContentData(slug: string): Promise<ContentFile> {
 
   console.log(fullPath,'fullPath1')
   // 파일이 존재하는지 확인
-  if (!fs.existsSync(fullPath)) {
-    // 파일을 찾지 못한 경우, 대소문자 구분 없이 디렉토리를 검색
-    const contentDir = path.join(process.cwd(), 'posts');
-    const allFiles = getAllContentFiles(contentDir);
+  console.log(fs.existsSync(fullPath),'fs.existsSync(fullPath)')
 
-    // 대소문자를 구분하지 않고 일치하는 파일 찾기
-    const matchingFile = allFiles.find(
-      (file) => file.toLowerCase() === slug.toLowerCase(),
-    );
-
-    if (matchingFile) {
-      // 찾은 파일의 실제 경로를 사용
-      const actualPath = path.join(
-        process.cwd(),
-        'posts',
-        matchingFile + '.md',
-      );
-      console.log(actualPath,'actualPath')
-      if (fs.existsSync(actualPath)) {
-        return getContentData(matchingFile);
-      }
-    }
-
-    console.log(matchingFile,'matchingFile1')
-    throw new Error(`getContentData File not found: ${fullPath}`);
-  }
-
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  const fileContents = fs.readFileSync(fullPath, {encoding: 'utf8'});
 
   // gray-matter로 frontmatter와 content 분리
   const { data, content } = matter(fileContents);
