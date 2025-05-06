@@ -44,4 +44,5 @@ export default async function CategoryPage({
   );
 }
 
+export const dynamicParams = false;
 export const dynamic = 'force-static';
