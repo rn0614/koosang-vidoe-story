@@ -13,7 +13,7 @@ export type ContentFile = {
 };
 
 export function getCategorys(){
-  return ['100 Resources', 'test']
+  return ['100resources', 'test']
 }
 
 export function getAllContentFiles(
