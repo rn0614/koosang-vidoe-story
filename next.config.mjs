@@ -1,6 +1,7 @@
 import remarkGfm from 'remark-gfm';
 import createMDX from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
+import path from 'path';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -14,7 +15,9 @@ const nextConfig = {
   },
   experimental: {
     outputFileTracingIncludes: {
-      '../lib/content.ts': ['../../posts/*'],
+      '../src/lib/content.ts': ['../../posts/**'],
+      '../../src/lib/content.ts': ['../../../posts/**'],
+      [path.resolve('src/lib/content.ts')]: [path.resolve('posts/**')],
     },
   },
 };

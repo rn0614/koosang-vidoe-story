@@ -105,7 +105,7 @@ export async function getContentData(slug: string): Promise<ContentFile> {
       }
     }
 
-    throw new Error(`File not found: ${fullPath}`);
+    throw new Error(`getContentData File not found: ${fullPath}`);
   }
 
   const fileContents = fs.readFileSync(fullPath, 'utf8');
