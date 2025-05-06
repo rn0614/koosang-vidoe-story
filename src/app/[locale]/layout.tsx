@@ -17,8 +17,6 @@ export default async function LocaleLayout({
   params: { locale: string };
 }) {
   const { locale } = params;
-
-  console.log(locale,'locale2')
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>

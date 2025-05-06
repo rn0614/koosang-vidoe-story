@@ -26,10 +26,6 @@ export default getRequestConfig(async (param) => {
   const locale = hasLocale(routing.locales, requested)
     ? requested
     : routing.defaultLocale;
-
-    console.log(requested,'requested')
-    console.log(routing.locales,'routing.locales')
-    console.log(locale,'locale')
   return {
     locale,
     messages: messages[locale] || messages[routing.defaultLocale],
