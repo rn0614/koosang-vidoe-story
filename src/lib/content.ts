@@ -12,8 +12,8 @@ export type ContentFile = {
   [key: string]: string | MDXRemoteSerializeResult | undefined;
 };
 
-export function getCategorys(){
-  return ['t100resources', 'test']
+export function getCategorys() {
+  return ['100resources', 'test'];
 }
 
 export function getAllContentFiles(
@@ -70,22 +70,25 @@ export function getAllContentFiles(
         fileList.push(slug);
       }
     }
-  })
+  });
   return fileList;
 }
 
 export async function getContentData(slug: string): Promise<ContentFile> {
   // 슬래시를 시스템 경로 구분자로 변환
-  const normalizedSlug = slug.split(path.sep).map(part => decodeURIComponent(part)).join(path.sep);
+  const normalizedSlug = slug
+    .split(path.sep)
+    .map((part) => decodeURIComponent(part))
+    .join(path.sep);
 
   // content/posts 디렉토리를 포함한 전체 경로로 수정
   const fullPath = path.join(process.cwd(), 'posts', normalizedSlug + '.md');
 
-  console.log(fullPath,'fullPath1')
+  console.log(fullPath, 'fullPath1');
   // 파일이 존재하는지 확인
-  console.log(fs.existsSync(fullPath),'fs.existsSync(fullPath)')
+  console.log(fs.existsSync(fullPath), 'fs.existsSync(fullPath)');
 
-  const fileContents = fs.readFileSync(fullPath, {encoding: 'utf8'});
+  const fileContents = fs.readFileSync(fullPath, { encoding: 'utf8' });
 
   // gray-matter로 frontmatter와 content 분리
   const { data, content } = matter(fileContents);
@@ -130,4 +133,41 @@ export async function getSortedContentData(
     if (!a.date || !b.date) return 0;
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
+}
+
+export function getAllContentWithMeta(
+  dir?: string,
+  options: {
+    exclude?: {
+      paths?: string[];
+      files?: string[];
+    };
+  } = {},
+) {
+  const fileSlugs = getAllContentFiles(dir, [], options);
+  const posts = fileSlugs
+    .map((slug) => {
+      // 항상 posts 기준으로 경로 생성
+      const mdPath = path.join(process.cwd(), 'posts', slug + '.md');
+      if (!fs.existsSync(mdPath)) {
+        throw new Error(`File not found: ${mdPath}`);
+      }
+      const file = fs.readFileSync(mdPath, { encoding: 'utf-8' });
+      const { content, data } = matter(file);
+      // title이 없으면 slug에서 파일명만 추출해서 .md 확장자 제거 후 title로 사용
+      let title = data.title;
+      if (!title) {
+        const slugParts = slug.split('/');
+        title = slugParts[slugParts.length - 1].replace(/\.md$/, '');
+      }
+      return {
+        slug,
+        ...data,
+        title,
+        tags: data.tags?.filter(Boolean) || [],
+        content,
+      };
+    })
+    .filter(Boolean);
+  return posts;
 }
