@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 
 
 export default function NotePage() {
-  const t = useTranslations('note-edit');
+  const t = useTranslations('note_edit');
   const {
     notes,
     loading,

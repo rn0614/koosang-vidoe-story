@@ -30,7 +30,7 @@ export default function NoteEditDialog({
   isOpen,
   onOpenChange,
 }: NoteEditDialogProps) {
-  const t = useTranslations('note-edit');
+  const t = useTranslations('note_edit');
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
