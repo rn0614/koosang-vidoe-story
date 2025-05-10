@@ -2,7 +2,7 @@ import { getAllContentFiles, getCategorys } from '@/lib/content';
 import { Link } from '@/i18n/navigation';
 import path from 'path';
 
-export default async function BlogPage() {
+export default async function CategoryMainPage() {
   const contentDir = path.join(process.cwd(), 'posts');
   const allFiles = getAllContentFiles(contentDir);
   const categorys = getCategorys();
@@ -11,31 +11,17 @@ export default async function BlogPage() {
       <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
         노트 목록
       </h3>
-      <div>
-        {categorys.map((category) => (
-          <Link href={`/blog/${category}`}>{category}</Link>
-        ))}
-      </div>
-
-      {allFiles.length === 0 ? (
-        <div className="text-gray-400 dark:text-gray-500">노트가 없습니다.</div>
-      ) : (
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {allFiles.map((file) => (
+      <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+        {categorys.length > 0 &&
+          categorys.map((category) => (
             <li
-              key={file}
+              key={category}
               className="cursor-pointer rounded transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
             >
-              <Link
-                href={`/blog/${file}`}
-                className="block w-full max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap px-3 py-2 text-gray-900 dark:text-gray-100 sm:max-w-[450px] md:max-w-[600px] lg:max-w-[700px]"
-              >
-                {file}
-              </Link>
+              <Link href={`/blog/${category}`}>{category}</Link>
             </li>
           ))}
-        </ul>
-      )}
+      </ul>
     </div>
   );
 }
