@@ -2,7 +2,12 @@ import { getAllContentFiles, getCategorys } from '@/lib/content';
 import { Link } from '@/i18n/navigation';
 import path from 'path';
 
-export default async function CategoryMainPage() {
+export default async function CategoryMain1Page({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  console.log("blog searchParams", searchParams);
   const contentDir = path.join(process.cwd(), 'posts');
   const allFiles = getAllContentFiles(contentDir);
   const categorys = getCategorys();
@@ -25,5 +30,3 @@ export default async function CategoryMainPage() {
     </div>
   );
 }
-
-export const dynamic = 'force-static';

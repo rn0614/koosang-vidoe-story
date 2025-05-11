@@ -7,8 +7,8 @@ tags:
   - SQL
   - 문제해결
   - transaction
-date: 2024/11/26 00:00:00
-last_modified_at: 2024/11/26 00:00:00
+created_at: 2024/11/26 00:00:00
+updated_at: 2024/11/26 00:00:00
 ---
 ## 문제상황
 ### 1. 동일한 pk의 insert, update 케이스

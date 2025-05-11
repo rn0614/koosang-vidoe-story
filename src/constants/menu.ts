@@ -13,6 +13,11 @@ export const SIDEBAR_MENU: MenuItem[] = [
     icon: null,
   },
   {
+    href: '/rag',
+    labelKey: 'rag',
+    icon: null,
+  },
+  {
     href: '/blog',
     labelKey: 'blog',
     icon: null,

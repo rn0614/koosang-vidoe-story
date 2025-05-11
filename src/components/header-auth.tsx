@@ -3,8 +3,9 @@ import { Link } from '@/i18n/navigation';
 import { Button } from './ui/button';
 import { createClient } from '@/utils/supabase/server';
 import { getTranslations } from 'next-intl/server';
+import { buttonVariants } from '@/components/ui/button';
 
-export default async function AuthButton() {
+export default async function HeaderAuth() {
   const supabase = await createClient();
   const t = await getTranslations('main_menu');
 
@@ -23,12 +24,18 @@ export default async function AuthButton() {
     </div>
   ) : (
     <div className="flex gap-2">
-      <Button asChild size="sm" variant={'outline'}>
-        <Link href="/sign-in">{t('sign-in')}</Link>
-      </Button>
-      <Button asChild size="sm" variant={'default'}>
-        <Link href="/sign-up">{t('sign-up')}</Link>
-      </Button>
+      <Link
+        href="/sign-in"
+        className={buttonVariants({ variant: 'outline', size: 'sm' })}
+      >
+        {t('sign-in')}
+      </Link>
+      <Link
+        href="/sign-up"
+        className={buttonVariants({ variant: 'default', size: 'sm' })}
+      >
+        {t('sign-up')}
+      </Link>
     </div>
   );
 }

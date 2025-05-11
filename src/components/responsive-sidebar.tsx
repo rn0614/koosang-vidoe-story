@@ -12,7 +12,6 @@ import { SidebarMenu } from './sidebar-menu';
 
 export function ResponsiveSidebar() {
   const pathname = usePathname();
-  console.log('locale', pathname);
   return (
     <>
       {/* 모바일: Drawer 트리거(햄버거 버튼) */}

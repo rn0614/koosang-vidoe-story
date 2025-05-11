@@ -1,3 +1,4 @@
+import React from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import HeaderAuth from '@/components/header-auth';
 import { ResponsiveSidebar } from '@/components/responsive-sidebar';
@@ -9,7 +10,7 @@ import { LocaleSelect } from '@/components/locale-select';
 import QueryProvider from '@/provider/query-provider';
 import { ThemeProvider } from 'next-themes';
 
-export default async function LocaleLayout({
+export default function LocaleLayout({
   children,
   params,
 }: {
@@ -49,6 +50,7 @@ export default async function LocaleLayout({
                         </div>
                         <div className="flex items-center gap-2">
                           <LocaleSelect locale={locale} />
+                          <ThemeSwitcher />
                           <HeaderAuth />
                         </div>
                       </div>

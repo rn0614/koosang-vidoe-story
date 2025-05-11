@@ -84,10 +84,6 @@ export async function getContentData(slug: string): Promise<ContentFile> {
   // content/posts 디렉토리를 포함한 전체 경로로 수정
   const fullPath = path.join(process.cwd(), 'posts', normalizedSlug + '.md');
 
-  console.log(fullPath, 'fullPath1');
-  // 파일이 존재하는지 확인
-  console.log(fs.existsSync(fullPath), 'fs.existsSync(fullPath)');
-
   const fileContents = fs.readFileSync(fullPath, { encoding: 'utf8' });
 
   // gray-matter로 frontmatter와 content 분리

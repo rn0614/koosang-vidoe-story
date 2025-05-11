@@ -23,7 +23,6 @@ const messages: Record<string, Record<string, any>> = {
 export default getRequestConfig(async (param) => {
   // Typically corresponds to the `[locale]` segment
   const requested = await param.requestLocale;
-  console.log('routing.locales', routing.locales);
   const locale = hasLocale(routing.locales, requested)
     ? requested
     : routing.defaultLocale;
