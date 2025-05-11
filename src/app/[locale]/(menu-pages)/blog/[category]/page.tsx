@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import Image from 'next/image';
-import BlogPagination from '@/components/blog-pagination';
+import ListPagination from '@/components/list-pagination';
 import { useSearchParams } from 'next/navigation';
 
 type PostMeta = {
@@ -104,7 +104,7 @@ export default async function CategoryPage({
               ) : null,
             )}
           </div>
-          <BlogPagination
+          <ListPagination
             listName="blog"
             currentPage={page}
             totalPages={totalPages}

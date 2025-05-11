@@ -6,7 +6,6 @@ import { ThemeSwitcher } from '@/components/theme-switcher';
 import { Drawer, DrawerTrigger } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
-import { LocaleSelect } from '@/components/locale-select';
 import QueryProvider from '@/provider/query-provider';
 import { ThemeProvider } from 'next-themes';
 
@@ -49,14 +48,12 @@ export default function LocaleLayout({
                           </Link>
                         </div>
                         <div className="flex items-center gap-2">
-                          <LocaleSelect locale={locale} />
-                          <ThemeSwitcher />
                           <HeaderAuth />
                         </div>
                       </div>
                     </header>
                     <div className="flex w-full">
-                      <ResponsiveSidebar />
+                      <ResponsiveSidebar locale={locale} />
                       <div className="flex flex-1 flex-col gap-20 p-5 md:ml-56">
                         {children}
                         <footer className="mx-auto flex w-full items-center justify-center gap-8 border-t py-16 text-center text-xs">

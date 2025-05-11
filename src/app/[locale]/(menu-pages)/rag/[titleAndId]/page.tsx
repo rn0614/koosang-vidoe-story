@@ -12,9 +12,8 @@ export default async function DocumentPage({
   // 만약 titleAndId가 곧 id라면 아래처럼 사용
 
   // API 라우트 호출
-  console.log('titleAndId', decodeURIComponent(titleAndId));
   const res = await fetch(
-    `http://localhost:3000/api/documents/${decodeURIComponent(titleAndId)}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/documents/${decodeURIComponent(titleAndId)}`,
   );
   const data = await res.json();
   const document = Array.isArray(data.documents)

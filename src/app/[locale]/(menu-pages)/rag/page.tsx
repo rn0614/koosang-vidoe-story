@@ -1,57 +1,91 @@
 'use client';
-import { useDocuments } from '@/app/hooks/useDocuments';
-import { useSearchParams } from 'next/navigation';
-import BlogPagination from '@/components/blog-pagination';
+import { useInfiniteDocuments } from '@/app/hooks/useDocumentsInfinite';
 import { Link } from '@/i18n/navigation';
-
-const PAGE_SIZE = 10;
+import { useRef, useCallback } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import Image from 'next/image';
 
 export default function DocumentPage() {
-  const { documents } = useDocuments();
-  const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get('page') ?? '1', 10);
-  const totalPages = Math.ceil(documents.length / PAGE_SIZE);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteDocuments();
 
-  const startIdx = (page - 1) * PAGE_SIZE;
-  const endIdx = startIdx + PAGE_SIZE;
-  const documentsToShow = documents.slice(startIdx, endIdx);
+  // 모든 문서 펼치기
+  const documents = data ? data.pages.flatMap((page) => page.documents) : [];
+
+  // IntersectionObserver로 무한스크롤 구현
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastDocRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isLoading || isFetchingNextPage) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new window.IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, isFetchingNextPage, hasNextPage, fetchNextPage]
+  );
 
   return (
-    <div style={{ background: 'var(--bg-main)', color: 'var(--text-main)' }}>
-      <div className="mx-auto">
-        <div className="rounded bg-white p-4 dark:bg-gray-900">
-          <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
-            노트 목록
-          </h3>
-          {documents.length === 0 ? (
-            <div className="text-gray-400 dark:text-gray-500">
-              노트가 없습니다.
-            </div>
-          ) : (
-            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-              {documentsToShow.map((document) => (
-                <li
-                  key={document.id}
-                  className="flex cursor-pointer items-center justify-between rounded py-2 text-gray-900 transition-colors hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800"
-                >
-                  <Link
-                    href={`/rag/${document.metadata.title}--${document.id}`}
-                    className="block w-full overflow-hidden text-ellipsis whitespace-nowrap px-3 py-2 text-gray-900 dark:text-gray-100"
-                  >
-                    {document.metadata.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-          <BlogPagination
-            listName="rag"
-            currentPage={page}
-            totalPages={totalPages}
-            category={''}
-          />
+    <div className="mx-auto w-full rounded bg-white p-4 dark:bg-gray-900">
+      <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
+        노트 목록
+      </h3>
+      {documents.length === 0 ? (
+        <div className="text-gray-400 dark:text-gray-500">노트가 없습니다.</div>
+      ) : (
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="grid auto-rows-min grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {documents.map((document, idx) => (
+              <Card
+                key={document.id}
+                className="md:max-w-full"
+                ref={idx === documents.length - 1 ? lastDocRef : undefined}
+              >
+                <Link href={`/rag/${document.metadata.title}--${document.id}`}>
+                  <CardHeader>
+                    <CardTitle className="overflow-hidden text-ellipsis whitespace-nowrap max-w-xs">
+                      {document.metadata.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex aspect-[5/4] w-full items-center justify-center overflow-hidden bg-gray-800">
+                      <Image
+                        src={
+                          document.metadata.thumbnail
+                            ? document.metadata.thumbnail
+                            : '/image/no-image-found.png'
+                        }
+                        alt={document.metadata.title}
+                        width={300}
+                        height={240}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <CardDescription>
+                      {document.metadata.excerpt || document.metadata.description || ''}
+                    </CardDescription>
+                  </CardContent>
+                </Link>
+              </Card>
+            ))}
+          </div>
+          {isFetchingNextPage && <div className="text-center py-2">로딩중...</div>}
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -17,7 +17,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
     labelKey: 'rag',
     icon: null,
   },
-  {
+  /*{
     href: '/blog',
     labelKey: 'blog',
     icon: null,
@@ -25,7 +25,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
       { href: '/blog/100%20Resources', labelKey: 'blogResources' },
       { href: '/blog/test', labelKey: 'blogTest' },
     ],
-  },
+  },*/
   {
     href: '/game',
     labelKey: 'game',

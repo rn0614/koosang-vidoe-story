@@ -7,11 +7,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { usePathname } from '@/i18n/navigation';
 import { SidebarMenu } from './sidebar-menu';
+import { ThemeSwitcher } from './theme-switcher';
+import { LocaleSelect } from './locale-select';
 
-export function ResponsiveSidebar() {
-  const pathname = usePathname();
+export function ResponsiveSidebar({ locale }: { locale: string }) {
   return (
     <>
       {/* 모바일: Drawer 트리거(햄버거 버튼) */}
@@ -30,13 +30,16 @@ export function ResponsiveSidebar() {
             </DrawerTitle>
             <div className="h-full overflow-y-auto">
               <SidebarMenu menu={SIDEBAR_MENU} />
+              <div className="flex justify-center gap-2">
+                <LocaleSelect locale={locale} />
+                <ThemeSwitcher />
+              </div>
             </div>
           </div>
         </DrawerContent>
       </div>
-
       {/* 데스크톱: 항상 보이는 사이드바 */}
-      <nav className="fixed hidden h-full w-56 overflow-y-auto rounded-lg bg-gray-100 p-4 shadow dark:bg-gray-800 md:block">
+      <nav className="fixed hidden h-full w-56 overflow-y-auto rounded-lg bg-gray-100 p-4 shadow dark:bg-gray-800 md:block sm:ml-4">
         <SidebarMenu menu={SIDEBAR_MENU} />
       </nav>
     </>
