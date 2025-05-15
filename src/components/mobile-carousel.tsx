@@ -15,7 +15,7 @@ export function CarouselDemo() {
       >
         <CarouselContent className="-mx-1">
           {Array.from({ length: 8 }).map((_, index) => (
-            <CarouselItem key={index} className="px-1 basis-[43%]">
+            <CarouselItem key={index} className="px-1 basis-[95%] lg:basis-[45%]">
               <Card>
                 <CardContent className="flex aspect-video items-center justify-center p-0 overflow-hidden">
                   <Image

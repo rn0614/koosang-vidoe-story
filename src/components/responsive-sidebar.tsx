@@ -39,7 +39,7 @@ export function ResponsiveSidebar({ locale }: { locale: string }) {
         </DrawerContent>
       </div>
       {/* 데스크톱: 항상 보이는 사이드바 */}
-      <nav className="fixed hidden h-full w-56 overflow-y-auto rounded-lg bg-gray-100 p-4 shadow dark:bg-gray-800 md:block sm:ml-4">
+      <nav className="fixed hidden h-full w-56 overflow-y-auto rounded-lg bg-gray-100 p-4 shadow dark:bg-gray-800 md:block">
         <SidebarMenu menu={SIDEBAR_MENU} />
       </nav>
     </>

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useNotes } from '@/app/hooks/useNotes';
+import { useNotes } from '@/hooks/useNotes';
 import { Note, NoteInsertFormData } from '@/types/note';
 import NoteEditDialog from '@/components/note-edit0dialog';
 import { UUID } from 'crypto';

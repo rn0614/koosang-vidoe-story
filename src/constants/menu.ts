@@ -7,11 +7,12 @@ export const MAIN_MENU: MenuItem[] = [
 ];
 
 export const SIDEBAR_MENU: MenuItem[] = [
+  /* 메인 dashboard로 리다이렉스토 메뉴 삭제
   {
     href: '/dashboard',
     labelKey: 'dashboard',
     icon: null,
-  },
+  },*/
   {
     href: '/rag',
     labelKey: 'rag',

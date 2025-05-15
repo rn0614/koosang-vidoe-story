@@ -8,15 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import QueryProvider from '@/provider/query-provider';
 import { ThemeProvider } from 'next-themes';
+import { getMessages } from 'next-intl/server';
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params;
+  const { locale } = params;  // 클라이언트에게 모든 메시지를 제공합니다.
+  // side is the easiest way to get started
+  const messages = await getMessages();
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
@@ -27,7 +30,7 @@ export default function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <NextIntlClientProvider locale={locale}>
+            <NextIntlClientProvider messages={messages}>
               <main className="flex min-h-screen flex-col items-center pt-16">
                 <Drawer direction="left">
                   <div className="flex w-full flex-1 flex-col items-center gap-20">

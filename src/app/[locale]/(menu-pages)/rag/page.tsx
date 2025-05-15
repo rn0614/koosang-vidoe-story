@@ -1,5 +1,5 @@
 'use client';
-import { useInfiniteDocuments } from '@/app/hooks/useDocumentsInfinite';
+import { useInfiniteDocuments } from '@/hooks/useDocumentsInfinite';
 import { Link } from '@/i18n/navigation';
 import { useRef, useCallback } from 'react';
 import {
