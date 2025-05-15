@@ -1,4 +1,5 @@
 {
+  "main_menu": {
     "title": "Main Menu",
     "dashboard": "Dashboard",
     "rag": "RAG",
@@ -14,4 +15,17 @@
     "blog": "Blog",
     "sign-in": "Sign In",
     "sign-up": "Sign Up"
+  },
+  "note_edit": {
+    "edit": "Edit",
+    "title": "Note Title Edit",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "This is my obisidian note.",
+    "recent_my_rag_note": "Recent My RAG Note",
+    "recent_ai_news_from_google": "Recent AI News from Google"
+  }
 }

@@ -1,4 +1,5 @@
 {
+  "main_menu": {
     "title": "메인 메뉴",
     "dashboard": "대시보드",
     "blog": "블로그",
@@ -14,4 +15,17 @@
     "contact": "연락처",
     "sign-in": "로그인",
     "sign-up": "회원가입"
+  },
+  "note_edit": {
+    "edit": "수정",
+    "title": "노트 제목 수정",
+    "cancel": "취소",
+    "save": "저장"
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "description": "최근에 작성한 obsidian 노트입니다",
+    "recent_my_rag_note": "최근 내 RAG 노트",
+    "recent_ai_news_from_google": "최근 AI 뉴스"
+  }
 }
