@@ -31,7 +31,7 @@ const components = {
   h4:(props:any) => <h4 {...props} style={{fontSize: '1rem', fontWeight: 'bold'}}/>,
   h5:(props:any) => <h5 {...props} style={{fontSize: '0.875rem', fontWeight: 'bold'}}/>,
   h6:(props:any) => <h6 {...props} style={{fontSize: '0.75rem', fontWeight: 'bold'}}/>,
-  pre:(props:any) => <pre {...props} style={{overflowX: 'scroll'}}/>
+  pre:(props:any) => <pre {...props} style={{overflowX:'scroll'}}/>
 };
 
 export default function MdxRenderer({
