@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -14,13 +15,8 @@ import { Button } from '@/components/ui/button';
 import { useTagFilter } from '@/hooks/useTagFilter';
 
 export default function DocumentPage() {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteDocuments();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteDocuments();
 
   const documents = data ? data.pages.flatMap((page) => page.documents) : [];
 
@@ -46,28 +42,19 @@ export default function DocumentPage() {
       });
       if (node) observer.current.observe(node);
     },
-    [isLoading, isFetchingNextPage, hasNextPage, fetchNextPage]
+    [isLoading, isFetchingNextPage, hasNextPage, fetchNextPage],
   );
 
   return (
-    <div className="mx-auto w-full rounded bg-white p-4 dark:bg-gray-900">
+    <div className="mx-auto w-full p-4">
       <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
         RAG 적용 노트
       </h3>
       {/* 태그 필터 UI */}
-      <div className="sticky top-16 z-20 py-2 mb-2">
-        <div
-          className="
-            flex flex-nowrap gap-2 overflow-x-auto
-            scrollbar-hide
-            bg-gray-100/80 dark:bg-gray-800/80
-            rounded-lg px-2 py-2
-            shadow-sm
-            transition
-          "
-        >
+      <div className="sticky top-16 z-20 mb-2 py-2">
+        <div className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto rounded-lg bg-gray-100/80 px-2 py-2 shadow-sm transition dark:bg-gray-800/80">
           <Button
-            variant={selectedTags.length === 0 ? "default" : "outline"}
+            variant={selectedTags.length === 0 ? 'default' : 'outline'}
             onClick={() => setSelectedTags([])}
           >
             전체
@@ -75,7 +62,7 @@ export default function DocumentPage() {
           {displayTags.map((tag) => (
             <Button
               key={tag}
-              variant={selectedTags.includes(tag) ? "default" : "outline"}
+              variant={selectedTags.includes(tag) ? 'default' : 'outline'}
               onClick={() => toggleTag(tag)}
               className="relative"
             >
@@ -87,17 +74,19 @@ export default function DocumentPage() {
       {filteredDocuments.length === 0 ? (
         <div className="text-gray-400 dark:text-gray-500">노트가 없습니다.</div>
       ) : (
-        <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex flex-1 flex-col gap-4">
           <div className="grid auto-rows-min grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {filteredDocuments.map((document, idx) => (
               <Card
                 key={document.id}
                 className="md:max-w-full"
-                ref={idx === filteredDocuments.length - 1 ? lastDocRef : undefined}
+                ref={
+                  idx === filteredDocuments.length - 1 ? lastDocRef : undefined
+                }
               >
                 <Link href={`/rag/${document.metadata.title}--${document.id}`}>
                   <CardHeader>
-                    <CardTitle className="overflow-hidden text-ellipsis whitespace-nowrap max-w-xs">
+                    <CardTitle className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap">
                       {document.metadata.title}
                     </CardTitle>
                   </CardHeader>
@@ -115,15 +104,21 @@ export default function DocumentPage() {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <CardDescription>
-                      {document.metadata.excerpt || document.metadata.description || ''}
-                    </CardDescription>
                   </CardContent>
+                  <CardFooter>
+                    <CardDescription>
+                      {document.metadata.excerpt ||
+                        document.metadata.description ||
+                        ''}
+                    </CardDescription>
+                  </CardFooter>
                 </Link>
               </Card>
             ))}
           </div>
-          {isFetchingNextPage && <div className="text-center py-2">로딩중...</div>}
+          {isFetchingNextPage && (
+            <div className="py-2 text-center">로딩중...</div>
+          )}
         </div>
       )}
     </div>

@@ -17,7 +17,7 @@ import { useState } from 'react';
 export default function DashboardPage() {
   const t = useTranslations();
   return (
-    <div>
+    <div className="p-4">
       <AiCarousel />
       <Separator className="my-4" />
       <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">

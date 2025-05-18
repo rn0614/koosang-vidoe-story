@@ -57,7 +57,7 @@ export default async function LocaleLayout({
                     </header>
                     <div className="flex w-full">
                       <ResponsiveSidebar locale={locale} />
-                      <div className="flex flex-1 flex-col gap-20 p-5 md:ml-56 min-w-[0px]">
+                      <div className="flex flex-1 flex-col gap-20 md:ml-56 min-w-[0px]">
                         {children}
                         <footer className="mx-auto flex w-full items-center justify-center gap-8 border-t py-16 text-center text-xs">
                           <p>
