@@ -1,3 +1,4 @@
+import { AiCarousel } from '@/components/ai-carousel';
 import { CarouselDemo } from '@/components/mobile-carousel';
 import { RagTop3Table } from '@/components/rag-top3';
 import { StatCard } from '@/components/state-card';
@@ -9,21 +10,17 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import {
-  Activity,
-  CreditCard,
-  DollarSign,
-  Users,
-} from 'lucide-react';
+import { Activity, CreditCard, DollarSign, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 export default function DashboardPage() {
   const t = useTranslations();
   return (
     <div>
-      <CarouselDemo></CarouselDemo>
+      <AiCarousel />
       <Separator className="my-4" />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
+      <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Revenue"
           value={45231.89}
@@ -53,7 +50,7 @@ export default function DashboardPage() {
           trend="up"
         />
       </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-7 mt-4">
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>{t('dashboard.recent_my_rag_note')}</CardTitle>

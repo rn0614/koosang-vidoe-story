@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { useTagFilter } from '@/hooks/useTagFilter';
 
 export default function DocumentPage() {
   const {
@@ -23,32 +24,14 @@ export default function DocumentPage() {
 
   const documents = data ? data.pages.flatMap((page) => page.documents) : [];
 
-  // 모든 태그 추출
-  const allTags = Array.from(
-    new Set(documents.flatMap((doc) => doc.metadata?.tags ?? []))
-  );
-  const topLevelTags = Array.from(
-    new Set(allTags.map(tag => tag.split('/')[0]))
-  );
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  // 태그 토글 함수
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
-  };
-
-  // 다중 태그 필터링: 선택된 태그 중 하나라도 포함된 문서만
-  const filteredDocuments = selectedTags.length > 0
-    ? documents.filter((doc) =>
-        (doc.metadata?.tags ?? []).some((tag: string) =>
-          selectedTags.some(
-            (selected) => tag === selected || tag.startsWith(selected + '/')
-          )
-        )
-      )
-    : documents;
+  // 커스텀 훅으로 태그 필터링 로직 분리
+  const {
+    selectedTags,
+    setSelectedTags,
+    toggleTag,
+    displayTags,
+    filteredDocuments,
+  } = useTagFilter(documents);
 
   // IntersectionObserver로 무한스크롤 구현
   const observer = useRef<IntersectionObserver | null>(null);
@@ -69,29 +52,37 @@ export default function DocumentPage() {
   return (
     <div className="mx-auto w-full rounded bg-white p-4 dark:bg-gray-900">
       <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
-        노트 목록
+        RAG 적용 노트
       </h3>
       {/* 태그 필터 UI */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        <Button
-          variant={selectedTags.length === 0 ? "default" : "outline"}
-          onClick={() => setSelectedTags([])}
+      <div className="sticky top-16 z-20 py-2 mb-2">
+        <div
+          className="
+            flex flex-nowrap gap-2 overflow-x-auto
+            scrollbar-hide
+            bg-gray-100/80 dark:bg-gray-800/80
+            rounded-lg px-2 py-2
+            shadow-sm
+            transition
+          "
         >
-          전체
-        </Button>
-        {topLevelTags.map((tag) => {
-          const isSelected = selectedTags.includes(tag);
-          return (
+          <Button
+            variant={selectedTags.length === 0 ? "default" : "outline"}
+            onClick={() => setSelectedTags([])}
+          >
+            전체
+          </Button>
+          {displayTags.map((tag) => (
             <Button
               key={tag}
-              variant={isSelected ? "default" : "outline"}
+              variant={selectedTags.includes(tag) ? "default" : "outline"}
               onClick={() => toggleTag(tag)}
               className="relative"
             >
               {tag}
             </Button>
-          );
-        })}
+          ))}
+        </div>
       </div>
       {filteredDocuments.length === 0 ? (
         <div className="text-gray-400 dark:text-gray-500">노트가 없습니다.</div>

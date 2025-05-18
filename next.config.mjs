@@ -17,7 +17,8 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'md', 'ts', 'tsx'],
   // Optionally, add any other Next.js config below
   images: {
-    domains: ['images.unsplash.com'],
+    domains: ['images.unsplash.com', 'xhnluxkxxazrklnvnoot.supabase.co'],
+    
   },
   experimental: {
     outputFileTracingIncludes: {

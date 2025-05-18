@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from '@tanstack/react-query';
 
-async function fetchDocuments(page: number=1, pageSize: number=10): Promise<any[]> {
+async function fetchDocuments(page: number=1, pageSize: number=10, filters: any = {}): Promise<any[]> {
   const res = await fetch(`/api/documents?page=${page}&pageSize=${pageSize}`);
   const data = await res.json();
   return data.documents || [];
@@ -12,10 +12,16 @@ export function useDocuments() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const [filters, setFilters] = useState({
+    tags: [] as string[],
+    title: '', // 또는 null
+    // ...다른 검색 조건
+  });
+
   // GET 노트 목록 불러오기 (react-query)
   const documentsQuery = useQuery<any[]>({
-    queryKey: ['documents', page, pageSize],
-    queryFn: () => fetchDocuments(page, pageSize),
+    queryKey: ['documents', page, pageSize, filters],
+    queryFn: () => fetchDocuments(page, pageSize, filters),
   });
 
   // 최신순 정렬 후 3개만 추출

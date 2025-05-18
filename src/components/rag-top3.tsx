@@ -10,16 +10,20 @@ export function RagTop3Table() {
   return (
     <div className="space-y-4 md:block">
       {top3Documents.map((ragPost) => (
-        <Link key={ragPost.id} href={`/rag/${ragPost.metadata.title}--${ragPost.id}`} className="flex items-center justify-between space-x-4">
-          <div className="flex items-center space-x-4">
-            <div>
-              <p className="text-sm font-medium leading-none">{ragPost.metadata?.title}</p>
-              <p className="text-sm text-muted-foreground">{ragPost.metadata?.excerpt}</p>
-            </div>
+        <Link
+          key={ragPost.id}
+          href={`/rag/${ragPost.metadata.title}--${ragPost.id}`}
+          className="flex flex-col space-y-1"
+        >
+          <div className="flex items-center justify-between min-w-0">
+            <p className="text-base font-semibold leading-none line-clamp-1">{ragPost.metadata?.title}</p>
+            <p className="text-xs text-muted-foreground font-light ml-2 truncate max-w-[120px] flex-shrink-0 hidden md:block">
+              {ragPost.metadata?.updated_at}
+            </p>
           </div>
-          <div className="flex hidden items-center space-x-4 md:block">
-            <p className="text-sm font-medium">{ragPost.metadata?.updated_at}</p>
-          </div>
+          <p className="text-sm text-muted-foreground mt-1 leading-none line-clamp-2">
+            {ragPost.metadata?.excerpt}
+          </p>
         </Link>
       ))}
     </div>

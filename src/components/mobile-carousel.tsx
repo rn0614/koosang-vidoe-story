@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import Image from "next/image"
 
-export function CarouselDemo() {
+export function CarouselDemo({images}: {images: {src: string, title: string, description: string}[]}) {
   return (
     <div className="w-full mx-auto px-4">
       <Carousel
@@ -14,15 +14,14 @@ export function CarouselDemo() {
         className="w-full"
       >
         <CarouselContent className="-mx-1">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <CarouselItem key={index} className="px-1 basis-[95%] lg:basis-[45%]">
+          {images.map((image, index) => (
+            <CarouselItem key={index} className="px-1 basis-[47%] lg:basis-[33%]">
               <Card>
-                <CardContent className="flex aspect-video items-center justify-center p-0 overflow-hidden">
+                <CardContent className="flex aspect-[9/16] items-center justify-center p-0 overflow-hidden relative">
                   <Image
-                    src={`/placeholder.svg?height=300&width=500&text=Image ${index + 1}`}
+                    src={image.src}
                     alt={`Slide ${index + 1}`}
-                    width={500}
-                    height={300}
+                    fill
                     className="w-full h-full object-cover"
                   />
                 </CardContent>
