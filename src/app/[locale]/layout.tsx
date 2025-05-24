@@ -9,6 +9,15 @@ import { Link } from '@/i18n/navigation';
 import QueryProvider from '@/provider/query-provider';
 import { ThemeProvider } from 'next-themes';
 import { getMessages } from 'next-intl/server';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Blog',
+  description: 'Blog',
+  verification: {
+    google: 'iD2KMxJcc8CPlfXVwS2U_wyOuU2cGTdWP3FzV0cfTNw',
+  },
+};
 
 export default async function LocaleLayout({
   children,
