@@ -1,30 +1,61 @@
 import { useState } from "react";
 import { useQuery } from '@tanstack/react-query';
 
-async function fetchDocuments(page: number=1, pageSize: number=10, filters: any = {}, recentDays?: number): Promise<{documents: any[], count: number}> {
-  let url = `/api/documents?page=${page}&pageSize=${pageSize}`;
-  if (recentDays) url += `&recentDays=${recentDays}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  // count가 없으면 documents.length fallback
-  return { documents: data.documents || [], count: data.count ?? (data.documents?.length ?? 0) };
+function buildQueryString(params: Record<string, any>) {
+  const query = Object.entries(params)
+    .filter(([_, v]) => v !== undefined && v !== null && v !== '' && !(Array.isArray(v) && v.length === 0))
+    .map(([k, v]) => {
+      if (Array.isArray(v)) return `${encodeURIComponent(k)}=${encodeURIComponent(v.join(','))}`;
+      return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+    })
+    .join('&');
+  return query ? `?${query}` : '';
 }
 
-export function useDocuments({ recentDays }: { recentDays?: number } = {}) {
-  // 내부 상태로 page, pageSize 관리
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+// API 응답 타입 정의
+interface DocumentsApiResponse {
+  documents: any[];
+  hasMore?: boolean;
+  count?: number;
+  totalCount?: number;
+  recentCount?: number;
+}
 
+async function fetchDocuments(filters: any = {}, recentDays?: number): Promise<DocumentsApiResponse> {
+  const params: Record<string, any> = {
+    page: filters.page ?? 1,
+    pageSize: filters.pageSize ?? 10,
+  };
+  if (recentDays) params.recentDays = recentDays;
+  if (filters.tags && filters.tags.length > 0) params.tags = filters.tags;
+  if (filters.title) params.title = filters.title;
+  // ...필요시 다른 필터 추가
+  const url = `/api/documents${buildQueryString(params)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return {
+    documents: data.documents || [],
+    hasMore: data.hasMore,
+    count: data.count,
+    totalCount: data.totalCount,
+    recentCount: data.recentCount,
+  };
+}
+
+export function useDocuments({ recentDays, page, pageSize }: { recentDays?: number, page?: number, pageSize?: number } = {}) {
+  // page, pageSize를 filters에 포함
   const [filters, setFilters] = useState({
+    page: page,
+    pageSize: pageSize,
     tags: [] as string[],
     title: '', // 또는 null
     // ...다른 검색 조건
   });
 
   // GET 노트 목록 불러오기 (react-query)
-  const documentsQuery = useQuery<{documents: any[], count: number}>({
-    queryKey: ['documents', page, pageSize, filters, recentDays],
-    queryFn: () => fetchDocuments(page, pageSize, filters, recentDays),
+  const documentsQuery = useQuery<DocumentsApiResponse>({
+    queryKey: ['documents', filters, recentDays],
+    queryFn: () => fetchDocuments(filters, recentDays),
   });
 
   // 최신순 정렬 후 3개만 추출
@@ -37,12 +68,13 @@ export function useDocuments({ recentDays }: { recentDays?: number } = {}) {
     // 쿼리 데이터
     documents: documentsQuery.data?.documents ?? [],
     top3Documents: top3,
-    totalCount: documentsQuery.data?.count ?? 0,
+    totalCount: documentsQuery.data?.totalCount ?? 0,
+    count: documentsQuery.data?.count ?? 0,
+    recentCount: documentsQuery.data?.recentCount ?? 0,
+    hasMore: documentsQuery.data?.hasMore ?? false,
     loading: documentsQuery.isLoading,
     errors: documentsQuery.error,
-    page,
-    setPage,
-    pageSize,
-    setPageSize,
+    filters,
+    setFilters,
   };
 }

@@ -8,25 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import {
-  Activity,
-  CreditCard,
-  DollarSign,
-  Users,
-  TrendingUp,
-  Image,
-  Newspaper,
-} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Metadata } from 'next';
-import { NewsTopNTable } from '@/components/news-top-n';
 import { RagTrendChart } from '@/components/rag-trend-chart';
 import { AiImageTrendChart } from '@/components/ai-image-trend-chart';
 import { NewsCountCard } from '@/components/news-count-card';
 import { NewsTop3Table } from '@/components/news-top3';
 import { RagPostCountCard } from '@/components/rag-post-count-card';
 import { AiImageCountCard } from '@/components/ai-image-count-card';
+import { Separator } from '@/components/ui/separator';
 export const metadata: Metadata = {
   title: 'Dashboard | 서비스명',
   description: '대시보드에서 최근 활동, 통계, AI 뉴스 등을 확인하세요.',
@@ -94,7 +84,9 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-      <AiCarousel />
+      <div className="my-4">
+        <AiCarousel />
+      </div>
     </div>
   );
 }

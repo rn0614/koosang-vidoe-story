@@ -1,20 +1,53 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useAIImage } from "@/hooks/useAIImage";
 
-// 임시 데이터 (실제로는 API에서 가져와야 함)
-const mockDailyData = [
-  { day: "월", images: 12 },
-  { day: "화", images: 18 },
-  { day: "수", images: 25 },
-  { day: "목", images: 22 },
-  { day: "금", images: 30 },
-  { day: "토", images: 35 },
-  { day: "일", images: 28 },
-];
+interface DayData {
+  day: string;
+  images: number;
+}
 
 export function AiImageTrendChart() {
-  const [data, setData] = useState(mockDailyData);
-  const maxImages = Math.max(...data.map(d => d.images));
+  const { images, isLoading } = useAIImage({ recentDays: 7 });
+
+  // 최근 7일간의 일별 데이터 생성
+  const generateDailyData = (): DayData[] => {
+    console.log('images', images);
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const today = new Date();
+    const dailyData: DayData[] = images.map((img) => ({
+      day: img.created_at,
+      images: 1,
+    }));
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dayName = days[date.getDay()];
+      
+      // 해당 날짜의 이미지 개수 계산
+      const dayImages = images.filter(img => {
+        const imgDate = new Date(img.created_at);
+        return imgDate.toDateString() === date.toDateString();
+      }).length;
+
+      dailyData.push({ day: dayName, images: dayImages });
+    }
+
+    return dailyData;
+  };
+
+  const data = generateDailyData();
+  const maxImages = Math.max(...data.map(d => d.images), 1); // 최소값 1로 설정
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-center h-32">
+          <div className="text-sm text-muted-foreground">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

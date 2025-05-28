@@ -14,6 +14,19 @@ export async function GET(req: Request) {
 
   const supabase = await createClient();
 
+  // 1. 전체 documents 개수
+  const { count: totalCount } = await supabase
+    .from('documents')
+    .select('id', { count: 'exact', head: true });
+
+  // 2. 최근 30일 updated_at 개수
+  const recent30 = new Date();
+  recent30.setDate(recent30.getDate() - 30);
+  const { count: recentCount } = await supabase
+    .from('documents')
+    .select('id', { count: 'exact', head: true })
+    .gte('metadata->>updated_at', recent30.toISOString());
+
   let query = supabase
     .from('documents')
     .select('id, content, metadata', { count: 'exact' })
@@ -21,7 +34,6 @@ export async function GET(req: Request) {
 
   // tags가 있으면 필터 추가
   if (tags && tags.length > 0) {
-    // metadata->tags를 select에 추가해서 별칭으로 사용
     query = query.contains('metadata->tags', tags);
   }
 
@@ -32,5 +44,5 @@ export async function GET(req: Request) {
   }
   // hasMore: 다음 페이지가 있는지 여부
   const hasMore = documents.length === pageSize && (count ? to + 1 < count : true);
-  return NextResponse.json({ documents, hasMore });
+  return NextResponse.json({ documents, hasMore, count, totalCount, recentCount });
 }
