@@ -5,13 +5,13 @@ import dayjs from 'dayjs';
 import { UUID } from 'crypto';
 
 async function fetchNotes(): Promise<Note[]> {
-  const res = await fetch('/api/note');
+  const res = await fetch('/api/notes');
   const data = await res.json();
   return data.notes || []
 }
 
 async function addNote(data: NoteInsertFormData) {
-  const res = await fetch('/api/note', {
+  const res = await fetch('/api/notes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title: data.title }),
@@ -24,7 +24,7 @@ async function addNote(data: NoteInsertFormData) {
 
 async function updateNote({ id, title }: NoteUpdateFormData) {
   const updated_at = dayjs().toISOString(); // ISO 문자열 형식으로 변환
-  const res = await fetch('/api/note', {
+  const res = await fetch('/api/notes', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id, title, updated_at }),
