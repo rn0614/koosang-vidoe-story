@@ -6,7 +6,7 @@ import { CardHeader } from './ui/card';
 export async function AiCarousel() {
   // Supabase에서 최근 8개 이미지 가져오기
   
-  const res = await fetch('http://localhost:3000/api/ai-image');
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ai-image`);
   const data = await res.json();
 
   // imagesData가 [{ image_url, title, description }, ...] 형태
