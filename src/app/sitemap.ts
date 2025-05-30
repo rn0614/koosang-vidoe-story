@@ -1,45 +1,56 @@
-import dayjs from "dayjs";
 import { MetadataRoute } from "next";
-import path from "path";
+import { createClient } from "@/utils/supabase/server";
+
+type SitemapItem = {
+  url: string;
+  lastModified: Date;
+  changeFrequency: "weekly" | "always" | "hourly" | "daily" | "monthly" | "yearly" | "never";
+  priority: number;
+};
+
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!+"/ko";
+  const supabase = await createClient();
 
+  // 1. 모든 문서 id, updated_at, slug(있다면) 가져오기
+  const { data: docs, error } = await supabase
+    .from("documents")
+    .select("id, metadata")
+    .order("id", { ascending: false });
 
-  const createUrl = (slug: string) => {
-    // 경로에서 .md 확장자 제거
-    const cleanSlug = slug.replace(/\.md$/, '');
-    
-    // POST_BASE_PATH 이후의 경로만 추출
-    const relativePath = cleanSlug.slice("posts".length + 1);
-    
-    // 경로를 슬래시로 분리
-    const pathParts = relativePath.split(path.sep);
-    
-    // 각 경로 부분을 인코딩 (이중 인코딩 방지)
-    const encodedParts = pathParts.map((part: string) => {
-      // 이미 인코딩된 부분이 있는지 확인
-      try {
-        // 디코딩 시도
-        const decoded = decodeURIComponent(part);
-        // 디코딩 성공 시 원본 값 사용
-        return part;
-      } catch (e) {
-        // 디코딩 실패 시 인코딩
-        return encodeURIComponent(part);
-      }
-    });
-    
-    // 인코딩된 부분들을 슬래시로 연결
-    return encodedParts.join("/");
-  };
+  if (error) {
+    throw new Error("문서 목록을 불러오지 못했습니다: " + error.message);
+  }
 
+  // 2. sitemap 배열 생성
+  const ragPages = (docs ?? []).map((doc) => {
+    // titleAndId는 보통 slug--id 형태이거나, 그냥 id일 수 있음
+    // metadata.title 또는 metadata.slug가 있다면 활용
+    const title = doc.metadata?.title ?? "";
+    // slug가 있다면 slug--id, 없다면 id만
+    const titleAndId = doc.metadata?.title
+      ? `${doc.metadata.title}--${doc.id}`
+      : doc.id;
+
+    return {
+      url: `${baseUrl}/rag/${encodeURIComponent(titleAndId)}`,
+      lastModified: doc.metadata?.updated_at
+        ? new Date(doc.metadata.updated_at)
+        : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    } as SitemapItem;
+  });
+
+  // 3. 홈 등 기본 경로 추가
   return [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 1
+      priority: 1,
     },
+    ...ragPages,
   ];
 }
