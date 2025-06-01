@@ -14,7 +14,10 @@
     "services": "서비스",
     "contact": "연락처",
     "sign-in": "로그인",
-    "sign-up": "회원가입"
+    "sign-up": "회원가입",
+    "alarm": "알림",
+    "company": "약국/병원",
+    "customer": "고객"
   },
   "note_edit": {
     "edit": "수정",

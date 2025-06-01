@@ -14,7 +14,10 @@
     "mincraft": "mincraft",
     "blog": "Blog",
     "sign-in": "Sign In",
-    "sign-up": "Sign Up"
+    "sign-up": "Sign Up",
+    "alarm": "Alarm",
+    "company": "Company",
+    "customer": "Customer"
   },
   "note_edit": {
     "edit": "Edit",
