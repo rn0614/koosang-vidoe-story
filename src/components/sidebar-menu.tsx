@@ -10,13 +10,20 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
       {menu.map((item) => (
         <li key={item.href}>
           <DrawerClose asChild>
-            <Link
-              href={item.href}
-              className="block rounded px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
-            >
-              {item.icon}
-              {t(item.labelKey)}
-            </Link>
+            {item.clickable ? (
+              <Link
+                href={item.href}
+                className="block rounded px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+              >
+                {item.icon}
+                {t(item.labelKey)}
+              </Link>
+            ) : (
+              <div className="block rounded px-3 py-2">
+                {item.icon}
+                {t(item.labelKey)}
+              </div>
+            )}
           </DrawerClose>
           {item.children && item.children.length > 0 && (
             <SidebarMenu menu={item.children} />

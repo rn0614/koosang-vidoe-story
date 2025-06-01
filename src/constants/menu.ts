@@ -14,6 +14,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
     icon: null,
   },*/
   {
+    clickable: true,
     href: '/rag',
     labelKey: 'rag',
     icon: null,
@@ -28,17 +29,41 @@ export const SIDEBAR_MENU: MenuItem[] = [
     ],
   },*/
   {
+    clickable: false,
     href: '/game',
     labelKey: 'game',
     icon: null,
     children: [
-      { href: '/game/boardgame', labelKey: 'boardgame' },
-      { href: '/game/mincraft', labelKey: 'mincraft' },
+      {
+        clickable: true,
+        href: '/game/boardgame',
+        labelKey: 'boardgame',
+      },
+      // { href: '/game/mincraft', labelKey: 'mincraft' },
     ],
   },
   {
+    clickable: true,
     href: '/note',
     labelKey: 'note',
     icon: null,
+  },
+  {
+    clickable: false,
+    href: '/alarm',
+    labelKey: 'alarm',
+    icon: null,
+    children: [
+      {
+        clickable: true,
+        href: '/alarm/company',
+        labelKey: 'company',
+      },
+      {
+        clickable: true,
+        href: '/alarm/customer',
+        labelKey: 'customer',
+      },
+    ],
   },
 ];
