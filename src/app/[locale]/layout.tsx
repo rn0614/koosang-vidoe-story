@@ -70,17 +70,47 @@ export default async function LocaleLayout({
                       <div className="flex flex-1 flex-col gap-20 md:ml-56 min-w-[0px]">
                         {children}
                         <footer className="mx-auto flex w-full items-center justify-center gap-8 border-t py-16 text-center text-xs">
-                          <p>
-                            Powered by{' '}
-                            <a
-                              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-                              target="_blank"
-                              className="font-bold hover:underline"
-                              rel="noreferrer"
-                            >
-                              Supabase
-                            </a>
-                          </p>
+                          <div className="flex flex-col items-center gap-2 w-full">
+                            <div className="font-bold">koo sangmo 블로그</div>
+                            <div className="flex flex-col md:flex-row gap-2 md:gap-6 items-center">
+                              <a
+                                href="https://github.com/rn0614"
+                                target="_blank"
+                                className="hover:underline text-blue-700"
+                                rel="noreferrer"
+                              >
+                                Github 바로가기
+                              </a>
+                              {/* <a
+                                href="https://play.google.com/store/apps/details?id=com.koosangmo.app"
+                                target="_blank"
+                                className="hover:underline text-green-700"
+                                rel="noreferrer"
+                              >
+                                Google Play 앱 다운로드
+                              </a> */}
+                            </div>
+                            <div className="mt-2">
+                              Powered by{' '}
+                              <a
+                                href="https://vercel.com"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="font-bold hover:underline"
+                              >
+                                Vercel
+                              </a>
+                              {' & '}
+                              <a
+                                href="https://supabase.com"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="font-bold hover:underline"
+                              >
+                                Supabase
+                              </a>
+                            </div>
+                          </div>
                           <ThemeSwitcher />
                         </footer>
                       </div>
