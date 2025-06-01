@@ -10,6 +10,7 @@ import QueryProvider from '@/provider/query-provider';
 import { ThemeProvider } from 'next-themes';
 import { getMessages } from 'next-intl/server';
 import { Metadata } from 'next';
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -90,6 +91,7 @@ export default async function LocaleLayout({
             </NextIntlClientProvider>
           </ThemeProvider>
         </QueryProvider>
+        <Toaster />
       </body>
     </html>
   );

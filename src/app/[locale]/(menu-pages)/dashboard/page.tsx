@@ -1,6 +1,6 @@
 import { AiCarousel } from '@/components/ai-carousel';
 import { RagTop3Table } from '@/components/rag-top3';
-import { StatCard } from '@/components/state-card';
+
 import {
   Card,
   CardContent,
@@ -16,7 +16,6 @@ import { NewsCountCard } from '@/components/news-count-card';
 import { NewsTop3Table } from '@/components/news-top3';
 import { RagPostCountCard } from '@/components/rag-post-count-card';
 import { AiImageCountCard } from '@/components/ai-image-count-card';
-import { Separator } from '@/components/ui/separator';
 export const metadata: Metadata = {
   title: 'Dashboard | 서비스명',
   description: '대시보드에서 최근 활동, 통계, AI 뉴스 등을 확인하세요.',
