@@ -17,8 +17,8 @@ export function ResponsiveSidebar({ locale }: { locale: string }) {
       {/* 모바일: Drawer 트리거(햄버거 버튼) */}
       <div className="fixed left-4 top-4 z-50 block">
         <DrawerContent>
-          <div className="mx-auto h-full w-full max-w-xs">
-            <DrawerTitle>
+          <div className="mx-auto h-full w-full max-w-xs p-4">
+            <DrawerTitle className="flex items-center gap-2">
               <DrawerTrigger asChild>
                 <Button variant="outline" size="icon" aria-label="메뉴 열기">
                   <span className="text-2xl">☰</span>
