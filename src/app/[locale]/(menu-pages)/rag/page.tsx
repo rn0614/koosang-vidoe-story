@@ -1,7 +1,7 @@
 'use client';
 import { useInfiniteDocuments } from '@/hooks/useDocumentsInfinite';
 import { Link } from '@/i18n/navigation';
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -19,6 +19,50 @@ export default function DocumentPage() {
     useInfiniteDocuments();
 
   const documents = data ? data.pages.flatMap((page) => page.documents) : [];
+
+  // WebView 감지
+  const isWebView = typeof window !== 'undefined' && window.ReactNativeWebView;
+
+  // WebView 메시지 전송 함수
+  const sendWebViewMessage = useCallback(
+    (document: any) => {
+      if (isWebView) {
+        const message = {
+          type: 'ROUTER_EVENT',
+          data: `/rag/${document.metadata.title}--${document.id}`,
+          title: document.metadata.title,
+          params: {
+            documentId: document.id,
+            documentTitle: document.metadata.title,
+            category: 'rag',
+            source: 'document_list',
+            tags: document.metadata.tags || [],
+            excerpt: document.metadata.excerpt || '',
+            thumbnail: document.metadata.thumbnail,
+            createdAt: document.metadata.createdAt,
+            updatedAt: document.metadata.updatedAt,
+          },
+          navigationMode: 'push',
+        };
+
+        console.log('Sending WebView message:', message);
+        window.ReactNativeWebView?.postMessage(JSON.stringify(message));
+      }
+    },
+    [isWebView],
+  );
+
+  // 링크 클릭 핸들러
+  const handleLinkClick = useCallback(
+    (e: React.MouseEvent, document: any) => {
+      if (isWebView) {
+        e.preventDefault(); // 기본 링크 동작 방지
+        sendWebViewMessage(document);
+      }
+      // 일반 브라우저에서는 Link의 기본 동작 유지
+    },
+    [isWebView, sendWebViewMessage],
+  );
 
   // 커스텀 훅으로 태그 필터링 로직 분리
   const {
@@ -84,7 +128,10 @@ export default function DocumentPage() {
                   idx === filteredDocuments.length - 1 ? lastDocRef : undefined
                 }
               >
-                <Link href={`/rag/${document.metadata.title}--${document.id}`}>
+                <Link
+                  href={`/rag/${document.metadata.title}--${document.id}`}
+                  onClick={(e) => handleLinkClick(e, document)}
+                >
                   <CardHeader>
                     <CardTitle className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap">
                       {document.metadata.title}
