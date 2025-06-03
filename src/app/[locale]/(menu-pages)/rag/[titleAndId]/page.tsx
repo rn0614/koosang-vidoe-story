@@ -1,4 +1,32 @@
 import MdxRenderer from '@/components/mdx-remote-comp';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: { titleAndId: string } }): Promise<Metadata> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/documents/${decodeURIComponent(params.titleAndId)}`
+  );
+  const data = await res.json();
+  const document = Array.isArray(data.documents)
+    ? data.documents[0]
+    : data.documents;
+
+  if (!document) {
+    return {
+      title: '문서를 찾을 수 없습니다.',
+      description: '해당 문서를 찾을 수 없습니다.',
+    };
+  }
+
+  return {
+    title: document.metadata.title,
+    description: document.metadata.excerpt || 'RAG 문서 상세 페이지',
+    openGraph: {
+      title: document.metadata.title,
+      description: document.metadata.excerpt || 'RAG 문서 상세 페이지',
+      type: 'article',
+    },
+  };
+}
 
 export default async function DocumentPage({
   params
