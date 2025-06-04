@@ -1,7 +1,8 @@
 import type { MenuItem } from '@/types/menu';
 
 export const MAIN_MENU: MenuItem[] = [
-  { href: '/blog', labelKey: 'blog' },
+  { href: '/rag', labelKey: 'rag' },
+  { href: '/alarm', labelKey: 'alarm' },
   { href: '/game', labelKey: 'game' },
   { href: '/note', labelKey: 'note' },
 ];
@@ -29,7 +30,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
     ],
   },*/
   {
-    clickable: false,
+    clickable: true,
     href: '/game',
     labelKey: 'game',
     icon: null,
