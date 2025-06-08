@@ -67,4 +67,17 @@ export const SIDEBAR_MENU: MenuItem[] = [
       },
     ],
   },
+  {
+    clickable: false,
+    href: '/workflow',
+    labelKey: 'workflow',
+    icon: null,
+    children: [
+      {
+        clickable: true,
+        href: '/workflow/template',
+        labelKey: 'template',
+      },
+    ],
+  },
 ];
