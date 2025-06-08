@@ -17,7 +17,10 @@
     "sign-up": "회원가입",
     "alarm": "알림",
     "company": "약국/병원",
-    "customer": "고객"
+    "customer": "고객",
+    "workflow": "워크플로우",
+    "template": "템플릿",
+    "personal": "개인"
   },
   "note_edit": {
     "edit": "수정",

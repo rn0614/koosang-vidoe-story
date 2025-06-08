@@ -1,4 +1,4 @@
-// components/FlowNode.jsx - 노드 컴포넌트
+// components/workflow/FlowNode.tsx
 import React, { useState, useRef, useCallback } from 'react';
 import { Settings, Play, CheckCircle, Circle, XCircle } from 'lucide-react';
 import {
@@ -11,6 +11,7 @@ import {
 import { DialogFooter } from '@/components/ui/dialog';
 import { WorkflowNode, WorkflowNodeState } from '@/types/workflow';
 import { logUserAction } from '@/utils/logger';
+import { useNodeSelector, useRelatedNodes, useWorkflowContext } from '@/contexts/WorkflowContext';
 
 // 노드 상태에 따른 색상 정의
 const getNodeStateColor = (state: WorkflowNodeState) => {
@@ -45,42 +46,61 @@ const getStateIcon = (state: WorkflowNodeState) => {
 };
 
 type FlowNodeProps = {
-  node: WorkflowNode;
-  onNodeUpdate: (nodeId: string, updatedData: Partial<WorkflowNode>) => void;
+  nodeId: string; // 🎯 ID만 받음!
   onNodeSelect: (nodeId: string) => void;
   onConnectionStart: (nodeId: string, e: React.MouseEvent) => void;
   isSelected: boolean;
   isDragging: boolean;
   onDragStart: (nodeId: string, e: React.MouseEvent) => void;
   onStatusChange: (nodeId: string, status: WorkflowNodeState) => void;
-  nodes: Record<string, WorkflowNode>;
   onNodeDelete: (nodeId: string) => void;
 };
 
-// 개별 노드 컴포넌트
+// 개별 노드 컴포넌트 - 최적화됨
 const FlowNode = ({
-  node,
-  onNodeUpdate,
+  nodeId,
   onNodeSelect,
   onConnectionStart,
   isSelected,
   isDragging,
   onDragStart,
   onStatusChange,
-  nodes,
   onNodeDelete,
 }: FlowNodeProps) => {
+  // 🚀 선택적 구독 - 해당 노드만 구독
+  const node = useNodeSelector(nodeId);
+  const relatedNodes = useRelatedNodes(nodeId);
+  const { updateNode, getNode } = useWorkflowContext();
+  
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({ ...node });
+  const [editData, setEditData] = useState<WorkflowNode>(() => 
+    node || {
+      id: nodeId,
+      title: '',
+      role: '',
+      state: 'wait',
+      x: 0,
+      y: 0,
+      frontFlow: [],
+      nextFlow: [],
+      nextFlowCondition: '',
+      doCondition: '',
+      activateConditionType: 'all',
+      activateCondition: []
+    }
+  );
   const [showDropdown, setShowDropdown] = useState(false);
   const nodeRef = useRef(null);
+
+  // 노드가 없으면 렌더링하지 않음
+  if (!node) return null;
 
   // 노드 크기 상수
   const NODE_WIDTH = 200;
   const NODE_HEIGHT = 150;
 
   const handleSave = () => {
-    onNodeUpdate(node.id, editData);
+    updateNode(nodeId, editData);
     setIsEditing(false);
   };
 
@@ -91,7 +111,7 @@ const FlowNode = ({
 
   // 모달이 열릴 때마다 최신 노드 데이터로 editData 업데이트
   React.useEffect(() => {
-    if (isEditing) {
+    if (isEditing && node) {
       setEditData({ ...node });
     }
   }, [isEditing, node]);
@@ -101,13 +121,13 @@ const FlowNode = ({
     if (target.closest('.connection-point')) return;
     if (target.closest('.status-dropdown')) return;
     if (isEditing) return;
-    logUserAction('노드 드래그 시작', { nodeId: node.id });
-    onDragStart(node.id, e);
+    logUserAction('노드 드래그 시작', { nodeId });
+    onDragStart(nodeId, e);
   };
 
   const handleStatusChange = (status: WorkflowNodeState) => {
     setShowDropdown(false);
-    onStatusChange(node.id, status);
+    onStatusChange(nodeId, status);
   };
 
   return (
@@ -124,25 +144,25 @@ const FlowNode = ({
         }}
         onMouseDown={handleMouseDown}
         onClick={() => {
-          logUserAction('노드 선택', { nodeId: node.id });
-          onNodeSelect(node.id);
+          logUserAction('노드 선택', { nodeId });
+          onNodeSelect(nodeId);
         }}
       >
         {/* 연결점 - 입력 */}
         <div
           className="connection-point absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform cursor-crosshair rounded-full border-2 border-white bg-green-500 shadow-md hover:scale-110"
           data-type="input"
-          data-node-id={node.id}
+          data-node-id={nodeId}
         />
 
         {/* 연결점 - 출력 */}
         <div
           className="connection-point absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 transform cursor-crosshair rounded-full border-2 border-white bg-blue-500 shadow-md hover:scale-110"
           data-type="output"
-          data-node-id={node.id}
+          data-node-id={nodeId}
           onMouseDown={(e) => {
             e.stopPropagation();
-            onConnectionStart(node.id, e);
+            onConnectionStart(nodeId, e);
           }}
         />
 
@@ -158,7 +178,7 @@ const FlowNode = ({
               <DialogTrigger asChild>
                 <button
                   onClick={(e) => {
-                    logUserAction('노드 편집 열기', { nodeId: node.id });
+                    logUserAction('노드 편집 열기', { nodeId });
                     e.stopPropagation();
                     setIsEditing(true);
                   }}
@@ -235,7 +255,7 @@ const FlowNode = ({
                       Do Condition
                     </label>
                     <textarea
-                      value={editData.doCondition || ''}
+                      value={editData.doCondition}
                       onChange={(e) =>
                         setEditData({
                           ...editData,
@@ -254,7 +274,7 @@ const FlowNode = ({
                       Next Flow Condition
                     </label>
                     <textarea
-                      value={editData.nextFlowCondition || ''}
+                      value={editData.nextFlowCondition}
                       onChange={(e) =>
                         setEditData({
                           ...editData,
@@ -267,6 +287,7 @@ const FlowNode = ({
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
+                  
                   <div>
                     <label className="mb-1 block text-sm font-medium text-gray-700">
                       Activate Condition Type
@@ -287,43 +308,48 @@ const FlowNode = ({
                       <option value="any">Any</option>
                     </select>
                   </div>
+                  
                   <div>
                     <label className="mb-1 block text-sm font-medium text-gray-700">
                       Activate Condition
                     </label>
                     <div className="flex flex-col gap-1">
-                      {(node.frontFlow || []).map(prevId => (
-                        <div key={prevId} className="flex items-center gap-3 py-1">
-                          <input
-                            type="checkbox"
-                            checked={!!(editData.activateCondition || []).includes(prevId)}
-                            onChange={e => {
-                              const checked = e.target.checked;
-                              setEditData(prev => {
-                                const prevList = prev.activateCondition || [];
-                                return {
-                                  ...prev,
-                                  activateCondition: checked
-                                    ? [...prevList, prevId]
-                                    : prevList.filter(id => id !== prevId),
-                                };
-                              });
-                            }}
-                            id={`activate-${prevId}`}
-                          />
-                          <label
-                            htmlFor={`activate-${prevId}`}
-                            className="text-sm font-semibold text-gray-900 ml-2 select-none cursor-pointer"
-                          >
-                            {nodes?.[prevId]?.title || prevId}
-                          </label>
-                        </div>
-                      ))}
+                      {(node.frontFlow || []).map(prevId => {
+                        const prevNode = getNode(prevId);
+                        return (
+                          <div key={prevId} className="flex items-center gap-3 py-1">
+                            <input
+                              type="checkbox"
+                              checked={!!(editData.activateCondition || []).includes(prevId)}
+                              onChange={e => {
+                                const checked = e.target.checked;
+                                setEditData(prev => {
+                                  const prevList = prev.activateCondition || [];
+                                  return {
+                                    ...prev,
+                                    activateCondition: checked
+                                      ? [...prevList, prevId]
+                                      : prevList.filter(id => id !== prevId),
+                                  };
+                                });
+                              }}
+                              id={`activate-${prevId}`}
+                            />
+                            <label
+                              htmlFor={`activate-${prevId}`}
+                              className="text-sm font-semibold text-gray-900 ml-2 select-none cursor-pointer"
+                            >
+                              {prevNode?.title || prevId}
+                            </label>
+                          </div>
+                        );
+                      })}
                       {(!node.frontFlow || node.frontFlow.length === 0) && (
                         <span className="text-xs text-gray-400">이전 노드가 없습니다.</span>
                       )}
                     </div>
                   </div>
+                  
                   <div>
                     <label className="mb-1 block text-sm font-medium text-gray-700">
                       완료 시 API 호출 URL
@@ -332,14 +358,13 @@ const FlowNode = ({
                       type="text"
                       value={editData.onCompleteApi?.url || ''}
                       onChange={e => {
-                        console.debug('onCompleteApi.url 변경:', e.target.value);
                         setEditData(prev => ({
                           ...prev,
                           onCompleteApi: {
-                            ...prev.onCompleteApi,
                             url: e.target.value,
                             method: prev.onCompleteApi?.method || 'POST',
                             body: prev.onCompleteApi?.body || '',
+                            authentication: prev.onCompleteApi?.authentication,
                           },
                         }));
                       }}
@@ -349,6 +374,7 @@ const FlowNode = ({
                       onClick={e => e.stopPropagation()}
                     />
                   </div>
+                  
                   <div>
                     <label className="mb-1 block text-sm font-medium text-gray-700">
                       완료 시 API Body (JSON)
@@ -356,14 +382,13 @@ const FlowNode = ({
                     <textarea
                       value={editData.onCompleteApi?.body || ''}
                       onChange={e => {
-                        console.debug('onCompleteApi.body 변경:', e.target.value);
                         setEditData(prev => ({
                           ...prev,
                           onCompleteApi: {
-                            ...prev.onCompleteApi,
                             url: prev.onCompleteApi?.url || '',
                             method: prev.onCompleteApi?.method || 'POST',
                             body: e.target.value,
+                            authentication: prev.onCompleteApi?.authentication,
                           },
                         }));
                       }}
@@ -378,10 +403,9 @@ const FlowNode = ({
                 <DialogFooter className="mt-6 flex gap-2">
                   <button
                     onClick={(e) => {
-                      logUserAction('노드 편집 저장', { nodeId: node.id, editData });
+                      logUserAction('노드 편집 저장', { nodeId, editData });
                       e.stopPropagation();
                       handleSave();
-                      setIsEditing(false);
                     }}
                     className="flex-1 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                   >
@@ -391,7 +415,6 @@ const FlowNode = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCancel();
-                      setIsEditing(false);
                     }}
                     className="flex-1 rounded-md bg-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-400"
                   >
@@ -401,7 +424,7 @@ const FlowNode = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       if (window.confirm('정말 이 노드를 삭제하시겠습니까?')) {
-                        onNodeDelete(node.id);
+                        onNodeDelete(nodeId);
                         setIsEditing(false);
                       }
                     }}
@@ -471,4 +494,5 @@ const FlowNode = ({
   );
 };
 
+// 🚀 React.memo로 최적화 - nodeId가 같으면 리렌더링 방지
 export default React.memo(FlowNode);
