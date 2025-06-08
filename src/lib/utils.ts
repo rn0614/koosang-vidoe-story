@@ -15,3 +15,12 @@ export async function convertBlobUrlToFile(blobUrl: string) {
   });
   return file;
 }
+
+// 배열 → 객체(map) 변환 함수
+export function arrayToMap<T extends { id: string }, K extends keyof T = 'id'>(
+  arr: T[] = [],
+  idKey?: K
+): Record<string, T> {
+  const key = (idKey ?? 'id') as K;
+  return Object.fromEntries(arr.map((item) => [String(item[key]), item]));
+}
