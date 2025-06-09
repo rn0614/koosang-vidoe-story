@@ -1,18 +1,15 @@
+// components/FlowEditor.tsx
 'use client';
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Plus } from 'lucide-react';
 import { StateExplanation } from '@/components/workflow/state-eplanation';
+import { WorkflowCanvas } from '@/components/workflow/workflow-canvas';
+import { WorkflowProvider, useWorkflowContext } from '@/contexts/WorkflowContext';
 import {
   workflowConnectionMock,
   workflowNodeMock,
 } from '@/mocks/data/work-flow.mock';
-import type {
-  WorkflowNode,
-  WorkflowConnection,
-  WorkflowNodeState,
-} from '@/types/workflow';
-import { WorkflowCanvas } from '@/components/workflow/workflow-canvas';
-import { arrayToMap } from '@/lib/utils';
+import { WorkflowConnection, WorkflowNode } from '@/types/workflow';
 
 // 템플릿 타입
 interface WorkflowTemplate {
@@ -22,21 +19,11 @@ interface WorkflowTemplate {
   connections: WorkflowConnection[];
 }
 
-// 메인 플로우 에디터 컴포넌트
-const FlowEditor = () => {
-  const [nodes, setNodes] = useState<Record<string, WorkflowNode>>(() =>
-    arrayToMap(workflowNodeMock),
-  );
-
-  const [connections, setConnections] = useState<WorkflowConnection[]>(
-    workflowConnectionMock,
-  );
-
+// 내부 에디터 컴포넌트 (Context 내부에서 실행)
+const FlowEditorContent = () => {
+  const { addNode, getAllNodeIds, getNode, getConnections } = useWorkflowContext();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-
-  // 템플릿 목록 상태
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
-
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [templateId, setTemplateId] = useState<number | null>(null);
 
@@ -62,127 +49,28 @@ const FlowEditor = () => {
     const idx = window.prompt(`불러올 템플릿 번호를 입력하세요:\n${nameList}`);
     const sel = Number(idx) - 1;
     if (isNaN(sel) || sel < 0 || sel >= list.length) return;
+    
     const template = list[sel];
     setWorkflowTitle(template.name || '');
-    const nodesArr = template.template?.nodes || [];
-    const connectionsArr = template.template?.connections || [];
-    setNodes(arrayToMap(nodesArr));
-    setConnections(connectionsArr);
     setTemplateId(template.id);
     console.debug('[USER_ACTION] 템플릿 적용', template);
     alert('템플릿이 적용되었습니다!');
   }, [fetchTemplates]);
 
-  // 노드 업데이트
-  const updateNode = useCallback(
-    (nodeId: string, updatedData: Partial<WorkflowNode>) => {
-      console.debug('[USER_ACTION] 노드 업데이트', { nodeId, updatedData });
-      setNodes((prev) => ({
-        ...prev,
-        [nodeId]: { ...prev[nodeId], ...updatedData },
-      }));
-    },
-    [],
-  );
-
-  // 상태 변경 처리
-  const handleStatusChange = useCallback(
-    (nodeId: string, status: WorkflowNodeState) => {
-      console.debug('[USER_ACTION] 노드 상태 변경', { nodeId, status });
-      const currentNode = nodes[nodeId];
-      if (!currentNode || currentNode.state !== 'do') return;
-
-      if (status === 'complete' || status === 'fail') {
-        setNodes((prev) => {
-          const updated = {
-            ...prev,
-            [nodeId]: { ...prev[nodeId], state: status },
-          };
-
-          (currentNode.nextFlow || []).forEach((nextId) => {
-            const nextNode = updated[nextId] as WorkflowNode;
-
-            if (!nextNode || nextNode.state !== 'wait') return;
-            const requiredIds = nextNode.activateCondition || [];
-            const allComplete =
-              requiredIds.length > 0 &&
-              requiredIds.every((fid) => updated[fid]?.state === 'complete');
-            if (
-              (allComplete && nextNode.activateConditionType === 'all') ||
-              (nextNode.activateConditionType === 'any' &&
-                requiredIds.length > 0)
-            ) {
-              updated[nextId] = { ...nextNode, state: 'do' };
-            }
-          });
-
-          if (status === 'complete' && currentNode.onCompleteApi) {
-            const { url, method, body, authentication } =
-              currentNode.onCompleteApi;
-            console.debug('[USER_ACTION] 노드 완료시 API 호출', { url, method, body });
-            fetch(url, {
-              method,
-              headers: {
-                'Content-Type': 'application/json',
-                ...(authentication ? { Authorization: `Bearer ${authentication}` } : {}),
-              },
-              ...(method === 'POST' || method === 'PUT'
-                ? { body: JSON.stringify(body) }
-                : {}),
-            }).then((res) => res.json());
-          }
-
-          return updated;
-        });
-      }
-    },
-    [nodes],
-  );
-
-  // 새 노드 추가
-  const addNode = useCallback(() => {
-    // 현재 viewport 중앙 좌표 계산
-    const scrollX = window.scrollX || document.documentElement.scrollLeft || 0;
-    const scrollY =
-      window.scrollY ||
-      window.pageYOffset ||
-      document.documentElement.scrollTop ||
-      0;
-    const centerX = scrollX + window.innerWidth / 2;
-    const centerY = scrollY + window.innerHeight / 2;
-    // 노드 크기(가로 200, 세로 150 기준) 중앙 정렬
-    const newX = centerX - 100;
-    const newY = centerY - 75;
-    const newId = `node-${Date.now()}`;
-    const newNode: WorkflowNode = {
-      id: newId,
-      title: '새 노드',
-      role: 'User',
-      state: 'wait',
-      x: newX,
-      y: newY,
-      frontFlow: [],
-      nextFlow: [],
-      nextFlowCondition: '',
-      doCondition: '',
-      activateConditionType: 'all',
-    };
-    console.debug('[USER_ACTION] 노드 추가', newNode);
-    setNodes((prev) => ({
-      ...prev,
-      [newId]: newNode,
-    }));
-  }, []);
-
   // 템플릿 저장 함수
   const saveTemplate = useCallback(async () => {
     try {
+      const nodeIds = getAllNodeIds();
+      const nodes = nodeIds.map(id => getNode(id)).filter(Boolean);
+      const connections = getConnections();
+      
       const template = {
         id: templateId,
         name: workflowTitle,
-        nodes: Object.values(nodes),
+        nodes,
         connections,
       };
+      
       console.debug('[USER_ACTION] 템플릿 저장', template);
       await fetch('/api/workflow/template', {
         method: 'POST',
@@ -195,19 +83,7 @@ const FlowEditor = () => {
     } catch (err) {
       alert('저장에 실패했습니다.');
     }
-  }, [nodes, connections, workflowTitle, templateId]);
-
-  const handleNodeDelete = useCallback((nodeId: string) => {
-    console.debug('[USER_ACTION] 노드 삭제', { nodeId });
-    setNodes((prev) => {
-      const newNodes = { ...prev };
-      delete newNodes[nodeId];
-      return newNodes;
-    });
-    setConnections((prev) =>
-      prev.filter((conn) => conn.from !== nodeId && conn.to !== nodeId),
-    );
-  }, []);
+  }, [workflowTitle, templateId, getAllNodeIds, getNode, getConnections]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-gray-100">
@@ -245,19 +121,24 @@ const FlowEditor = () => {
 
       {/* 메인 캔버스 */}
       <WorkflowCanvas
-        nodes={nodes}
-        setNodes={setNodes}
-        connections={connections}
-        setConnections={setConnections}
         selectedNodeId={selectedNodeId}
         setSelectedNodeId={setSelectedNodeId}
-        updateNode={updateNode}
-        handleStatusChange={handleStatusChange}
-        handleNodeDelete={handleNodeDelete}
       />
 
       <StateExplanation />
     </div>
+  );
+};
+
+// 메인 플로우 에디터 컴포넌트
+const FlowEditor = () => {
+  return (
+    <WorkflowProvider 
+      initialNodes={workflowNodeMock}
+      initialConnections={workflowConnectionMock}
+    >
+      <FlowEditorContent />
+    </WorkflowProvider>
   );
 };
 
