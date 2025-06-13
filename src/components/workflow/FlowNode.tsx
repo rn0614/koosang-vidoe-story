@@ -69,32 +69,29 @@ const FlowNode = ({
 }: FlowNodeProps) => {
   console.log(`[RENDER] FlowNode ${nodeId}`);
   // 🚀 선택적 구독 - 해당 노드만 구독
-  const node = useNodeSelector(nodeId);
+  const node = useNodeSelector(nodeId) as WorkflowNode;
   const relatedNodes = useRelatedNodes(nodeId);
   const { updateNode, getNode } = useWorkflowContext();
   
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState<WorkflowNode>(() => 
-    node || {
-      id: nodeId,
-      title: '',
-      role: '',
-      state: 'wait',
-      x: 0,
-      y: 0,
-      frontFlow: [],
-      nextFlow: [],
-      nextFlowCondition: '',
-      doCondition: '',
-      activateConditionType: 'all',
-      activateCondition: []
-    }
-  );
+  if (!node) return null;
+
+  const [editData, setEditData] = useState<WorkflowNode>(() => ({
+    id: nodeId,
+    title: '',
+    role: '',
+    state: 'wait',
+    x: 0,
+    y: 0,
+    frontFlow: [],
+    nextFlow: [],
+    nextFlowCondition: '',
+    doCondition: '',
+    activateConditionType: 'all',
+    activateCondition: []
+  }));
   const [showDropdown, setShowDropdown] = useState(false);
   const nodeRef = useRef(null);
-
-  // 노드가 없으면 렌더링하지 않음
-  if (!node) return null;
 
   // 노드 크기 상수
   const NODE_WIDTH = 200;
