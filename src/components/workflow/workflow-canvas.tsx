@@ -17,6 +17,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   selectedNodeId,
   setSelectedNodeId,
 }) => {
+  console.log('[RENDER] WorkflowCanvas');
   const { 
     getNode, 
     updateNode, 
@@ -51,6 +52,10 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleNodeSelect = useCallback((nodeId: string) => {
+    setSelectedNodeId(nodeId);
+  }, []);
 
   // 드래그 시작
   const handleDragStart = useCallback(
@@ -323,20 +328,24 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         </div>
 
         {/* 노드들 - 최적화된 렌더링 */}
-        {nodeIds.map(nodeId => (
-          <div key={nodeId} data-node={nodeId}>
-            <FlowNode
-              nodeId={nodeId} // 🎯 ID만 전달!
-              onNodeSelect={setSelectedNodeId}
-              onConnectionStart={handleConnectionStart}
-              onStatusChange={handleStatusChange}
-              isSelected={selectedNodeId === nodeId}
-              isDragging={dragState.isDragging && dragState.dragNodeId === nodeId}
-              onDragStart={handleDragStart}
-              onNodeDelete={deleteNode}
-            />
-          </div>
-        ))}
+        {nodeIds.map(nodeId => {
+          const node = getNode(nodeId);
+          if (!node) return null;
+          return (
+            <div key={nodeId} data-node={nodeId}>
+              <FlowNode
+                nodeId={nodeId}
+                onNodeSelect={handleNodeSelect}
+                onConnectionStart={handleConnectionStart}
+                onDragStart={handleDragStart}
+                onStatusChange={handleStatusChange}
+                isSelected={selectedNodeId === nodeId}
+                isDragging={dragState.isDragging && dragState.dragNodeId === nodeId}
+                onNodeDelete={deleteNode}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

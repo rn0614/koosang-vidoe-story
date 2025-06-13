@@ -1,6 +1,6 @@
 // components/FlowEditor.tsx
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useTransition } from 'react';
 import { Plus } from 'lucide-react';
 import { StateExplanation } from '@/components/workflow/state-eplanation';
 import { WorkflowCanvas } from '@/components/workflow/workflow-canvas';
@@ -21,11 +21,14 @@ interface WorkflowTemplate {
 
 // 내부 에디터 컴포넌트 (Context 내부에서 실행)
 const FlowEditorContent = () => {
-  const { addNode, getAllNodeIds, getNode, getConnections } = useWorkflowContext();
+  console.log('[RENDER] FlowEditorContent');
+  const { addNode, getAllNodeIds, getNode, getConnections, replaceAll } = useWorkflowContext();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [templateId, setTemplateId] = useState<number | null>(null);
+
+  const [isPending, startTransition] = useTransition();
 
   // 템플릿 목록 불러오기
   const fetchTemplates = useCallback(async () => {
@@ -51,11 +54,12 @@ const FlowEditorContent = () => {
     if (isNaN(sel) || sel < 0 || sel >= list.length) return;
     
     const template = list[sel];
-    setWorkflowTitle(template.name || '');
-    setTemplateId(template.id);
-    console.debug('[USER_ACTION] 템플릿 적용', template);
-    alert('템플릿이 적용되었습니다!');
-  }, [fetchTemplates]);
+
+    setTimeout(() => {
+      replaceAll(template.template?.nodes || [], template.template?.connections || []);
+      alert('템플릿이 적용되었습니다!');
+    }, 0);
+  }, [fetchTemplates, replaceAll]);
 
   // 템플릿 저장 함수
   const saveTemplate = useCallback(async () => {

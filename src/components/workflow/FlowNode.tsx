@@ -1,5 +1,5 @@
 // components/workflow/FlowNode.tsx
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
 import { Settings, Play, CheckCircle, Circle, XCircle } from 'lucide-react';
 import {
   Dialog,
@@ -67,6 +67,7 @@ const FlowNode = ({
   onStatusChange,
   onNodeDelete,
 }: FlowNodeProps) => {
+  console.log(`[RENDER] FlowNode ${nodeId}`);
   // 🚀 선택적 구독 - 해당 노드만 구독
   const node = useNodeSelector(nodeId);
   const relatedNodes = useRelatedNodes(nodeId);
@@ -110,7 +111,7 @@ const FlowNode = ({
   };
 
   // 모달이 열릴 때마다 최신 노드 데이터로 editData 업데이트
-  React.useEffect(() => {
+  useLayoutEffect(() => {
     if (isEditing && node) {
       setEditData({ ...node });
     }

@@ -14,6 +14,8 @@ interface WorkflowContextType {
   getRelatedNodes: (nodeId: string) => WorkflowNode[];
   getAllNodeIds: () => string[];
   getConnections: () => WorkflowConnection[];
+  replaceAll: (nodes: WorkflowNode[], connections: WorkflowConnection[]) => void;
+  subscribeToNode: (nodeId: string, callback: () => void) => () => void;
 }
 
 const WorkflowContext = createContext<WorkflowContextType | null>(null);
@@ -29,6 +31,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   initialNodes = [],
   initialConnections = []
 }) => {
+  console.log('[RENDER] WorkflowProvider');
   // Map으로 노드 관리 (성능 최적화)
   const [nodesMap, setNodesMap] = useState<Map<string, WorkflowNode>>(() => 
     new Map(initialNodes.map(node => [node.id, node]))
@@ -259,6 +262,12 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     });
   }, []);
   
+  // 전체 노드/연결 교체
+  const replaceAll = useCallback((nodes: WorkflowNode[], connections: WorkflowConnection[]) => {
+    setNodesMap(new Map(nodes.map(node => [node.id, node])));
+    setConnections(connections);
+  }, []);
+  
   // 선택적 구독을 위한 셀렉터들
   const contextValue = useMemo<WorkflowContextType>(() => ({
     updateNode,
@@ -267,6 +276,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     deleteNode,
     addConnection,
     removeConnection,
+    replaceAll,
     
     // 셀렉터들
     getNode: (nodeId: string) => nodesMap.get(nodeId),
@@ -283,9 +293,10 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     },
     getAllNodeIds: () => Array.from(nodesMap.keys()),
     getConnections: () => connections,
+    subscribeToNode,
   }), [
     updateNode, handleStatusChange, addNode, deleteNode, 
-    addConnection, removeConnection, nodesMap, connections
+    addConnection, removeConnection, nodesMap, connections, replaceAll, subscribeToNode
   ]);
   
   return (
@@ -307,31 +318,23 @@ export const useWorkflowContext = () => {
 export const useNodeSelector = (nodeId: string) => {
   const { getNode } = useWorkflowContext();
   const [node, setNode] = useState(() => getNode(nodeId));
-  
-  // 해당 노드만 구독
+  const { subscribeToNode } = React.useContext(WorkflowContext)!;
+
   React.useEffect(() => {
     setNode(getNode(nodeId));
-    
-    // 실제 구독 로직은 Context 내부에서 관리
-    // 여기서는 단순화를 위해 주기적 체크로 구현
-    const interval = setInterval(() => {
-      const currentNode = getNode(nodeId);
-      setNode(prev => {
-        if (!prev && !currentNode) return prev;
-        if (!prev || !currentNode) return currentNode;
-        
-        // 얕은 비교로 변경 감지
-        const changed = Object.keys(currentNode).some(key => 
-          currentNode[key as keyof WorkflowNode] !== prev[key as keyof WorkflowNode]
-        );
-        
-        return changed ? currentNode : prev;
-      });
-    }, 100);
-    
-    return () => clearInterval(interval);
-  }, [nodeId, getNode]);
-  
+    const unsubscribe = subscribeToNode(nodeId, () => {
+      setNode(getNode(nodeId));
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [nodeId, getNode, subscribeToNode]);
+
+  if (!node) {
+    // 최소한의 렌더링만 반환 (훅은 위에서 항상 실행)
+    return <div style={{display: 'none'}} />;
+  }
+
   return node;
 };
 
