@@ -80,4 +80,10 @@ export const SIDEBAR_MENU: MenuItem[] = [
       },
     ],
   },
+  {
+    clickable: true,
+    href: '/container',
+    labelKey: 'container',
+    icon: null,
+  },
 ];

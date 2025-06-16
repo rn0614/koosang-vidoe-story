@@ -20,7 +20,8 @@
     "customer": "고객",
     "workflow": "워크플로우",
     "template": "템플릿",
-    "personal": "개인"
+    "personal": "개인",
+    "container": "컨테이너"
   },
   "note_edit": {
     "edit": "수정",

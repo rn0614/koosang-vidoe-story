@@ -20,7 +20,8 @@
     "customer": "Customer",
     "workflow": "Workflow",
     "template": "Template",
-    "personal": "Personal"
+    "personal": "Personal",
+    "container": "Container"
   },
   "note_edit": {
     "edit": "Edit",
