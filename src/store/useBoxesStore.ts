@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import React from 'react';
-import { BoxData, BoxMethods } from '@/types/BoxPosition';
+import { BoxData, BoxMethods } from '@/types/boxPosition';
 
 interface BoxesState {
   boxes: Map<string, BoxData>;
