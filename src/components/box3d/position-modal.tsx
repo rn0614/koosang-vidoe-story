@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, AlertTriangle, Move3D, Expand, Navigation } from 'lucide-react';
-import { BoxData, Position } from '../../types/BoxPosition';
+import { BoxData, BoxPosition } from '@/types/boxPosition';
 import { useBoxesStore } from '@/store/useBoxesStore';
 
 interface PositionModalProps {
@@ -18,7 +18,7 @@ interface PositionModalProps {
 }
 
 const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onMove, mode = 'default', onMoveToOtherPosition }) => {
-  const [position, setPosition] = useState<Position>({ x: 0, y: 0, z: 0 });
+  const [position, setPosition] = useState<BoxPosition>({ x: 0, y: 0, z: 0 });
   const [dimensions, setDimensions] = useState<{ lenX: number; lenY: number; lenZ: number }>({ lenX: 2, lenY: 2, lenZ: 2 });
   const [validationError, setValidationError] = useState<string>('');
   const [currentBox, setCurrentBox] = useState<BoxData | null>(null);
@@ -41,8 +41,8 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
 
   interface ValidationResult {
     isValid: boolean;
-    snappedPosition: Position;
-    suggestedPosition?: Position;
+    snappedPosition: BoxPosition;
+    suggestedPosition?: BoxPosition;
     error: string;
   }
 
@@ -134,7 +134,7 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
     }
   };
 
-  const handlePositionChange = (axis: keyof Position, value: string): void => {
+  const handlePositionChange = (axis: keyof BoxPosition, value: string): void => {
     const newPos = { ...position, [axis]: parseFloat(value) || 0 };
     setPosition(newPos);
     const validation = validatePosition(newPos.x, newPos.y, newPos.z, dimensions.lenX, dimensions.lenY, dimensions.lenZ);

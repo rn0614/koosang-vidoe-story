@@ -26,7 +26,7 @@ import Lighting from '@/components/box3d/lighting';
 import BoxInfoCard from '@/components/box3d/boxInfo-card';
 import SelectedBoxDisplay from '@/components/box3d/selected-box-display';
 import BoxStatusDisplay from '@/components/box3d/box-status-display';
-import { BoxData, BoxMethods } from '@/types/BoxPosition';
+import { BoxData, BoxMethods } from '@/types/boxPosition';
 
 const BoxManagementContent: React.FC = () => {
   console.log('📱 BoxManagementContent 렌더링');
