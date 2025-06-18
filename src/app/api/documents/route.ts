@@ -48,7 +48,7 @@ export async function GET(req: Request) {
   }
 
   query = query
-    .order('metadata->updated_at', { ascending: false })
+    .order('updated_at', { ascending: false })
     .range(from, to);
 
   const { data, error } = await query;
