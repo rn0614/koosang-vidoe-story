@@ -6,6 +6,7 @@ import { CheckCircle, XCircle, Move3D, ArrowUp, ArrowDown, Navigation } from 'lu
 import PositionModal from './position-modal';
 import { useBoxesStore } from '@/store/useBoxesStore';
 import { shallow } from 'zustand/shallow';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface BoxInfoCardProps {
   boxId: string; // 🚀 box 객체 대신 boxId만 받기
@@ -39,6 +40,8 @@ const BoxInfoCard: React.FC<BoxInfoCardProps> = memo(({
   
   const [modalMode, setModalMode] = useState<'default' | 'move'>('default');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const isMobile = useIsMobile();
   
   // 박스 데이터가 없으면 렌더링하지 않음
   if (!box) {
@@ -112,6 +115,55 @@ const BoxInfoCard: React.FC<BoxInfoCardProps> = memo(({
     onMoveToOtherPosition(boxId, x, z);
     setIsModalOpen(false);
   }, [onMoveToOtherPosition]);
+
+  if (isMobile) {
+    // 모바일: 선택된 박스만 버튼 노출, 카드 클릭 불가
+    if (!isSelected) return null;
+    return (
+      <div className="flex space-x-1 mt-2">
+        <Button 
+          size="sm" 
+          variant="outline" 
+          onClick={handleEditOpenModal}
+          title="정확한 위치 설정"
+        >
+          <Move3D className="h-3 w-3" />
+        </Button>
+        <Button 
+          size="sm" 
+          variant="secondary"
+          onClick={handleMoveToConveyorClick}
+          title="컨베이어로 올리기"
+        >
+          <ArrowUp className="h-3 w-3" />
+        </Button>
+        <Button 
+          size="sm" 
+          variant="secondary"
+          onClick={handleDropToBottomClick}
+          title="바닥으로 내리기"
+        >
+          <ArrowDown className="h-3 w-3" />
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleMoveOpenModal}
+          title="다른 위치로 이동"
+        >
+          <Navigation className="h-3 w-3" />
+        </Button>
+        <PositionModal
+          box={box}
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          onMove={handleModalMove}
+          mode={modalMode}
+          onMoveToOtherPosition={handleMoveToOtherPosition}
+        />
+      </div>
+    );
+  }
 
   return (
     <Card
