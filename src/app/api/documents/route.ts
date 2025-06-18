@@ -10,16 +10,17 @@ export async function GET(req: Request) {
 
   // tags 파라미터 파싱
   const tagsParam = searchParams.get('tags');
-  const tags = tagsParam ? tagsParam.split(',') : null;
+  const tagsFilter = tagsParam ? tagsParam.split(',') : null;
+
 
   const supabase = await createClient();
 
-  // 1. 전체 documents 개수
+  // 전체 documents 개수 (필터와 무관)
   const { count: totalCount } = await supabase
     .from('documents')
     .select('id', { count: 'exact', head: true });
 
-  // 2. 최근 30일 updated_at 개수
+  // 최근 30일 updated_at 개수 (필터와 무관)
   const recent30 = new Date();
   recent30.setDate(recent30.getDate() - 30);
   const { count: recentCount } = await supabase
@@ -27,22 +28,42 @@ export async function GET(req: Request) {
     .select('id', { count: 'exact', head: true })
     .gte('metadata->>updated_at', recent30.toISOString());
 
-  let query = supabase
-    .from('documents')
-    .select('id, content, metadata', { count: 'exact' })
-    .range(from, to);
-
-  // tags가 있으면 필터 추가
-  if (tags && tags.length > 0) {
-    query = query.contains('metadata->tags', tags);
+  // 태그 필터가 있으면 count도 필터링된 쿼리로
+  let filteredCount = totalCount;
+  if (tagsFilter && tagsFilter.length > 0) {
+    const { count } = await supabase
+      .from('documents')
+      .select('id', { count: 'exact', head: true })
+      .contains('metadata->tags', JSON.stringify(tagsFilter));
+    filteredCount = count ?? 0;
   }
 
-  const { data: documents, error, count } = await query;
+  // 실제 데이터 쿼리
+  let query = supabase
+    .from('documents')
+    .select('id, content, metadata, metadata->tags', { count: 'exact' });
+
+  if (tagsFilter && tagsFilter.length > 0) {
+    query = query.contains('metadata->tags', JSON.stringify(tagsFilter));
+  }
+
+  query = query
+    .order('metadata->updated_at', { ascending: false })
+    .range(from, to);
+
+  const { data, error } = await query;
+  const documents = data ?? [];
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  // hasMore: 다음 페이지가 있는지 여부
-  const hasMore = documents.length === pageSize && (count ? to + 1 < count : true);
-  return NextResponse.json({ documents, hasMore, count, totalCount, recentCount });
+
+  // 현재 문서들의 태그 목록 추출
+  const tagsSet = new Set<string>(documents.map(doc => doc.metadata?.tags).flat());
+  const tags = Array.from(tagsSet);
+
+  // hasMore: 다음 페이지가 있는지 여부 (필터링된 count 기준)
+  const hasMore = documents.length === pageSize && (filteredCount ? to + 1 < filteredCount : true);
+
+  return NextResponse.json({ documents, hasMore, count: filteredCount, totalCount, recentCount, tags });
 }

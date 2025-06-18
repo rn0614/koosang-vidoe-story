@@ -1,7 +1,7 @@
 'use client';
 import { useInfiniteDocuments } from '@/hooks/useDocumentsInfinite';
 import { Link } from '@/i18n/navigation';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -12,13 +12,20 @@ import {
 } from '@/components/ui/card';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { useTagFilter } from '@/hooks/useTagFilter';
 
 export default function DocumentPage() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteDocuments();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteDocuments({ tags: selectedTags });
 
+  // API에서 받은 documents와 tags
   const documents = data ? data.pages.flatMap((page) => page.documents) : [];
+  const tags = data && data.pages.length > 0 ? data.pages[0].tags : [];
 
   // WebView 감지
   const isWebView = typeof window !== 'undefined' && window.ReactNativeWebView;
@@ -64,15 +71,6 @@ export default function DocumentPage() {
     [isWebView, sendWebViewMessage],
   );
 
-  // 커스텀 훅으로 태그 필터링 로직 분리
-  const {
-    selectedTags,
-    setSelectedTags,
-    toggleTag,
-    displayTags,
-    filteredDocuments,
-  } = useTagFilter(documents);
-
   // IntersectionObserver로 무한스크롤 구현
   const observer = useRef<IntersectionObserver | null>(null);
   const lastDocRef = useCallback(
@@ -103,11 +101,17 @@ export default function DocumentPage() {
           >
             전체
           </Button>
-          {displayTags.map((tag) => (
+          {tags.map((tag: string) => (
             <Button
               key={tag}
               variant={selectedTags.includes(tag) ? 'default' : 'outline'}
-              onClick={() => toggleTag(tag)}
+              onClick={() =>
+                setSelectedTags((prev) =>
+                  prev.includes(tag)
+                    ? prev.filter((t) => t !== tag)
+                    : [...prev, tag],
+                )
+              }
               className="relative"
             >
               {tag}
@@ -115,18 +119,16 @@ export default function DocumentPage() {
           ))}
         </div>
       </div>
-      {filteredDocuments.length === 0 ? (
+      {documents.length === 0 ? (
         <div className="text-gray-400 dark:text-gray-500">노트가 없습니다.</div>
       ) : (
         <div className="flex flex-1 flex-col gap-4">
           <div className="grid auto-rows-min grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {filteredDocuments.map((document, idx) => (
+            {documents.map((document, idx) => (
               <Card
                 key={document.id}
                 className="md:max-w-full"
-                ref={
-                  idx === filteredDocuments.length - 1 ? lastDocRef : undefined
-                }
+                ref={idx === documents.length - 1 ? lastDocRef : undefined}
               >
                 <Link
                   href={`/rag/${document.metadata.title}--${document.id}`}
