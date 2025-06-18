@@ -29,6 +29,7 @@ async function fetchDocuments({
   const data = await res.json();
   return {
     documents: data.documents || [],
+    tags: data.tags || [],
     nextPage: data.hasMore ? pageParam + 1 : undefined,
   };
 }
