@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Move3D, ArrowUp, ArrowDown, Navigation } from 'lucide-react';
-import { BoxData } from '../../types/boxPosition';
 import PositionModal from './position-modal';
 import { useBoxesStore } from '@/store/useBoxesStore';
 import { shallow } from 'zustand/shallow';

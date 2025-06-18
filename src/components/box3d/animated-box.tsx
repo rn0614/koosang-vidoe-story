@@ -74,6 +74,11 @@ function moveReducer(state: MoveState, action: MoveAction): MoveState {
 
 const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({ boxId, onSelect }) => {
   console.log(`🔄 AnimatedBox ${boxId} 렌더링`);
+  const handleCardClick = useCallback((e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    console.log(`🎯 ${boxId} 카드 클릭`);
+    onSelect(boxId);
+  }, [onSelect, boxId]);
   
   // 🚀 핵심 최적화: 이 박스의 데이터만 구독
   const boxData = useBoxesStore(
@@ -307,6 +312,7 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({ boxId, onSelect }) =
         ref={meshRef}
         position={[centerX, centerY, centerZ]}
         args={[boxData.lenX, boxData.lenY, boxData.lenZ]}
+        onClick={handleCardClick}
       >
         <meshStandardMaterial 
           color={getBoxColor()} 

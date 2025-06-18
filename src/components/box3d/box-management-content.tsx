@@ -156,7 +156,6 @@ const BoxManagementContent: React.FC = () => {
         style={{
           background: 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)',
         }}
-        onClick={handleCanvasClick}
       >
         <Lighting />
         <GridFloor />
