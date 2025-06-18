@@ -1,9 +1,12 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { detectPlatform } from '@/lib/user-agent';
+
+// 플랫폼 감지 함수 (클라이언트 사이드)
 
 const BOARD_SIZE = 10;
-const BASE_CELL_SIZE = 60; // 기본 셀 크기
-const MIN_CELL_SIZE = 30; // 최소 셀 크기
+const BASE_CELL_SIZE = 60;
+const MIN_CELL_SIZE = 30;
 const PLAYER_COLOR = '#007bff';
 const BOARD_COLOR = '#f5f5f5';
 const GRID_COLOR = '#ccc';
@@ -11,7 +14,7 @@ const WALL_COLOR = '#222';
 const EXIT_COLOR = '#2ecc40';
 const ITEM_COLOR = '#ffd600';
 const MONSTER_COLOR = '#e74c3c';
-const WALL_PROB = 0.4; // 40% 확률로 벽 생성
+const WALL_PROB = 0.4;
 
 function bfs(
   board: number[][],
@@ -38,7 +41,6 @@ function bfs(
   while (queue.length) {
     const { row, col, dist } = queue.shift()!;
     if (row === end[0] && col === end[1]) {
-      // 경로 추적용
       const path: [number, number][] = [];
       let cur: [number, number] | null = [row, col];
       while (cur) {
@@ -65,7 +67,7 @@ function bfs(
       }
     }
   }
-  return null; // 경로 없음
+  return null;
 }
 
 function generateBoardWithPathAndItemsAndMonster(stage = 1) {
@@ -90,7 +92,6 @@ function generateBoardWithPathAndItemsAndMonster(stage = 1) {
     dist = bfs(board, [BOARD_SIZE - 1, 0], [0, BOARD_SIZE - 1])?.dist ?? null;
   } while (dist === null);
 
-  // 빈칸 수집
   const emptyCells: Array<[number, number]> = [];
   for (let row = 0; row < BOARD_SIZE; row++) {
     for (let col = 0; col < BOARD_SIZE; col++) {
@@ -103,7 +104,7 @@ function generateBoardWithPathAndItemsAndMonster(stage = 1) {
       }
     }
   }
-  // 아이템 배치
+  
   let itemList: [number, number][] = [];
   let itemCount = Math.min(Math.floor(stage / 2) + 1, emptyCells.length);
   for (let i = 0; i < itemCount && emptyCells.length > 0; i++) {
@@ -112,7 +113,7 @@ function generateBoardWithPathAndItemsAndMonster(stage = 1) {
     itemList.push([r, c]);
     board[r][c] = 3;
   }
-  // 몬스터 배치
+  
   let monsterList: [number, number][] = [];
   let monsterCount = Math.min(stage, emptyCells.length);
   for (let i = 0; i < monsterCount; i++) {
@@ -124,7 +125,6 @@ function generateBoardWithPathAndItemsAndMonster(stage = 1) {
   return { board, dist, monsterList, itemList };
 }
 
-// Player 객체
 class Player {
   row: number;
   col: number;
@@ -136,62 +136,49 @@ class Player {
     this.remainStep = remainStep;
   }
 
-  // 플레이어 이동 시도
   tryMove(newRow: number, newCol: number, board: number[][]): boolean {
-    // 범위 체크
     if (newRow < 0 || newRow >= BOARD_SIZE || newCol < 0 || newCol >= BOARD_SIZE) {
       return false;
     }
-    // 벽 체크
     if (board[newRow][newCol] === 1) {
       return false;
     }
     return true;
   }
 
-  // 플레이어 이동 실행
   move(newRow: number, newCol: number): void {
-    console.log(`Player moving from (${this.row}, ${this.col}) to (${newRow}, ${newCol})`);
     this.row = newRow;
     this.col = newCol;
   }
 
-  // 아이템 획득
   collectItem(): void {
-    console.log('Player collected item! +20 steps');
     this.remainStep += 20;
   }
 
-  // 일반 이동 (스텝 소모)
   useStep(): boolean {
     if (this.remainStep > 1) {
       this.remainStep--;
       return true;
     } else if (this.remainStep === 1) {
       this.remainStep = 0;
-      return false; // 게임오버
+      return false;
     }
     return false;
   }
 
-  // 몬스터와 충돌 시 체력 감소
   takeDamage(): void {
-    console.log('Player took damage! -30 steps');
     this.remainStep = Math.max(this.remainStep - 30, 0);
   }
 
-  // 출구 도달 체크
   isAtExit(): boolean {
     return this.row === 0 && this.col === BOARD_SIZE - 1;
   }
 
-  // 위치 반환
   getPosition(): [number, number] {
     return [this.row, this.col];
   }
 }
 
-// Monster 객체
 class Monster {
   row: number;
   col: number;
@@ -203,34 +190,28 @@ class Monster {
     this.id = id;
   }
 
-  // 몬스터의 다음 이동 위치 계산
   calculateNextMove(board: number[][], playerPos: [number, number]): [number, number] | null {
     const bfsResult = bfs(board, [this.row, this.col], playerPos);
     if (!bfsResult || bfsResult.path.length < 2) {
-      return null; // 이동할 수 없음
+      return null;
     }
-    return bfsResult.path[1]; // 다음 위치
+    return bfsResult.path[1];
   }
 
-  // 몬스터 이동 실행
   move(newRow: number, newCol: number): void {
-    console.log(`Monster ${this.id} moving from (${this.row}, ${this.col}) to (${newRow}, ${newCol})`);
     this.row = newRow;
     this.col = newCol;
   }
 
-  // 플레이어와 충돌 체크
   isCollidingWith(playerPos: [number, number]): boolean {
     return this.row === playerPos[0] && this.col === playerPos[1];
   }
 
-  // 위치 반환
   getPosition(): [number, number] {
     return [this.row, this.col];
   }
 }
 
-// GameManager 객체
 class GameManager {
   player: Player;
   monsters: Monster[];
@@ -246,12 +227,10 @@ class GameManager {
     this.itemList = boardState.itemList;
   }
 
-  // 플레이어 이동 처리
   handlePlayerMove(direction: string): { success: boolean; gameOver: boolean; stageCleared: boolean } {
     const { row, col } = this.player;
     let newRow = row, newCol = col;
 
-    // 방향에 따른 새 위치 계산
     switch (direction) {
       case 'ArrowUp': if (row > 0) newRow--; break;
       case 'ArrowDown': if (row < BOARD_SIZE - 1) newRow++; break;
@@ -260,28 +239,23 @@ class GameManager {
       default: return { success: false, gameOver: false, stageCleared: false };
     }
 
-    // 이동 가능 체크
     if (!this.player.tryMove(newRow, newCol, this.board)) {
       return { success: false, gameOver: false, stageCleared: false };
     }
 
-    // 플레이어 이동 실행
     this.player.move(newRow, newCol);
 
-    // 아이템 체크
     const itemIndex = this.itemList.findIndex(([ir, ic]) => ir === newRow && ic === newCol);
     if (itemIndex !== -1) {
       this.player.collectItem();
-      this.itemList.splice(itemIndex, 1); // 아이템 제거
-      this.board[newRow][newCol] = 0; // 보드에서 아이템 제거
+      this.itemList.splice(itemIndex, 1);
+      this.board[newRow][newCol] = 0;
     } else {
-      // 일반 이동 시 스텝 소모
       if (!this.player.useStep()) {
         return { success: true, gameOver: true, stageCleared: false };
       }
     }
 
-    // 출구 도달 체크
     if (this.player.isAtExit()) {
       return { success: true, gameOver: false, stageCleared: true };
     }
@@ -289,24 +263,19 @@ class GameManager {
     return { success: true, gameOver: false, stageCleared: false };
   }
 
-  // 몬스터 이동 처리
   handleMonsterMovement(): void {
     const playerPos = this.player.getPosition();
     const newMonsters: Monster[] = [];
 
     for (const monster of this.monsters) {
-      // 보드에서 현재 몬스터 위치 제거
       this.board[monster.row][monster.col] = 0;
-
-      // 다음 이동 위치 계산
       const nextPos = monster.calculateNextMove(this.board, playerPos);
       
       if (nextPos) {
         monster.move(nextPos[0], nextPos[1]);
-        this.board[nextPos[0]][nextPos[1]] = 4; // 새 위치에 몬스터 배치
+        this.board[nextPos[0]][nextPos[1]] = 4;
         newMonsters.push(monster);
       } else {
-        // 이동할 수 없으면 제자리
         this.board[monster.row][monster.col] = 4;
         newMonsters.push(monster);
       }
@@ -315,12 +284,10 @@ class GameManager {
     this.monsters = newMonsters;
   }
 
-  // 충돌 체크 및 처리
   handleCollisions(): boolean {
     const playerPos = this.player.getPosition();
     const collidingMonsters: Monster[] = [];
 
-    // 충돌한 몬스터들 찾기
     for (const monster of this.monsters) {
       if (monster.isCollidingWith(playerPos)) {
         collidingMonsters.push(monster);
@@ -328,44 +295,33 @@ class GameManager {
     }
 
     if (collidingMonsters.length > 0) {
-      console.log(`Collision detected with ${collidingMonsters.length} monster(s)`);
-      
-      // 플레이어 데미지
       this.player.takeDamage();
-
-      // 충돌한 몬스터들 제거
       this.monsters = this.monsters.filter(monster => 
         !collidingMonsters.includes(monster)
       );
 
-      // 보드에서 충돌한 몬스터들 제거
       for (const monster of collidingMonsters) {
         this.board[monster.row][monster.col] = 0;
       }
 
-      return true; // 충돌 발생
+      return true;
     }
 
-    return false; // 충돌 없음
+    return false;
   }
 
-  // 전체 턴 처리
   processTurn(direction: string): { 
     success: boolean; 
     gameOver: boolean; 
     stageCleared: boolean; 
     collision: boolean;
   } {
-    // 1. 플레이어 이동
     const playerResult = this.handlePlayerMove(direction);
     if (!playerResult.success || playerResult.gameOver || playerResult.stageCleared) {
       return { ...playerResult, collision: false };
     }
 
-    // 2. 몬스터 이동
     this.handleMonsterMovement();
-
-    // 3. 충돌 체크
     const collision = this.handleCollisions();
 
     return { 
@@ -376,15 +332,14 @@ class GameManager {
     };
   }
 
-  // 공격 처리
   handleAttack(): boolean {
     if (this.player.remainStep < 5) return false;
 
     const playerPos = this.player.getPosition();
     const targets: [number, number][] = [
-      [playerPos[0] - 1, playerPos[1]],     // 상단
-      [playerPos[0] - 1, playerPos[1] + 1], // 상단우측
-      [playerPos[0], playerPos[1] + 1],     // 우측
+      [playerPos[0] - 1, playerPos[1]],
+      [playerPos[0] - 1, playerPos[1] + 1],
+      [playerPos[0], playerPos[1] + 1],
     ];
 
     let killedCount = 0;
@@ -392,18 +347,16 @@ class GameManager {
       const monsterPos = monster.getPosition();
       const isTarget = targets.some(([tr, tc]) => tr === monsterPos[0] && tc === monsterPos[1]);
       if (isTarget) {
-        this.board[monsterPos[0]][monsterPos[1]] = 0; // 보드에서 제거
+        this.board[monsterPos[0]][monsterPos[1]] = 0;
         killedCount++;
       }
       return !isTarget;
     });
 
-    this.player.remainStep -= 5; // 공격 비용
-    console.log(`Attack killed ${killedCount} monster(s)`);
+    this.player.remainStep -= 5;
     return killedCount > 0;
   }
 
-  // 게임 상태 반환
   getGameState() {
     return {
       player: this.player.getPosition(),
@@ -415,7 +368,214 @@ class GameManager {
   }
 }
 
-export default function BoardGame() {
+// 방향 버튼 컴포넌트
+interface DirectionButtonProps {
+  direction: 'up' | 'down' | 'left' | 'right';
+  onPress: (direction: string) => void;
+  size?: number;
+  disabled?: boolean;
+}
+
+function DirectionButton({ direction, onPress, size = 50, disabled = false }: DirectionButtonProps) {
+  const [isPressed, setIsPressed] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
+
+  const directionMap = {
+    up: { arrow: '↑', key: 'ArrowUp' },
+    down: { arrow: '↓', key: 'ArrowDown' },
+    left: { arrow: '←', key: 'ArrowLeft' },
+    right: { arrow: '→', key: 'ArrowRight' }
+  };
+
+  const handlePress = () => {
+    if (!disabled && !hasTriggered) {
+      setIsPressed(true);
+      setHasTriggered(true);
+      onPress(directionMap[direction].key);
+      
+      setTimeout(() => {
+        setIsPressed(false);
+        setHasTriggered(false);
+      }, 200); // 200ms 쿨다운
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handlePress();
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // 터치 디바이스에서는 클릭 이벤트 무시
+    if (!('ontouchstart' in window)) {
+      handlePress();
+    }
+  };
+
+  return (
+    <button
+      onTouchStart={handleTouchStart}
+      onClick={handleClick}
+      disabled={disabled}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        borderRadius: '8px',
+        backgroundColor: disabled ? '#ccc' : (isPressed ? '#0056b3' : '#007bff'),
+        border: '2px solid',
+        borderColor: disabled ? '#999' : (isPressed ? '#003d82' : '#0056b3'),
+        color: disabled ? '#666' : 'white',
+        fontSize: `${size * 0.4}px`,
+        fontWeight: 'bold',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        boxShadow: disabled ? 'none' : (isPressed ? 
+          '0 2px 4px rgba(0, 0, 0, 0.2)' : 
+          '0 4px 8px rgba(0, 0, 0, 0.3)'
+        ),
+        transform: isPressed ? 'scale(0.95)' : 'scale(1)',
+        transition: 'all 0.1s ease',
+        userSelect: 'none',
+        touchAction: 'manipulation',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      {directionMap[direction].arrow}
+    </button>
+  );
+}
+
+// 플로팅 방향 패드 컴포넌트
+interface FloatingDPadProps {
+  onDirectionPress: (direction: string) => void;
+  size?: number;
+  disabled?: boolean;
+}
+
+function FloatingDPad({ onDirectionPress, size = 50, disabled = false }: FloatingDPadProps) {
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gap: '8px',
+      padding: '12px',
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      borderRadius: '16px',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+      border: '1px solid rgba(0, 0, 0, 0.1)'
+    }}>
+      {/* 첫 번째 행 */}
+      <div></div>
+      <DirectionButton 
+        direction="up" 
+        onPress={onDirectionPress} 
+        size={size}
+        disabled={disabled}
+      />
+      <div></div>
+      
+      {/* 두 번째 행 */}
+      <DirectionButton 
+        direction="left" 
+        onPress={onDirectionPress} 
+        size={size}
+        disabled={disabled}
+      />
+      <div style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '12px',
+        color: '#666',
+        fontWeight: 'bold'
+      }}>
+        🎮
+      </div>
+      <DirectionButton 
+        direction="right" 
+        onPress={onDirectionPress} 
+        size={size}
+        disabled={disabled}
+      />
+      
+      {/* 세 번째 행 */}
+      <div></div>
+      <DirectionButton 
+        direction="down" 
+        onPress={onDirectionPress} 
+        size={size}
+        disabled={disabled}
+      />
+      <div></div>
+    </div>
+  );
+}
+
+// 플로팅 공격 버튼 컴포넌트
+interface FloatingAttackButtonProps {
+  onClick: () => void;
+  disabled?: boolean;
+  size?: number;
+}
+
+function FloatingAttackButton({ onClick, disabled = false, size = 80 }: FloatingAttackButtonProps) {
+  const [isPressed, setIsPressed] = useState(false);
+
+  const handleStart = () => {
+    if (!disabled) {
+      setIsPressed(true);
+      onClick();
+    }
+  };
+
+  const handleEnd = () => {
+    setIsPressed(false);
+  };
+
+  return (
+    <button
+      onMouseDown={handleStart}
+      onMouseUp={handleEnd}
+      onMouseLeave={handleEnd}
+      onTouchStart={(e) => { e.preventDefault(); handleStart(); }}
+      onTouchEnd={(e) => { e.preventDefault(); handleEnd(); }}
+      disabled={disabled}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        borderRadius: '50%',
+        backgroundColor: disabled ? '#ccc' : (isPressed ? '#ff6b35' : '#ff4444'),
+        border: '3px solid',
+        borderColor: disabled ? '#999' : (isPressed ? '#d63031' : '#e74c3c'),
+        color: disabled ? '#666' : 'white',
+        fontSize: '24px',
+        fontWeight: 'bold',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        boxShadow: disabled ? 'none' : (isPressed ? 
+          '0 2px 8px rgba(0, 0, 0, 0.3)' : 
+          '0 4px 12px rgba(0, 0, 0, 0.4)'
+        ),
+        transform: isPressed ? 'scale(0.95)' : 'scale(1)',
+        transition: 'all 0.1s ease',
+        userSelect: 'none',
+        touchAction: 'manipulation',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      ⚔️
+    </button>
+  );
+}
+
+export default function FloatingButtonBoardGame() {
   const [boardState, setBoardState] = useState<{
     board: number[][];
     dist: number | null;
@@ -427,30 +587,36 @@ export default function BoardGame() {
   const [remainStep, setRemainStep] = useState(100);
   const [stage, setStage] = useState(1);
   const [swinging, setSwinging] = useState(false);
-  const [swingAngle, setSwingAngle] = useState(0); // 0: 상단, 90: 우측
+  const [swingAngle, setSwingAngle] = useState(0);
   const [cellSize, setCellSize] = useState(BASE_CELL_SIZE);
+  const [vibrationEnabled, setVibrationEnabled] = useState(true);
+  const [platform, setPlatform] = useState<'mobile' | 'webview' | 'web'>('web');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // 화면 크기에 따른 셀 크기 계산
   const calculateCellSize = () => {
     const screenWidth = window.innerWidth;
-    const padding = 40; // 좌우 패딩
+    const padding = 40;
     const maxBoardWidth = screenWidth - padding;
     const calculatedCellSize = Math.floor(maxBoardWidth / BOARD_SIZE);
-    
-    // 최소/최대 크기 제한
     const newCellSize = Math.max(MIN_CELL_SIZE, Math.min(BASE_CELL_SIZE, calculatedCellSize));
     setCellSize(newCellSize);
   };
 
-  // 초기 렌더링 및 화면 크기 변경 감지
+  // 햅틱 피드백
+  const triggerVibration = (pattern: number | number[] = 50) => {
+    if (vibrationEnabled && 'vibrate' in navigator) {
+      navigator.vibrate(pattern);
+    }
+  };
+
   useEffect(() => {
     calculateCellSize();
-    
-    const handleResize = () => {
-      calculateCellSize();
-    };
-    
+    // 비동기 함수로 감싸서 await 사용
+    (async () => {
+      const platform = await detectPlatform();
+      setPlatform(platform as 'mobile' | 'webview' | 'web');
+    })();
+    const handleResize = () => calculateCellSize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -461,93 +627,119 @@ export default function BoardGame() {
     setGameManager(new GameManager(initialBoardState));
   }, []);
 
-  // 키보드 이벤트 처리
+  // 키보드 이벤트 처리 추가
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
       if (!gameManager || remainStep <= 0) return;
 
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        const result = gameManager.processTurn(e.key);
-        
-        if (result.success) {
-          const gameState = gameManager.getGameState();
-          setPlayer({ row: gameState.player[0], col: gameState.player[1] });
-          setRemainStep(gameState.remainStep);
-          setBoardState(prev => prev ? {
-            ...prev,
-            board: gameState.board,
-            monsterList: gameState.monsters,
-            itemList: gameState.itemList
-          } : null);
-
-          if (result.gameOver) {
-            setTimeout(() => alert('게임오버: 이동 횟수를 모두 소진했습니다!'), 10);
-          } else if (result.stageCleared) {
-            setStage(prev => prev + 1);
-            const newBoardState = generateBoardWithPathAndItemsAndMonster(stage + 1);
-            setBoardState(newBoardState);
-            setGameManager(new GameManager(newBoardState));
-            setPlayer({ row: BOARD_SIZE - 1, col: 0 });
-            setRemainStep(100);
-            setTimeout(() => alert('클리어! 출구에 도착했습니다.'), 10);
-          }
-        }
+        handleMove(e.key);
       }
 
       if ((e.key === 'z' || e.key === 'Z') && !swinging) {
-        // 스텝이 부족하면 공격 불가
-        if (remainStep < 5) return;
-        
-        // UI 애니메이션 시작 (몬스터 유무와 관계없이)
-        setSwinging(true);
-        setSwingAngle(0);
-        
-        // 애니메이션 실행
-        let angle = 0;
-        const animationInterval = setInterval(() => {
-          angle += 15; // 15도씩 증가
-          setSwingAngle(angle);
-          
-          if (angle >= 90) { // 90도까지 회전
-            clearInterval(animationInterval);
-            setTimeout(() => {
-              setSwinging(false);
-              setSwingAngle(0);
-            }, 100); // 잠깐 멈춘 후 애니메이션 종료
-          }
-        }, 50); // 50ms마다 업데이트
-        
-        // 게임 로직 처리 (몬스터 제거 및 스텝 소모)
-        const attacked = gameManager.handleAttack();
-        const gameState = gameManager.getGameState();
-        setRemainStep(gameState.remainStep);
-        setBoardState(prev => prev ? {
-          ...prev,
-          board: gameState.board,
-          monsterList: gameState.monsters
-        } : null);
-        
-        if (attacked) {
-          console.log('Attack hit monster(s)!');
-        } else {
-          console.log('Attack missed - no monsters in range');
-        }
+        handleAttack();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameManager, remainStep, swinging, stage]);
+  }, [gameManager, remainStep, swinging]);
 
-  // 캔버스에 보드, 벽, 플레이어, 출구, 아이템, 몬스터 그리기
+  // 이동 처리 함수 (단일 이동만)
+  const handleMove = (direction: string) => {
+    if (!gameManager || remainStep <= 0) return;
+
+    triggerVibration(30); // 이동 시 진동
+
+    const result = gameManager.processTurn(direction);
+    
+    if (result.success) {
+      const gameState = gameManager.getGameState();
+      setPlayer({ row: gameState.player[0], col: gameState.player[1] });
+      setRemainStep(gameState.remainStep);
+      setBoardState(prev => prev ? {
+        ...prev,
+        board: gameState.board,
+        monsterList: gameState.monsters,
+        itemList: gameState.itemList
+      } : null);
+
+      if (result.gameOver) {
+        triggerVibration([200, 100, 200]);
+        setTimeout(() => alert('게임오버: 이동 횟수를 모두 소진했습니다!'), 10);
+      } else if (result.stageCleared) {
+        triggerVibration([100, 50, 100, 50, 100]);
+        setStage(prev => prev + 1);
+        const newBoardState = generateBoardWithPathAndItemsAndMonster(stage + 1);
+        setBoardState(newBoardState);
+        setGameManager(new GameManager(newBoardState));
+        setPlayer({ row: BOARD_SIZE - 1, col: 0 });
+        setRemainStep(100);
+        setTimeout(() => alert('클리어! 출구에 도착했습니다.'), 10);
+      } else if (result.collision) {
+        triggerVibration([150, 50, 150]);
+      }
+    } else {
+      triggerVibration(25);
+    }
+  };
+
+  // 공격 처리 함수
+  const handleAttack = () => {
+    if (!gameManager || remainStep < 5 || swinging) return;
+    
+    setSwinging(true);
+    setSwingAngle(0);
+    triggerVibration([80, 20, 80]);
+    
+    let angle = 0;
+    const animationInterval = setInterval(() => {
+      angle += 15;
+      setSwingAngle(angle);
+      
+      if (angle >= 90) {
+        clearInterval(animationInterval);
+        setTimeout(() => {
+          setSwinging(false);
+          setSwingAngle(0);
+        }, 100);
+      }
+    }, 50);
+    
+    const attacked = gameManager.handleAttack();
+    const gameState = gameManager.getGameState();
+    setRemainStep(gameState.remainStep);
+    setBoardState(prev => prev ? {
+      ...prev,
+      board: gameState.board,
+      monsterList: gameState.monsters
+    } : null);
+    
+    if (attacked) {
+      triggerVibration([120, 30, 120]);
+    }
+  };
+
+  // 조이스틱 방향 버튼 처리 (단일 클릭만)
+  const handleDirectionPress = (direction: string) => {
+    handleMove(direction);
+  };
+
+  // 컴포넌트 언마운트 시 정리 (인터벌 관련 제거)
+  useEffect(() => {
+    return () => {
+      // cleanup if needed
+    };
+  }, []);
+
+  // 캔버스 그리기
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx || !boardState) return;
     
-    // 캔버스 크기 업데이트
     const boardWidth = cellSize * BOARD_SIZE;
     const boardHeight = cellSize * BOARD_SIZE;
     canvas.width = boardWidth;
@@ -614,7 +806,6 @@ export default function BoardGame() {
     );
     ctx.fill();
 
-    // 막대기 공격 애니메이션
     if (swinging) {
       ctx.save();
       ctx.strokeStyle = '#ffd600';
@@ -625,8 +816,7 @@ export default function BoardGame() {
       const centerY = player.row * cellSize + cellSize / 2;
       const stickLength = cellSize * 0.8;
       
-      // 각도를 라디안으로 변환 (0도는 위쪽, 시계방향)
-      const angleRad = (swingAngle - 90) * Math.PI / 180; // -90도 오프셋으로 위쪽이 0도가 되도록
+      const angleRad = (swingAngle - 90) * Math.PI / 180;
       
       const endX = centerX + Math.cos(angleRad) * stickLength;
       const endY = centerY + Math.sin(angleRad) * stickLength;
@@ -636,7 +826,6 @@ export default function BoardGame() {
       ctx.lineTo(endX, endY);
       ctx.stroke();
       
-      // 막대기 끝에 작은 원 추가 (검의 끝 효과)
       ctx.fillStyle = '#ffed4e';
       ctx.beginPath();
       ctx.arc(endX, endY, 3, 0, 2 * Math.PI);
@@ -645,7 +834,6 @@ export default function BoardGame() {
       ctx.restore();
     }
 
-    // 몬스터 그리기
     ctx.fillStyle = MONSTER_COLOR;
     for (const [mr, mc] of boardState.monsterList) {
       ctx.beginPath();
@@ -659,7 +847,6 @@ export default function BoardGame() {
       ctx.fill();
     }
 
-    // 아이템 그리기
     ctx.fillStyle = ITEM_COLOR;
     for (const [ir, ic] of boardState.itemList) {
       ctx.beginPath();
@@ -674,7 +861,6 @@ export default function BoardGame() {
     }
   }, [player, boardState, swinging, swingAngle, cellSize]);
 
-  // remainStep이 0이 되면 게임오버 알림
   useEffect(() => {
     if (remainStep === 0) {
       alert('게임오버: 이동 횟수를 모두 소진했습니다!');
@@ -687,19 +873,23 @@ export default function BoardGame() {
 
   return (
     <main style={{ 
-      padding: '20px', 
+      padding: '10px', 
       display: 'flex', 
       flexDirection: 'column', 
       alignItems: 'center',
       maxWidth: '100vw',
-      boxSizing: 'border-box'
+      minHeight: '100vh',
+      boxSizing: 'border-box',
+      userSelect: 'none',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
       <h1 style={{ 
         fontSize: cellSize < 40 ? '1.5rem' : '2rem',
         marginBottom: '10px',
         textAlign: 'center'
       }}>
-        Canvas Board Game
+        Floating Button Board Game
       </h1>
       
       <div style={{ 
@@ -710,7 +900,7 @@ export default function BoardGame() {
         flexWrap: 'wrap',
         justifyContent: 'center'
       }}>
-        <div>REMAIN_STEP: {remainStep}</div>
+        <div>STEPS: {remainStep}</div>
         <div>STAGE: {stage}</div>
       </div>
       
@@ -720,22 +910,111 @@ export default function BoardGame() {
           border: '2px solid #333', 
           background: BOARD_COLOR,
           maxWidth: '100%',
-          height: 'auto'
+          height: 'auto',
+          touchAction: 'none',
+          borderRadius: '8px',
+          marginBottom: '20px'
         }}
       />
+
+      {/* 조건부 렌더링: 웹이 아닌 경우에만 플로팅 버튼들 표시 */}
+      {platform !== 'web' && (
+        <>
+          {/* 방향 패드 - 왼쪽 하단 */}
+          <div style={{
+            position: 'fixed',
+            bottom: '30px',
+            left: '30px',
+            zIndex: 1000
+          }}>
+            <FloatingDPad 
+              onDirectionPress={handleDirectionPress}
+              size={cellSize < 40 ? 40 : 50}
+              disabled={remainStep <= 0}
+            />
+          </div>
+
+          {/* 공격 버튼 - 오른쪽 하단 */}
+          <div style={{
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            zIndex: 1000
+          }}>
+            <FloatingAttackButton
+              onClick={handleAttack}
+              disabled={remainStep < 5 || swinging}
+              size={cellSize < 40 ? 60 : 80}
+            />
+          </div>
+        </>
+      )}
+
+      {/* 설정 패널 */}
+      <div style={{
+        marginTop: '20px',
+        padding: '10px',
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        backgroundColor: '#f9f9f9',
+        maxWidth: cellSize * BOARD_SIZE,
+        width: '100%',
+        marginBottom: platform !== 'web' ? '100px' : '20px' // 플로팅 버튼이 있을 때만 여백 추가
+      }}>
+        <label style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px',
+          fontSize: '14px',
+          cursor: 'pointer' 
+        }}>
+          <input
+            type="checkbox"
+            checked={vibrationEnabled}
+            onChange={(e) => setVibrationEnabled(e.target.checked)}
+            style={{ cursor: 'pointer' }}
+          />
+          햅틱 피드백 활성화
+        </label>
+      </div>
       
       <div style={{ 
-        marginTop: '15px', 
         maxWidth: cellSize * BOARD_SIZE,
         fontSize: cellSize < 40 ? '0.8rem' : '0.9rem',
-        lineHeight: '1.4'
+        lineHeight: '1.4',
+        textAlign: 'center',
+        marginBottom: platform !== 'web' ? '100px' : '20px' // 플로팅 버튼이 있을 때만 여백 추가
       }}>
         <p>
-          방향키로 파란 원(플레이어)을 이동하세요. 검은색은 벽, 노란색은 아이템,
-          빨간색은 몬스터, 초록색은 출구입니다.
+          <strong>조작법:</strong>
         </p>
-        <p>
-          z키로 막대기를 휘두르면 상단, 우측상단, 우측을 공격할 수 있습니다.
+        {platform !== 'web' ? (
+          <>
+            <p>
+              • 왼쪽 하단 방향 패드로 이동 (한 번 클릭 = 한 번 이동)
+            </p>
+            <p>
+              • 오른쪽 하단 ⚔️ 버튼으로 공격 (5스텝 소모)
+            </p>
+            <p>
+              • 각 방향 버튼을 개별적으로 터치하여 정확한 이동
+            </p>
+          </>
+        ) : (
+          <>
+            <p>
+              • 키보드 방향키 (↑↓←→)로 이동
+            </p>
+            <p>
+              • Z키로 공격 (5스텝 소모)
+            </p>
+            <p>
+              • 상단/우측상단/우측을 공격할 수 있습니다
+            </p>
+          </>
+        )}
+        <p style={{ fontSize: '0.7rem', color: '#666', marginTop: '10px' }}>
+          현재 플랫폼: {platform === 'webview' ? 'WebView' : platform === 'mobile' ? 'Mobile' : 'Web'}
         </p>
       </div>
     </main>
