@@ -8,7 +8,7 @@ import { HTML5toTouch } from 'rdndmb-html5-to-touch'; // or any other pipeline
 import { DndProvider } from 'react-dnd-multi-backend';
 import { Button } from '@/components/ui/button';
 import {cloneDeep} from 'lodash';
-import { timeScheduleMock } from "@/mocks/data/time-schedule-list.mock";
+import { timeScheduleMock } from "@/shared/mocks/data/time-schedule-list.mock";
 
 const changeData = (inputData: any) => {
   // Creating a Map to group data by type

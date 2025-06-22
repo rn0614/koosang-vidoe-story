@@ -8,7 +8,7 @@ import { WorkflowProvider, useWorkflowContext } from '@/contexts/WorkflowContext
 import {
   workflowConnectionMock,
   workflowNodeMock,
-} from '@/mocks/data/work-flow.mock';
+} from '@/shared/mocks/data/work-flow.mock';
 import { WorkflowConnection, WorkflowNode } from '@/types/workflow';
 
 // 템플릿 타입
