@@ -1,6 +1,6 @@
 import { Link } from '@/i18n/navigation';
 import HeaderAuth from './header-auth';
-import { detectPlatform } from '@/lib/user-agent';
+import { detectPlatform } from '@/utils/user-agent';
 import { headers } from 'next/headers';
 import HeaderMenuButton from './header-menu-button';
 

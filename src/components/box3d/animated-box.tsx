@@ -2,7 +2,7 @@ import React, { useRef, useReducer, useMemo, useCallback } from 'react';
 import { Box, Text } from '@react-three/drei';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
-import { BoxData, BoxMethods, StabilityInfo } from '@/types/boxPosition';
+import { BoxData, BoxMethods, StabilityInfo } from '@/shared/types/boxPosition';
 import { useBoxesStore } from '@/store/useBoxesStore';
 import { shallow } from 'zustand/shallow';
 

@@ -9,10 +9,6 @@ import { Metadata } from 'next';
 import { Toaster } from '@/components/ui/sonner';
 import Footer from '@/components/footer';
 import Header from '@/components/header';
-import { SidebarMenu } from '@/components/sidebar-menu';
-import { LocaleSelect } from '@/components/locale-select';
-import { SIDEBAR_MENU } from '@/constants/menu';
-import { ThemeSwitcher } from '@/components/theme-switcher';
 
 export const metadata: Metadata = {
   title: 'Blog',

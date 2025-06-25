@@ -6,7 +6,7 @@ import { useWorkflowContext, useAllNodeIds } from '@/contexts/WorkflowContext';
 import type {
   DragState,
   ConnectionState,
-} from '@/types/workflow';
+} from '@/shared/types/workflow';
 
 interface WorkflowCanvasProps {
   selectedNodeId: string | null;

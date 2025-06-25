@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog';
-import { NoteUpdateFormData } from '@/types/note';
+import { NoteUpdateFormData } from '@/shared/types/note';
 import { Button } from "@/components/ui/button"
 import { useTranslations } from 'next-intl';
 interface NoteEditDialogProps {

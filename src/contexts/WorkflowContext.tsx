@@ -1,6 +1,6 @@
 // contexts/WorkflowContext.tsx
 import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
-import type { WorkflowNode, WorkflowConnection, WorkflowNodeState } from '@/types/workflow';
+import type { WorkflowNode, WorkflowConnection, WorkflowNodeState } from '@/shared/types/workflow';
 
 interface WorkflowContextType {
   updateNode: (nodeId: string, updatedData: Partial<WorkflowNode>) => void;

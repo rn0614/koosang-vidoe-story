@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
-import React from 'react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * Redirects to a specified path with an encoded message as a query parameter.
@@ -94,4 +95,9 @@ export async function extractLinks(url: string, linkRegex: RegExp): Promise<{ li
   console.log(JSON.stringify([result], null, 2));
 
   return result;
+}
+
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }

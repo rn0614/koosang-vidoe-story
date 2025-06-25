@@ -25,7 +25,7 @@ import Lighting from '@/components/box3d/lighting';
 import BoxInfoCard from '@/components/box3d/boxInfo-card';
 import SelectedBoxDisplay from '@/components/box3d/selected-box-display';
 import BoxStatusDisplay from '@/components/box3d/box-status-display';
-import { BoxData, BoxMethods } from '@/types/boxPosition';
+import { BoxData, BoxMethods } from '@/shared/types/boxPosition';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 const BoxManagementContent: React.FC = () => {

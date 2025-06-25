@@ -1,5 +1,5 @@
 import ResponsiveAppLogo from './responsive-app-logo';
-import { detectPlatform } from '@/lib/user-agent';
+import { detectPlatform } from '@/utils/user-agent';
 
 export default async function AppLogo() {
   const platform = await detectPlatform();

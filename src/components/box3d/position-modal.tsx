@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, AlertTriangle, Move3D, Expand, Navigation } from 'lucide-react';
-import { BoxData, BoxPosition } from '@/types/boxPosition';
+import { BoxData, BoxPosition } from '@/shared/types/boxPosition';
 import { useBoxesStore } from '@/store/useBoxesStore';
 
 interface PositionModalProps {

@@ -1,4 +1,4 @@
-import type { MenuItem } from '@/types/menu';
+import type { MenuItem } from '@/shared/types/menu';
 
 export const MAIN_MENU: MenuItem[] = [
   { href: '/rag', labelKey: 'rag' },

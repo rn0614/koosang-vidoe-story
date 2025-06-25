@@ -1,4 +1,4 @@
-import { WorkflowNode, WorkflowNodeState } from "@/types/workflow";
+import { WorkflowNode, WorkflowNodeState } from "@/shared/types/workflow";
 
 export const workflowNodeMock: WorkflowNode[] = [
   {

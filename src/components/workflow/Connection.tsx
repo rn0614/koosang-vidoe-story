@@ -1,5 +1,5 @@
 // components/Connection.jsx - 연결선 컴포넌트
-import { ConnectionState, WorkflowNode } from '@/types/workflow';
+import { ConnectionState, WorkflowNode } from '@/shared/types/workflow';
 import React from 'react';
 type ConnectionProps = {
   from: {

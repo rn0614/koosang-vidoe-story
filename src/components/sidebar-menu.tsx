@@ -1,6 +1,6 @@
 import { useRouter } from '@/i18n/navigation';
 import { DrawerClose } from './ui/drawer';
-import { MenuItem } from '@/types/menu';
+import { MenuItem } from '@/shared/types/menu';
 import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { MAIN_MENU } from '@/constants/menu';

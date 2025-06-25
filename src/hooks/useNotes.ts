@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Note, NoteInsertFormData, NoteUpdateFormData } from '@/types/note';
+import type { Note, NoteInsertFormData, NoteUpdateFormData } from '@/shared/types/note';
 import { useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { UUID } from 'crypto';

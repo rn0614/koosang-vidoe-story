@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DialogFooter } from '@/components/ui/dialog';
-import { WorkflowNode, WorkflowNodeState } from '@/types/workflow';
+import { WorkflowNode, WorkflowNodeState } from '@/shared/types/workflow';
 import { logUserAction } from '@/utils/logger';
 import { useNodeSelector, useRelatedNodes, useWorkflowContext } from '@/contexts/WorkflowContext';
 
