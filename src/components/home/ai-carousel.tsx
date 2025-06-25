@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
-import { CarouselDemo } from './mobile-carousel';
-import { Card, CardContent, CardTitle } from './ui/card';
-import { CardHeader } from './ui/card';
+import { CarouselDemo } from '../widget/mobile-carousel';
+import { Card, CardContent, CardTitle } from '../ui/card';
+import { CardHeader } from '../ui/card';
 
 export async function AiCarousel() {
   // Supabase에서 최근 8개 이미지 가져오기

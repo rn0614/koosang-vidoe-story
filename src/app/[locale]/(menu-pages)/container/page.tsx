@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import BoxManagementContent from '@/components/box3d/box-management-content';
+import BoxManagementContent from '@/components/container/box-management-content';
 
 const Page: React.FC = () => {
   return (

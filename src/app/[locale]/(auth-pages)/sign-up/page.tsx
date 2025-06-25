@@ -1,6 +1,6 @@
 import { signUpAction } from '@/app/api/auth/actions';
-import { FormMessage, Message } from '@/components/form-message';
-import { SubmitButton } from '@/components/submit-button';
+import { FormMessage, Message } from '@/components/widget/form-message';
+import { SubmitButton } from '@/components/widget/submit-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Link } from '@/i18n/navigation';

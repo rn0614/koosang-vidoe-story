@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useQuestionTemplates } from '@/hooks/useQuestionTemplates';
-import { CompanySelect } from '@/components/company-select';
-import { QuestionTemplateCreateForm } from '@/components/question-template-create-form';
-import { QuestionTemplateList } from '@/components/question-template-list';
-import { CustomerResponseStatus } from '@/components/customer-response-status';
+import { CompanySelect } from '@/components/alarm/company-select';
+import { QuestionTemplateCreateForm } from '@/components/alarm/question-template-create-form';
+import { QuestionTemplateList } from '@/components/alarm/question-template-list';
+import { CustomerResponseStatus } from '@/components/alarm/customer-response-status';
 
 // CompanyView Props 타입 정의
 export interface CompanyViewProps {

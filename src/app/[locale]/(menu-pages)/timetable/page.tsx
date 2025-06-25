@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { DropTargetMonitor } from 'react-dnd';
 import { useScheduler } from '@/hooks/useSchedule';
 import TimeSchedule from '@/shared/types/timeSchedule';
-import DropWrapper from '@/components/drop-wrapper';
+import DropWrapper from '@/components/timetable/drop-wrapper';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch'; // or any other pipeline
 import { DndProvider } from 'react-dnd-multi-backend';
 import { Button } from '@/components/ui/button';

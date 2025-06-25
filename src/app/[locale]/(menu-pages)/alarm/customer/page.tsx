@@ -1,7 +1,7 @@
 "use client"
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { CustomerView } from '@/components/customer-view';
+import { CustomerView } from '@/components/alarm/customer-view';
 
 export default function CustomerAlarmPage() {
   return (

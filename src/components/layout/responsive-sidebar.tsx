@@ -8,8 +8,8 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { SidebarMenu } from './sidebar-menu';
-import { ThemeSwitcher } from './theme-switcher';
-import { LocaleSelect } from './locale-select';
+import { ThemeSwitcher } from '../widget/theme-switcher';
+import { LocaleSelect } from '../widget/locale-select';
 
 export function ResponsiveSidebar({ locale }: { locale: string }) {
   return (

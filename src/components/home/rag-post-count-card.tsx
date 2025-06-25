@@ -1,5 +1,5 @@
 "use client";
-import { StatCard } from "./state-card";
+import { StatCard } from "../widget/state-card";
 import { TrendingUp } from "lucide-react";
 import { useDocuments } from "@/hooks/useDocuments";
 

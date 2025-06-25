@@ -1,5 +1,5 @@
 "use client";
-import { StatCard } from "./state-card";
+import { StatCard } from "../widget/state-card";
 import { Newspaper } from "lucide-react";
 import { useNews } from "@/hooks/useNesw";
 

@@ -1,4 +1,4 @@
-import MdxRenderer from '@/components/mdx-remote-comp';
+import MdxRenderer from '@/components/widget/mdx-remote-comp';
 import { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: { titleAndId: string } }): Promise<Metadata> {

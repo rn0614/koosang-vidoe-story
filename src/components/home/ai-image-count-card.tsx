@@ -1,5 +1,5 @@
 "use client";
-import { StatCard } from "./state-card";
+import { StatCard } from "../widget/state-card";
 import { Image } from "lucide-react";
 import { useAIImage } from "@/hooks/useAIImage";
 // AI 이미지 관련 데이터 fetch 훅 필요 (예: useAiImages)

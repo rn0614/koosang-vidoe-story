@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNotes } from '@/hooks/useNotes';
 import { Note, NoteInsertFormData } from '@/shared/types/note';
-import NoteEditDialog from '@/components/note-edit0dialog';
+import NoteEditDialog from '@/components/note/note-edit0dialog';
 import { useTranslations } from 'next-intl';
 
 

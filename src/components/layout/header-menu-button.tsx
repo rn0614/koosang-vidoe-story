@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import { DrawerTrigger } from './ui/drawer';
+import { DrawerTrigger } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 
 export default function HeaderMenuButton({ platform }: { platform: string }) {

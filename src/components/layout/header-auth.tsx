@@ -1,6 +1,6 @@
 import { signOutAction } from '@/app/api/auth/actions';
 import { Link } from '@/i18n/navigation';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/server';
 import { getTranslations } from 'next-intl/server';
 import { buttonVariants } from '@/components/ui/button';

@@ -17,14 +17,14 @@ import {
   Navigation,
 } from 'lucide-react';
 import { useBoxesStore } from '../../store/useBoxesStore';
-import AnimatedBox from '@/components/box3d/animated-box';
-import OccupiedAreaIndicator from '@/components/box3d/occupied-area-indicator';
-import ConveyorBelt from '@/components/box3d/conveyor-belt';
-import GridFloor from '@/components/box3d/grid-floor';
-import Lighting from '@/components/box3d/lighting';
-import BoxInfoCard from '@/components/box3d/boxInfo-card';
-import SelectedBoxDisplay from '@/components/box3d/selected-box-display';
-import BoxStatusDisplay from '@/components/box3d/box-status-display';
+import AnimatedBox from '@/components/container/animated-box';
+import OccupiedAreaIndicator from '@/components/container/occupied-area-indicator';
+import ConveyorBelt from '@/components/container/conveyor-belt';
+import GridFloor from '@/components/container/grid-floor';
+import Lighting from '@/components/container/lighting';
+import BoxInfoCard from '@/components/container/boxInfo-card';
+import SelectedBoxDisplay from '@/components/container/selected-box-display';
+import BoxStatusDisplay from '@/components/container/box-status-display';
 import { BoxData, BoxMethods } from '@/shared/types/boxPosition';
 import { useIsMobile } from '@/hooks/useIsMobile';
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCompanies } from '@/hooks/useCompanies';
-import { CompanyView } from '@/components/company-view';
+import { CompanyView } from '@/components/alarm/company-view';
 
 export default function CompanyAlarmPage() {
   const {
