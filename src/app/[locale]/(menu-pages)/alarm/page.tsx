@@ -5,7 +5,7 @@ import { Link } from '@/i18n/navigation';
 
 export default function HealthCheckMVP() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <div className="max-w-4xl mx-auto p-4 space-y-8">
         {/* Header */}
         <Card className="mb-6">
