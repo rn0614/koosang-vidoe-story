@@ -39,15 +39,14 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             <NextIntlClientProvider messages={messages}>
-              <main className="flex min-h-screen flex-col items-center pt-16">
+              <main className="flex min-h-screen flex-col pt-16">
                 <Drawer direction="left">
-                  <div className="flex w-full flex-1 flex-col items-center gap-20">
+                  <div className="flex w-full flex-1 min-h-0 flex-col items-center gap-20">
                     <Header />
-                    <div className="flex w-full">
+                    <div className="flex w-full flex-1 min-h-0">
                       <ResponsiveSidebar locale={locale} />
-                      <div className="flex min-w-[0px] flex-1 flex-col gap-20 md:ml-56">
+                      <div className="flex min-w-0 flex-1 flex-col gap-20 md:ml-56">
                         {children}
-                        <Footer />
                       </div>
                     </div>
                   </div>
