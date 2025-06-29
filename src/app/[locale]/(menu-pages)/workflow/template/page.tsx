@@ -10,6 +10,8 @@ import {
   workflowNodeMock,
 } from '@/__mocks__/work-flow.mock';
 import { WorkflowConnection, WorkflowNode } from '@/shared/types/workflow';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 // 템플릿 타입
 interface WorkflowTemplate {
@@ -56,6 +58,7 @@ const FlowEditorContent = () => {
     const template = list[sel];
 
     setTimeout(() => {
+      setWorkflowTitle(template.name || '');
       replaceAll(template.template?.nodes || [], template.template?.connections || []);
       alert('템플릿이 적용되었습니다!');
     }, 0);
@@ -90,46 +93,61 @@ const FlowEditorContent = () => {
   }, [workflowTitle, templateId, getAllNodeIds, getNode, getConnections]);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-gray-100">
+    <div className="w-full min-h-screen overflow-hidden bg-gray-100">
       {/* 헤더 */}
-      <div className="flex items-center justify-between border-b bg-white p-4 shadow-sm">
+      <div className="w-full flex flex-row items-center justify-between border-b bg-white p-4 shadow-sm gap-2">
         <input
           type="text"
           value={workflowTitle}
           onChange={(e) => setWorkflowTitle(e.target.value)}
           placeholder="워크플로우 제목을 입력하세요"
-          className="min-w-[300px] border-b border-gray-300 bg-transparent px-2 py-1 text-xl font-bold text-gray-800 focus:border-blue-500 focus:outline-none"
+          className="flex-1 min-w-0 max-w-[500px] border-b border-gray-300 bg-transparent px-2 py-1 text-xl font-bold text-gray-800 focus:border-blue-500 focus:outline-none"
         />
-        <div className="flex gap-2">
-          <button
-            onClick={addNode}
-            className="flex items-center gap-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          >
+        {/* 데스크탑: 버튼 그룹 */}
+        <div className="hidden md:flex gap-2 flex-shrink-0">
+          <Button onClick={addNode} variant="default" size="default" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             노드 추가
-          </button>
-          <button
-            onClick={saveTemplate}
-            className="flex items-center gap-2 rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-          >
+          </Button>
+          <Button onClick={saveTemplate} variant="secondary" size="default" className="flex items-center gap-2">
             템플릿 저장
-          </button>
-          <button
-            onClick={loadTemplate}
-            className="flex items-center gap-2 rounded-md bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
-          >
+          </Button>
+          <Button onClick={loadTemplate} variant="outline" size="default" className="flex items-center gap-2">
             템플릿 불러오기
-          </button>
+          </Button>
+        </div>
+        {/* 모바일: 드롭다운 메뉴 */}
+        <div className="flex md:hidden justify-end flex-shrink-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="default" size="default" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                메뉴
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={addNode}>
+                <Plus className="h-4 w-4 mr-2" /> 노드 추가
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={saveTemplate}>
+                템플릿 저장
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={loadTemplate}>
+                템플릿 불러오기
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
       {/* 메인 캔버스 */}
-      <WorkflowCanvas
-        selectedNodeId={selectedNodeId}
-        setSelectedNodeId={setSelectedNodeId}
-      />
-
-      <StateExplanation />
+      <div className="w-full h-full overflow-hidden">
+        <WorkflowCanvas
+          selectedNodeId={selectedNodeId}
+          setSelectedNodeId={setSelectedNodeId}
+        />
+        <StateExplanation />
+      </div>
     </div>
   );
 };

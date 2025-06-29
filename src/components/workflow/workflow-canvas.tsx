@@ -114,6 +114,16 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     document.body.style.userSelect = 'none';
   }, [setSelectedNodeId]);
 
+  // 터치 팬 시작
+  const handleCanvasTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    setSelectedNodeId(null);
+    setIsPanning(true);
+    setPanStart({ x: touch.clientX, y: touch.clientY });
+    document.body.style.cursor = 'move';
+    document.body.style.userSelect = 'none';
+  }, [setSelectedNodeId]);
+
   // 마우스 이동 처리
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -155,6 +165,20 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     [dragState, connectionState, isPanning, panStart, canvasOffset, updateNode],
   );
 
+  // 터치 이동
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (isPanning) {
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - panStart.x;
+      const deltaY = touch.clientY - panStart.y;
+      setCanvasOffset((prev) => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY,
+      }));
+      setPanStart({ x: touch.clientX, y: touch.clientY });
+    }
+  }, [isPanning, panStart]);
+
   // 마우스 업 처리
   const handleMouseUp = useCallback(
     (e: React.MouseEvent) => {
@@ -194,6 +218,14 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     [connectionState, addConnection],
   );
 
+  // 터치 끝
+  const handleTouchEnd = useCallback(() => {
+    setIsPanning(false);
+    setPanStart({ x: 0, y: 0 });
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }, []);
+
   // 연결선 좌표 계산 (캔버스 오프셋 포함)
   const getConnectionCoordinates = useCallback(
     (fromId: string, toId: string) => {
@@ -229,6 +261,9 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseDown={handleCanvasMouseDown}
+      onTouchStart={handleCanvasTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* 연결선 SVG - 캔버스 변환 컨테이너 밖에 위치 */}
       <svg
