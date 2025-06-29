@@ -93,7 +93,7 @@ const FlowEditorContent = () => {
   }, [workflowTitle, templateId, getAllNodeIds, getNode, getConnections]);
 
   return (
-    <div className="w-full min-h-screen overflow-hidden bg-gray-100">
+    <div className="w-full h-full overflow-hidden bg-gray-100">
       {/* 헤더 */}
       <div className="w-full flex flex-row items-center justify-between border-b bg-white p-4 shadow-sm gap-2">
         <input

@@ -13,7 +13,7 @@ export default function CompanyAlarmPage() {
   } = useCompanies();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <div className="mx-auto max-w-4xl p-4">
         <Card className="mb-6">
           <CardContent className="pt-6">

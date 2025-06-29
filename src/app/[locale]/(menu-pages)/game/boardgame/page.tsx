@@ -872,75 +872,32 @@ export default function FloatingButtonBoardGame() {
   }
 
   return (
-    <main style={{ 
-      padding: '10px', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center',
-      maxWidth: '100vw',
-      minHeight: '100vh',
-      boxSizing: 'border-box',
-      userSelect: 'none',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      <h1 style={{ 
-        fontSize: cellSize < 40 ? '1.5rem' : '2rem',
-        marginBottom: '10px',
-        textAlign: 'center'
-      }}>
+    <main
+      className="flex flex-col items-center w-full pt-2 pb-4 px-2 box-border select-none relative overflow-hidden"
+    >
+      <h1 className={`font-bold mb-2 text-center ${cellSize < 40 ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
         Floating Button Board Game
       </h1>
-      
-      <div style={{ 
-        display: 'flex', 
-        gap: '20px', 
-        marginBottom: '15px',
-        fontSize: cellSize < 40 ? '0.9rem' : '1rem',
-        flexWrap: 'wrap',
-        justifyContent: 'center'
-      }}>
+      <div className={`flex gap-5 mb-4 flex-wrap justify-center ${cellSize < 40 ? 'text-sm' : 'text-base md:text-lg'}`}>
         <div>STEPS: {remainStep}</div>
         <div>STAGE: {stage}</div>
       </div>
-      
       <canvas
         ref={canvasRef}
-        style={{ 
-          border: '2px solid #333', 
-          background: BOARD_COLOR,
-          maxWidth: '100%',
-          height: 'auto',
-          touchAction: 'none',
-          borderRadius: '8px',
-          marginBottom: '20px'
-        }}
+        className="border-2 border-gray-800 bg-gray-100 rounded-lg mb-5 max-w-full h-auto touch-none"
+        style={{ maxWidth: `${cellSize * BOARD_SIZE}px` }}
       />
-
-      {/* 조건부 렌더링: 웹이 아닌 경우에만 플로팅 버튼들 표시 */}
+      {/* 플로팅 버튼들 */}
       {platform !== 'web' && (
         <>
-          {/* 방향 패드 - 왼쪽 하단 */}
-          <div style={{
-            position: 'fixed',
-            bottom: '30px',
-            left: '30px',
-            zIndex: 1000
-          }}>
-            <FloatingDPad 
+          <div className="fixed bottom-8 left-8 z-50">
+            <FloatingDPad
               onDirectionPress={handleDirectionPress}
               size={cellSize < 40 ? 40 : 50}
               disabled={remainStep <= 0}
             />
           </div>
-
-          {/* 공격 버튼 - 오른쪽 하단 */}
-          <div style={{
-            position: 'fixed',
-            bottom: '30px',
-            right: '30px',
-            zIndex: 1000
-          }}>
+          <div className="fixed bottom-8 right-8 z-50">
             <FloatingAttackButton
               onClick={handleAttack}
               disabled={remainStep < 5 || swinging}
@@ -949,71 +906,43 @@ export default function FloatingButtonBoardGame() {
           </div>
         </>
       )}
-
       {/* 설정 패널 */}
-      <div style={{
-        marginTop: '20px',
-        padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        backgroundColor: '#f9f9f9',
-        maxWidth: cellSize * BOARD_SIZE,
-        width: '100%',
-        marginBottom: platform !== 'web' ? '100px' : '20px' // 플로팅 버튼이 있을 때만 여백 추가
-      }}>
-        <label style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '8px',
-          fontSize: '14px',
-          cursor: 'pointer' 
-        }}>
+      <div
+        className="mt-5 mb-5 p-3 border border-gray-300 rounded-lg bg-gray-50 w-full"
+        style={{ maxWidth: `${cellSize * BOARD_SIZE}px`, marginBottom: platform !== 'web' ? '100px' : '20px' }}
+      >
+        <label className="flex items-center gap-2 text-sm cursor-pointer">
           <input
             type="checkbox"
             checked={vibrationEnabled}
             onChange={(e) => setVibrationEnabled(e.target.checked)}
-            style={{ cursor: 'pointer' }}
+            className="cursor-pointer"
           />
           햅틱 피드백 활성화
         </label>
       </div>
-      
-      <div style={{ 
-        maxWidth: cellSize * BOARD_SIZE,
-        fontSize: cellSize < 40 ? '0.8rem' : '0.9rem',
-        lineHeight: '1.4',
-        textAlign: 'center',
-        marginBottom: platform !== 'web' ? '100px' : '20px' // 플로팅 버튼이 있을 때만 여백 추가
-      }}>
+      {/* 설명 */}
+      <div
+        className={`max-w-full text-sm md:text-base leading-relaxed text-center mb-5`}
+        style={{ maxWidth: `${cellSize * BOARD_SIZE}px`, marginBottom: platform !== 'web' ? '100px' : '20px' }}
+      >
         <p>
           <strong>조작법:</strong>
         </p>
         {platform !== 'web' ? (
           <>
-            <p>
-              • 왼쪽 하단 방향 패드로 이동 (한 번 클릭 = 한 번 이동)
-            </p>
-            <p>
-              • 오른쪽 하단 ⚔️ 버튼으로 공격 (5스텝 소모)
-            </p>
-            <p>
-              • 각 방향 버튼을 개별적으로 터치하여 정확한 이동
-            </p>
+            <p>• 왼쪽 하단 방향 패드로 이동 (한 번 클릭 = 한 번 이동)</p>
+            <p>• 오른쪽 하단 ⚔️ 버튼으로 공격 (5스텝 소모)</p>
+            <p>• 각 방향 버튼을 개별적으로 터치하여 정확한 이동</p>
           </>
         ) : (
           <>
-            <p>
-              • 키보드 방향키 (↑↓←→)로 이동
-            </p>
-            <p>
-              • Z키로 공격 (5스텝 소모)
-            </p>
-            <p>
-              • 상단/우측상단/우측을 공격할 수 있습니다
-            </p>
+            <p>• 키보드 방향키 (↑↓←→)로 이동</p>
+            <p>• Z키로 공격 (5스텝 소모)</p>
+            <p>• 상단/우측상단/우측을 공격할 수 있습니다</p>
           </>
         )}
-        <p style={{ fontSize: '0.7rem', color: '#666', marginTop: '10px' }}>
+        <p className="text-xs text-gray-500 mt-2">
           현재 플랫폼: {platform === 'webview' ? 'WebView' : platform === 'mobile' ? 'Mobile' : 'Web'}
         </p>
       </div>

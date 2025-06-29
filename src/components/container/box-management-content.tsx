@@ -122,25 +122,6 @@ const BoxManagementContent: React.FC = () => {
     }
   }, []);
 
-  const handleMoveMultipleBoxes = useCallback(async (): Promise<void> => {
-    try {
-      console.log('🚛 다중 박스 이동 시작');
-      
-      // 병렬이 아닌 순차 실행으로 충돌 방지
-      await handleMoveToOtherPosition('BOX-001', 10, 2);
-      await new Promise(resolve => setTimeout(resolve, 500)); // 딜레이 추가
-      
-      await handleMoveToOtherPosition('BOX-002', 12, 2);
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      await handleMoveToOtherPosition('BOX-003', 14, 2);
-      
-      console.log('✅ 다중 박스 이동 완료');
-    } catch (error) {
-      console.error('❌ 다중 박스 이동 실패:', error);
-    }
-  }, [handleMoveToOtherPosition]);
-
   // 🚀 핸들러들을 완전히 안정적으로 만들기 (의존성 최소화)
   const stableHandlers = useMemo(() => ({
     onSelect: handleSelectBox,
@@ -152,11 +133,14 @@ const BoxManagementContent: React.FC = () => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="relative h-screen w-full bg-gradient-to-br from-slate-900 to-slate-800">
+    <div className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
       <Canvas
         camera={{ position: [20, 15, 20], fov: 75 }}
         style={{
+          width: '100vw',
+          height: '100dvh',
           background: 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)',
+          touchAction: 'none',
         }}
       >
         <Lighting />
@@ -184,7 +168,7 @@ const BoxManagementContent: React.FC = () => {
       </Canvas>
       
       {/* 🎨 UI 패널 */}
-      <Card className="absolute left-4 top-4 w-80 bg-background/95 shadow-xl backdrop-blur-sm">
+      <Card className="absolute right-4 bottom-4 w-80 bg-background/80 shadow-xl backdrop-blur-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2">
             <Move3D className="h-5 w-5" />
@@ -220,42 +204,6 @@ const BoxManagementContent: React.FC = () => {
               ))}
             </div>
           </ScrollArea>
-        </CardContent>
-      </Card>
-      
-      {/* 🎮 빠른 액션 패널 */}
-      <Card className="absolute bottom-4 right-4 bg-background/95 backdrop-blur-sm">
-        <CardContent className="p-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm">
-              <AlertCircle className="h-4 w-4 text-muted-foreground" />
-              <span>
-                개별 구독 패턴으로 최적화된 박스 관리 시스템
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={handleAddBox}
-                className="flex items-center gap-1"
-              >
-                <Plus className="h-3 w-3" />
-                박스 추가
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleMoveMultipleBoxes}
-                variant="outline"
-                className="flex items-center gap-1"
-              >
-                <Navigation className="h-3 w-3" />
-                테스트 이동
-              </Button>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              콘솔에서 렌더링 로그를 확인하세요!
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
