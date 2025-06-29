@@ -1,13 +1,8 @@
-'use client';
-import { usePathname } from 'next/navigation';
 import { DrawerTrigger } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 
 export default function HeaderMenuButton({ platform }: { platform: string }) {
-  const pathname = usePathname();
-  const isRagDetail = /^\/[a-z]{2}\/rag\/[^/]+/.test(pathname);
-
-  if (platform === 'webview' && isRagDetail) {
+  if (platform === 'webview') {
     return <div className="p-2"></div>;
   }
   return (

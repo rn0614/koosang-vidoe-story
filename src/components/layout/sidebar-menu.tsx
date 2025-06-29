@@ -57,7 +57,6 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
           // Always render as accordion if has children
           return (
             <li key={item.href} className="w-full">
-              <DrawerClose asChild>
                 <div
                   className="flex items-center w-full rounded px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
                   onClick={(e) => {
@@ -71,7 +70,6 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
                     {isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                   </span>
                 </div>
-              </DrawerClose>
               {isOpen && (
                 <div className="ml-4">
                   <SidebarMenu menu={item.children ?? []} />

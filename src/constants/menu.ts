@@ -15,10 +15,22 @@ export const SIDEBAR_MENU: MenuItem[] = [
     icon: null,
   },*/
   {
-    clickable: true,
-    href: '/rag',
-    labelKey: 'rag',
+    clickable: false,
+    href: '/',
+    labelKey: 'blog',
     icon: null,
+    children: [
+      {
+        clickable: true,
+        href: '/rag',
+        labelKey: 'rag',
+      },
+      {
+        clickable: true,
+        href: '/rag/note',
+        labelKey: 'note',
+      },
+    ],
   },
   /*{
     href: '/blog',
@@ -30,7 +42,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
     ],
   },*/
   {
-    clickable: true,
+    clickable: false,
     href: '/game',
     labelKey: 'game',
     icon: null,
