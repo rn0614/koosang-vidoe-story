@@ -104,7 +104,7 @@ function generateBoardWithPathAndItemsAndMonster(stage = 1) {
       }
     }
   }
-  
+
   let itemList: [number, number][] = [];
   let itemCount = Math.min(Math.floor(stage / 2) + 1, emptyCells.length);
   for (let i = 0; i < itemCount && emptyCells.length > 0; i++) {
@@ -113,7 +113,7 @@ function generateBoardWithPathAndItemsAndMonster(stage = 1) {
     itemList.push([r, c]);
     board[r][c] = 3;
   }
-  
+
   let monsterList: [number, number][] = [];
   let monsterCount = Math.min(stage, emptyCells.length);
   for (let i = 0; i < monsterCount; i++) {
@@ -137,7 +137,12 @@ class Player {
   }
 
   tryMove(newRow: number, newCol: number, board: number[][]): boolean {
-    if (newRow < 0 || newRow >= BOARD_SIZE || newCol < 0 || newCol >= BOARD_SIZE) {
+    if (
+      newRow < 0 ||
+      newRow >= BOARD_SIZE ||
+      newCol < 0 ||
+      newCol >= BOARD_SIZE
+    ) {
       return false;
     }
     if (board[newRow][newCol] === 1) {
@@ -190,7 +195,10 @@ class Monster {
     this.id = id;
   }
 
-  calculateNextMove(board: number[][], playerPos: [number, number]): [number, number] | null {
+  calculateNextMove(
+    board: number[][],
+    playerPos: [number, number],
+  ): [number, number] | null {
     const bfsResult = bfs(board, [this.row, this.col], playerPos);
     if (!bfsResult || bfsResult.path.length < 2) {
       return null;
@@ -220,23 +228,38 @@ class GameManager {
 
   constructor(boardState: any) {
     this.player = new Player(BOARD_SIZE - 1, 0, 100);
-    this.monsters = boardState.monsterList.map((pos: [number, number], index: number) => 
-      new Monster(pos[0], pos[1], index)
+    this.monsters = boardState.monsterList.map(
+      (pos: [number, number], index: number) =>
+        new Monster(pos[0], pos[1], index),
     );
     this.board = boardState.board;
     this.itemList = boardState.itemList;
   }
 
-  handlePlayerMove(direction: string): { success: boolean; gameOver: boolean; stageCleared: boolean } {
+  handlePlayerMove(direction: string): {
+    success: boolean;
+    gameOver: boolean;
+    stageCleared: boolean;
+  } {
     const { row, col } = this.player;
-    let newRow = row, newCol = col;
+    let newRow = row,
+      newCol = col;
 
     switch (direction) {
-      case 'ArrowUp': if (row > 0) newRow--; break;
-      case 'ArrowDown': if (row < BOARD_SIZE - 1) newRow++; break;
-      case 'ArrowLeft': if (col > 0) newCol--; break;
-      case 'ArrowRight': if (col < BOARD_SIZE - 1) newCol++; break;
-      default: return { success: false, gameOver: false, stageCleared: false };
+      case 'ArrowUp':
+        if (row > 0) newRow--;
+        break;
+      case 'ArrowDown':
+        if (row < BOARD_SIZE - 1) newRow++;
+        break;
+      case 'ArrowLeft':
+        if (col > 0) newCol--;
+        break;
+      case 'ArrowRight':
+        if (col < BOARD_SIZE - 1) newCol++;
+        break;
+      default:
+        return { success: false, gameOver: false, stageCleared: false };
     }
 
     if (!this.player.tryMove(newRow, newCol, this.board)) {
@@ -245,7 +268,9 @@ class GameManager {
 
     this.player.move(newRow, newCol);
 
-    const itemIndex = this.itemList.findIndex(([ir, ic]) => ir === newRow && ic === newCol);
+    const itemIndex = this.itemList.findIndex(
+      ([ir, ic]) => ir === newRow && ic === newCol,
+    );
     if (itemIndex !== -1) {
       this.player.collectItem();
       this.itemList.splice(itemIndex, 1);
@@ -270,7 +295,7 @@ class GameManager {
     for (const monster of this.monsters) {
       this.board[monster.row][monster.col] = 0;
       const nextPos = monster.calculateNextMove(this.board, playerPos);
-      
+
       if (nextPos) {
         monster.move(nextPos[0], nextPos[1]);
         this.board[nextPos[0]][nextPos[1]] = 4;
@@ -296,8 +321,8 @@ class GameManager {
 
     if (collidingMonsters.length > 0) {
       this.player.takeDamage();
-      this.monsters = this.monsters.filter(monster => 
-        !collidingMonsters.includes(monster)
+      this.monsters = this.monsters.filter(
+        (monster) => !collidingMonsters.includes(monster),
       );
 
       for (const monster of collidingMonsters) {
@@ -310,25 +335,29 @@ class GameManager {
     return false;
   }
 
-  processTurn(direction: string): { 
-    success: boolean; 
-    gameOver: boolean; 
-    stageCleared: boolean; 
+  processTurn(direction: string): {
+    success: boolean;
+    gameOver: boolean;
+    stageCleared: boolean;
     collision: boolean;
   } {
     const playerResult = this.handlePlayerMove(direction);
-    if (!playerResult.success || playerResult.gameOver || playerResult.stageCleared) {
+    if (
+      !playerResult.success ||
+      playerResult.gameOver ||
+      playerResult.stageCleared
+    ) {
       return { ...playerResult, collision: false };
     }
 
     this.handleMonsterMovement();
     const collision = this.handleCollisions();
 
-    return { 
-      success: true, 
-      gameOver: this.player.remainStep <= 0, 
+    return {
+      success: true,
+      gameOver: this.player.remainStep <= 0,
       stageCleared: false,
-      collision 
+      collision,
     };
   }
 
@@ -343,9 +372,11 @@ class GameManager {
     ];
 
     let killedCount = 0;
-    this.monsters = this.monsters.filter(monster => {
+    this.monsters = this.monsters.filter((monster) => {
       const monsterPos = monster.getPosition();
-      const isTarget = targets.some(([tr, tc]) => tr === monsterPos[0] && tc === monsterPos[1]);
+      const isTarget = targets.some(
+        ([tr, tc]) => tr === monsterPos[0] && tc === monsterPos[1],
+      );
       if (isTarget) {
         this.board[monsterPos[0]][monsterPos[1]] = 0;
         killedCount++;
@@ -361,9 +392,9 @@ class GameManager {
     return {
       player: this.player.getPosition(),
       remainStep: this.player.remainStep,
-      monsters: this.monsters.map(m => m.getPosition()),
+      monsters: this.monsters.map((m) => m.getPosition()),
       board: this.board,
-      itemList: this.itemList
+      itemList: this.itemList,
     };
   }
 }
@@ -376,7 +407,12 @@ interface DirectionButtonProps {
   disabled?: boolean;
 }
 
-function DirectionButton({ direction, onPress, size = 50, disabled = false }: DirectionButtonProps) {
+function DirectionButton({
+  direction,
+  onPress,
+  size = 50,
+  disabled = false,
+}: DirectionButtonProps) {
   const [isPressed, setIsPressed] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
 
@@ -384,7 +420,7 @@ function DirectionButton({ direction, onPress, size = 50, disabled = false }: Di
     up: { arrow: '↑', key: 'ArrowUp' },
     down: { arrow: '↓', key: 'ArrowDown' },
     left: { arrow: '←', key: 'ArrowLeft' },
-    right: { arrow: '→', key: 'ArrowRight' }
+    right: { arrow: '→', key: 'ArrowRight' },
   };
 
   const handlePress = () => {
@@ -392,7 +428,7 @@ function DirectionButton({ direction, onPress, size = 50, disabled = false }: Di
       setIsPressed(true);
       setHasTriggered(true);
       onPress(directionMap[direction].key);
-      
+
       setTimeout(() => {
         setIsPressed(false);
         setHasTriggered(false);
@@ -424,24 +460,25 @@ function DirectionButton({ direction, onPress, size = 50, disabled = false }: Di
         width: `${size}px`,
         height: `${size}px`,
         borderRadius: '8px',
-        backgroundColor: disabled ? '#ccc' : (isPressed ? '#0056b3' : '#007bff'),
+        backgroundColor: disabled ? '#ccc' : isPressed ? '#0056b3' : '#007bff',
         border: '2px solid',
-        borderColor: disabled ? '#999' : (isPressed ? '#003d82' : '#0056b3'),
+        borderColor: disabled ? '#999' : isPressed ? '#003d82' : '#0056b3',
         color: disabled ? '#666' : 'white',
         fontSize: `${size * 0.4}px`,
         fontWeight: 'bold',
         cursor: disabled ? 'not-allowed' : 'pointer',
-        boxShadow: disabled ? 'none' : (isPressed ? 
-          '0 2px 4px rgba(0, 0, 0, 0.2)' : 
-          '0 4px 8px rgba(0, 0, 0, 0.3)'
-        ),
+        boxShadow: disabled
+          ? 'none'
+          : isPressed
+            ? '0 2px 4px rgba(0, 0, 0, 0.2)'
+            : '0 4px 8px rgba(0, 0, 0, 0.3)',
         transform: isPressed ? 'scale(0.95)' : 'scale(1)',
         transition: 'all 0.1s ease',
         userSelect: 'none',
         touchAction: 'manipulation',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
     >
       {directionMap[direction].arrow}
@@ -456,59 +493,67 @@ interface FloatingDPadProps {
   disabled?: boolean;
 }
 
-function FloatingDPad({ onDirectionPress, size = 50, disabled = false }: FloatingDPadProps) {
+function FloatingDPad({
+  onDirectionPress,
+  size = 50,
+  disabled = false,
+}: FloatingDPadProps) {
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
-      gap: '8px',
-      padding: '12px',
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-      borderRadius: '16px',
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-      border: '1px solid rgba(0, 0, 0, 0.1)'
-    }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '8px',
+        padding: '12px',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: '16px',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+      }}
+    >
       {/* 첫 번째 행 */}
       <div></div>
-      <DirectionButton 
-        direction="up" 
-        onPress={onDirectionPress} 
+      <DirectionButton
+        direction="up"
+        onPress={onDirectionPress}
         size={size}
         disabled={disabled}
       />
       <div></div>
-      
+
       {/* 두 번째 행 */}
-      <DirectionButton 
-        direction="left" 
-        onPress={onDirectionPress} 
+      <DirectionButton
+        direction="left"
+        onPress={onDirectionPress}
         size={size}
         disabled={disabled}
       />
-      <div style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '12px',
-        color: '#666',
-        fontWeight: 'bold'
-      }}>
+      <div
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '12px',
+          color: '#666',
+          fontWeight: 'bold',
+        }}
+      >
         🎮
       </div>
-      <DirectionButton 
-        direction="right" 
-        onPress={onDirectionPress} 
+      <DirectionButton
+        direction="right"
+        onPress={onDirectionPress}
         size={size}
         disabled={disabled}
       />
-      
+
       {/* 세 번째 행 */}
       <div></div>
-      <DirectionButton 
-        direction="down" 
-        onPress={onDirectionPress} 
+      <DirectionButton
+        direction="down"
+        onPress={onDirectionPress}
         size={size}
         disabled={disabled}
       />
@@ -524,7 +569,11 @@ interface FloatingAttackButtonProps {
   size?: number;
 }
 
-function FloatingAttackButton({ onClick, disabled = false, size = 80 }: FloatingAttackButtonProps) {
+function FloatingAttackButton({
+  onClick,
+  disabled = false,
+  size = 80,
+}: FloatingAttackButtonProps) {
   const [isPressed, setIsPressed] = useState(false);
 
   const handleStart = () => {
@@ -543,31 +592,38 @@ function FloatingAttackButton({ onClick, disabled = false, size = 80 }: Floating
       onMouseDown={handleStart}
       onMouseUp={handleEnd}
       onMouseLeave={handleEnd}
-      onTouchStart={(e) => { e.preventDefault(); handleStart(); }}
-      onTouchEnd={(e) => { e.preventDefault(); handleEnd(); }}
+      onTouchStart={(e) => {
+        e.preventDefault();
+        handleStart();
+      }}
+      onTouchEnd={(e) => {
+        e.preventDefault();
+        handleEnd();
+      }}
       disabled={disabled}
       style={{
         width: `${size}px`,
         height: `${size}px`,
         borderRadius: '50%',
-        backgroundColor: disabled ? '#ccc' : (isPressed ? '#ff6b35' : '#ff4444'),
+        backgroundColor: disabled ? '#ccc' : isPressed ? '#ff6b35' : '#ff4444',
         border: '3px solid',
-        borderColor: disabled ? '#999' : (isPressed ? '#d63031' : '#e74c3c'),
+        borderColor: disabled ? '#999' : isPressed ? '#d63031' : '#e74c3c',
         color: disabled ? '#666' : 'white',
         fontSize: '24px',
         fontWeight: 'bold',
         cursor: disabled ? 'not-allowed' : 'pointer',
-        boxShadow: disabled ? 'none' : (isPressed ? 
-          '0 2px 8px rgba(0, 0, 0, 0.3)' : 
-          '0 4px 12px rgba(0, 0, 0, 0.4)'
-        ),
+        boxShadow: disabled
+          ? 'none'
+          : isPressed
+            ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+            : '0 4px 12px rgba(0, 0, 0, 0.4)',
         transform: isPressed ? 'scale(0.95)' : 'scale(1)',
         transition: 'all 0.1s ease',
         userSelect: 'none',
         touchAction: 'manipulation',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
     >
       ⚔️
@@ -598,7 +654,10 @@ export default function FloatingButtonBoardGame() {
     const padding = 40;
     const maxBoardWidth = screenWidth - padding;
     const calculatedCellSize = Math.floor(maxBoardWidth / BOARD_SIZE);
-    const newCellSize = Math.max(MIN_CELL_SIZE, Math.min(BASE_CELL_SIZE, calculatedCellSize));
+    const newCellSize = Math.max(
+      MIN_CELL_SIZE,
+      Math.min(BASE_CELL_SIZE, calculatedCellSize),
+    );
     setCellSize(newCellSize);
   };
 
@@ -653,25 +712,31 @@ export default function FloatingButtonBoardGame() {
     triggerVibration(30); // 이동 시 진동
 
     const result = gameManager.processTurn(direction);
-    
+
     if (result.success) {
       const gameState = gameManager.getGameState();
       setPlayer({ row: gameState.player[0], col: gameState.player[1] });
       setRemainStep(gameState.remainStep);
-      setBoardState(prev => prev ? {
-        ...prev,
-        board: gameState.board,
-        monsterList: gameState.monsters,
-        itemList: gameState.itemList
-      } : null);
+      setBoardState((prev) =>
+        prev
+          ? {
+              ...prev,
+              board: gameState.board,
+              monsterList: gameState.monsters,
+              itemList: gameState.itemList,
+            }
+          : null,
+      );
 
       if (result.gameOver) {
         triggerVibration([200, 100, 200]);
         setTimeout(() => alert('게임오버: 이동 횟수를 모두 소진했습니다!'), 10);
       } else if (result.stageCleared) {
         triggerVibration([100, 50, 100, 50, 100]);
-        setStage(prev => prev + 1);
-        const newBoardState = generateBoardWithPathAndItemsAndMonster(stage + 1);
+        setStage((prev) => prev + 1);
+        const newBoardState = generateBoardWithPathAndItemsAndMonster(
+          stage + 1,
+        );
         setBoardState(newBoardState);
         setGameManager(new GameManager(newBoardState));
         setPlayer({ row: BOARD_SIZE - 1, col: 0 });
@@ -688,16 +753,16 @@ export default function FloatingButtonBoardGame() {
   // 공격 처리 함수
   const handleAttack = () => {
     if (!gameManager || remainStep < 5 || swinging) return;
-    
+
     setSwinging(true);
     setSwingAngle(0);
     triggerVibration([80, 20, 80]);
-    
+
     let angle = 0;
     const animationInterval = setInterval(() => {
       angle += 15;
       setSwingAngle(angle);
-      
+
       if (angle >= 90) {
         clearInterval(animationInterval);
         setTimeout(() => {
@@ -706,16 +771,20 @@ export default function FloatingButtonBoardGame() {
         }, 100);
       }
     }, 50);
-    
+
     const attacked = gameManager.handleAttack();
     const gameState = gameManager.getGameState();
     setRemainStep(gameState.remainStep);
-    setBoardState(prev => prev ? {
-      ...prev,
-      board: gameState.board,
-      monsterList: gameState.monsters
-    } : null);
-    
+    setBoardState((prev) =>
+      prev
+        ? {
+            ...prev,
+            board: gameState.board,
+            monsterList: gameState.monsters,
+          }
+        : null,
+    );
+
     if (attacked) {
       triggerVibration([120, 30, 120]);
     }
@@ -739,15 +808,15 @@ export default function FloatingButtonBoardGame() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx || !boardState) return;
-    
+
     const boardWidth = cellSize * BOARD_SIZE;
     const boardHeight = cellSize * BOARD_SIZE;
     canvas.width = boardWidth;
     canvas.height = boardHeight;
-    
+
     ctx.fillStyle = BOARD_COLOR;
     ctx.fillRect(0, 0, boardWidth, boardHeight);
-    
+
     for (let row = 0; row < BOARD_SIZE; row++) {
       for (let col = 0; col < BOARD_SIZE; col++) {
         if (boardState.board[row][col] === 1) {
@@ -778,10 +847,10 @@ export default function FloatingButtonBoardGame() {
         }
       }
     }
-    
+
     ctx.fillStyle = EXIT_COLOR;
     ctx.fillRect((BOARD_SIZE - 1) * cellSize, 0, cellSize, cellSize);
-    
+
     ctx.strokeStyle = GRID_COLOR;
     ctx.lineWidth = 1;
     for (let i = 0; i <= BOARD_SIZE; i++) {
@@ -794,7 +863,7 @@ export default function FloatingButtonBoardGame() {
       ctx.lineTo(i * cellSize, boardHeight);
       ctx.stroke();
     }
-    
+
     ctx.fillStyle = PLAYER_COLOR;
     ctx.beginPath();
     ctx.arc(
@@ -811,26 +880,26 @@ export default function FloatingButtonBoardGame() {
       ctx.strokeStyle = '#ffd600';
       ctx.lineWidth = Math.max(6, cellSize / 6);
       ctx.lineCap = 'round';
-      
+
       const centerX = player.col * cellSize + cellSize / 2;
       const centerY = player.row * cellSize + cellSize / 2;
       const stickLength = cellSize * 0.8;
-      
-      const angleRad = (swingAngle - 90) * Math.PI / 180;
-      
+
+      const angleRad = ((swingAngle - 90) * Math.PI) / 180;
+
       const endX = centerX + Math.cos(angleRad) * stickLength;
       const endY = centerY + Math.sin(angleRad) * stickLength;
-      
+
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(endX, endY);
       ctx.stroke();
-      
+
       ctx.fillStyle = '#ffed4e';
       ctx.beginPath();
       ctx.arc(endX, endY, 3, 0, 2 * Math.PI);
       ctx.fill();
-      
+
       ctx.restore();
     }
 
@@ -868,23 +937,27 @@ export default function FloatingButtonBoardGame() {
   }, [remainStep]);
 
   if (!boardState) {
-    return <div style={{ textAlign: 'center', padding: '20px' }}>로딩중...</div>;
+    return (
+      <div style={{ textAlign: 'center', padding: '20px' }}>로딩중...</div>
+    );
   }
 
   return (
-    <main
-      className="flex flex-col items-center w-full pt-2 pb-4 px-2 box-border select-none relative overflow-hidden"
-    >
-      <h1 className={`font-bold mb-2 text-center ${cellSize < 40 ? 'text-xl' : 'text-2xl md:text-3xl'}`}>
-        Floating Button Board Game
+    <main className="relative box-border flex w-full select-none flex-col items-center overflow-hidden px-2 pb-4 pt-2">
+      <h1
+        className={`mb-2 text-center font-bold ${cellSize < 40 ? 'text-xl' : 'text-2xl md:text-3xl'}`}
+      >
+        Go out Board Game
       </h1>
-      <div className={`flex gap-5 mb-4 flex-wrap justify-center ${cellSize < 40 ? 'text-sm' : 'text-base md:text-lg'}`}>
+      <div
+        className={`mb-4 flex flex-wrap justify-center gap-5 ${cellSize < 40 ? 'text-sm' : 'text-base md:text-lg'}`}
+      >
         <div>STEPS: {remainStep}</div>
         <div>STAGE: {stage}</div>
       </div>
       <canvas
         ref={canvasRef}
-        className="border-2 border-gray-800 bg-gray-100 rounded-lg mb-5 max-w-full h-auto touch-none"
+        className="mb-5 h-auto max-w-full touch-none rounded-lg border-2 border-gray-800 bg-gray-100"
         style={{ maxWidth: `${cellSize * BOARD_SIZE}px` }}
       />
       {/* 플로팅 버튼들 */}
@@ -906,45 +979,25 @@ export default function FloatingButtonBoardGame() {
           </div>
         </>
       )}
-      {/* 설정 패널 */}
-      <div
-        className="mt-5 mb-5 p-3 border border-gray-300 rounded-lg bg-gray-50 w-full"
-        style={{ maxWidth: `${cellSize * BOARD_SIZE}px`, marginBottom: platform !== 'web' ? '100px' : '20px' }}
-      >
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
-          <input
-            type="checkbox"
-            checked={vibrationEnabled}
-            onChange={(e) => setVibrationEnabled(e.target.checked)}
-            className="cursor-pointer"
-          />
-          햅틱 피드백 활성화
-        </label>
-      </div>
       {/* 설명 */}
       <div
-        className={`max-w-full text-sm md:text-base leading-relaxed text-center mb-5`}
-        style={{ maxWidth: `${cellSize * BOARD_SIZE}px`, marginBottom: platform !== 'web' ? '100px' : '20px' }}
+        className={`mb-5 max-w-full text-center text-sm leading-relaxed md:text-base`}
+        style={{
+          maxWidth: `${cellSize * BOARD_SIZE}px`,
+          marginBottom: platform !== 'web' ? '100px' : '20px',
+        }}
       >
-        <p>
-          <strong>조작법:</strong>
-        </p>
-        {platform !== 'web' ? (
+        {platform !== 'web' && (
           <>
+            <p>
+              <strong>조작법:</strong>
+            </p>
+
             <p>• 왼쪽 하단 방향 패드로 이동 (한 번 클릭 = 한 번 이동)</p>
             <p>• 오른쪽 하단 ⚔️ 버튼으로 공격 (5스텝 소모)</p>
             <p>• 각 방향 버튼을 개별적으로 터치하여 정확한 이동</p>
           </>
-        ) : (
-          <>
-            <p>• 키보드 방향키 (↑↓←→)로 이동</p>
-            <p>• Z키로 공격 (5스텝 소모)</p>
-            <p>• 상단/우측상단/우측을 공격할 수 있습니다</p>
-          </>
         )}
-        <p className="text-xs text-gray-500 mt-2">
-          현재 플랫폼: {platform === 'webview' ? 'WebView' : platform === 'mobile' ? 'Mobile' : 'Web'}
-        </p>
       </div>
     </main>
   );
