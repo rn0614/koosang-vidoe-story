@@ -24,6 +24,8 @@ const getNodeStateColor = (state: WorkflowNodeState) => {
       return 'border-gray-400 bg-gray-50';
     case 'fail':
       return 'border-red-400 bg-red-50';
+    case 'close':
+      return 'border-gray-300 bg-gray-200 opacity-60';
     default:
       return 'border-gray-300 bg-white';
   }
@@ -40,6 +42,8 @@ const getStateIcon = (state: WorkflowNodeState) => {
       return <CheckCircle className="h-4 w-4 text-gray-500" />;
     case 'fail':
       return <XCircle className="h-4 w-4 text-red-500" />;
+    case 'close':
+      return <Circle className="h-4 w-4 text-gray-400 opacity-60" />;
     default:
       return <Circle className="h-4 w-4 text-gray-400" />;
   }
@@ -51,6 +55,9 @@ type FlowNodeProps = {
   onConnectionStart: (nodeId: string, e: React.MouseEvent) => void;
   isSelected: boolean;
   isDragging: boolean;
+  dragOffset?: { x: number; y: number };
+  isGhost?: boolean;
+  ghostPosition?: { x: number; y: number };
   onDragStart: (nodeId: string, e: React.MouseEvent) => void;
   onStatusChange: (nodeId: string, status: WorkflowNodeState) => void;
   onNodeDelete: (nodeId: string) => void;
@@ -63,6 +70,9 @@ const FlowNode = ({
   onConnectionStart,
   isSelected,
   isDragging,
+  dragOffset,
+  isGhost = false,
+  ghostPosition,
   onDragStart,
   onStatusChange,
   onNodeDelete,
@@ -125,23 +135,25 @@ const FlowNode = ({
 
   const handleStatusChange = (status: WorkflowNodeState) => {
     setShowDropdown(false);
-    onStatusChange(nodeId, status);
+    updateNode(nodeId, { state: status });
   };
 
   return (
     <>
       <div
         ref={nodeRef}
-        className={`relative min-w-[200px] cursor-move select-none rounded-lg border-2 bg-white p-4 shadow-md ${getNodeStateColor(node.state)} ${isSelected ? 'ring-2 ring-blue-500' : ''} ${isDragging ? 'z-50 opacity-50' : ''} hover:shadow-lg`}
+        className={`relative min-w-[200px] cursor-move select-none rounded-lg border-2 bg-white p-4 shadow-md ${getNodeStateColor(node.state)} ${isSelected ? 'ring-2 ring-blue-500' : ''} ${isDragging && !isGhost ? 'z-50 opacity-50' : ''} ${isGhost ? 'pointer-events-none z-[9999] opacity-80' : ''} hover:shadow-lg`}
         style={{
           position: 'absolute',
-          left: node.x,
-          top: node.y,
+          left: isGhost && ghostPosition ? ghostPosition.x : node.x,
+          top: isGhost && ghostPosition ? ghostPosition.y : node.y,
           width: NODE_WIDTH,
           height: NODE_HEIGHT,
+          transform: isDragging && dragOffset && !isGhost ? `translate(${dragOffset.x}px, ${dragOffset.y}px)` : undefined,
+          boxShadow: isGhost ? '0 0 0 2px #3B82F6, 0 8px 24px rgba(59,130,246,0.15)' : undefined,
         }}
-        onMouseDown={handleMouseDown}
-        onClick={() => {
+        onMouseDown={isGhost ? undefined : handleMouseDown}
+        onClick={isGhost ? undefined : () => {
           logUserAction('노드 선택', { nodeId });
           onNodeSelect(nodeId);
         }}
@@ -243,8 +255,9 @@ const FlowNode = ({
                     >
                       <option value="wait">대기중 (1)</option>
                       <option value="do">진행중 (2)</option>
-                      <option value="complete">완료/불가 (3)</option>
+                      <option value="complete">완료 (3)</option>
                       <option value="fail">실패</option>
+                      <option value="close">종료</option>
                     </select>
                   </div>
 

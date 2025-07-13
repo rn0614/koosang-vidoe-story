@@ -16,6 +16,8 @@ interface WorkflowContextType {
   getConnections: () => WorkflowConnection[];
   replaceAll: (nodes: WorkflowNode[], connections: WorkflowConnection[]) => void;
   subscribeToNode: (nodeId: string, callback: () => void) => () => void;
+  currentTemplateId: number | null;
+  setCurrentTemplateId: (id: number | null) => void;
 }
 
 const WorkflowContext = createContext<WorkflowContextType | null>(null);
@@ -38,6 +40,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
   );
   
   const [connections, setConnections] = useState<WorkflowConnection[]>(initialConnections);
+  const [currentTemplateId, setCurrentTemplateId] = useState<number | null>(null);
   
   // 구독자 관리 (Observer 패턴)
   const nodeSubscribers = useRef<Map<string, Set<() => void>>>(new Map());
@@ -61,23 +64,6 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     });
   }, []);
   
-  // 노드 업데이트
-  const updateNode = useCallback((nodeId: string, updatedData: Partial<WorkflowNode>) => {
-    console.debug('[USER_ACTION] 노드 업데이트', { nodeId, updatedData });
-    
-    setNodesMap(prev => {
-      const newMap = new Map(prev);
-      const existingNode = newMap.get(nodeId);
-      if (!existingNode) return prev;
-      
-      newMap.set(nodeId, { ...existingNode, ...updatedData });
-      return newMap;
-    });
-    
-    // 해당 노드 구독자들에게 알림
-    notifyNodeSubscribers([nodeId]);
-  }, [notifyNodeSubscribers]);
-  
   // 활성화 조건 체크
   const checkActivationCondition = useCallback((nodeId: string, nodesMap: Map<string, WorkflowNode>) => {
     const node = nodesMap.get(nodeId);
@@ -92,6 +78,52 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
       return requiredIds.some(id => nodesMap.get(id)?.state === 'complete');
     }
   }, []);
+  
+  // 노드 업데이트
+  const updateNode = useCallback((nodeId: string, updatedData: Partial<WorkflowNode>) => {
+    console.debug('[USER_ACTION] 노드 업데이트', { nodeId, updatedData });
+    
+    setNodesMap(prev => {
+      const newMap = new Map(prev);
+      const existingNode = newMap.get(nodeId);
+      if (!existingNode) return prev;
+      
+      const prevState = existingNode.state;
+      const nextState = updatedData.state ?? prevState;
+
+      newMap.set(nodeId, { ...existingNode, ...updatedData });
+
+      // 상태가 do → complete로 바뀌는 경우 다음 노드 활성화 체크
+      if (prevState === 'do' && nextState === 'complete') {
+        (existingNode.nextFlow || []).forEach(nextId => {
+          const shouldActivate = checkActivationCondition(nextId, newMap);
+          const nextNode = newMap.get(nextId);
+          if (shouldActivate && nextNode) {
+            // 다음 노드 활성화
+            newMap.set(nextId, { ...nextNode, state: 'do' });
+
+            // any 조건일 때 나머지 이전 노드들 close 처리
+            if (nextNode.activateConditionType === 'any') {
+              const prevIds = nextNode.activateCondition || [];
+              prevIds.forEach(prevId => {
+                if (prevId !== nodeId) {
+                  const prevNode = newMap.get(prevId);
+                  if (prevNode && prevNode.state !== 'complete' && prevNode.state !== 'close') {
+                    newMap.set(prevId, { ...prevNode, state: 'close' });
+                  }
+                }
+              });
+            }
+          }
+        });
+      }
+      
+      return newMap;
+    });
+    
+    // 해당 노드 구독자들에게 알림
+    notifyNodeSubscribers([nodeId]);
+  }, [checkActivationCondition, notifyNodeSubscribers]);
   
   // 상태 변경 처리 (Observer 패턴 적용)
   const handleStatusChange = useCallback((nodeId: string, status: WorkflowNodeState) => {
@@ -268,7 +300,21 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     setConnections(connections);
   }, []);
   
-  // 선택적 구독을 위한 셀렉터들
+  // 셀렉터들 useCallback으로 감싸기
+  const getNode = useCallback((nodeId: string) => nodesMap.get(nodeId), [nodesMap]);
+  const getAllNodeIds = useCallback(() => Array.from(nodesMap.keys()), [nodesMap]);
+  const getConnections = useCallback(() => connections, [connections]);
+  const getRelatedNodes = useCallback((nodeId: string) => {
+    const node = nodesMap.get(nodeId);
+    if (!node) return [];
+    const relatedIds = [
+      ...(node.frontFlow || []),
+      ...(node.nextFlow || [])
+    ];
+    return relatedIds.map(id => nodesMap.get(id)).filter(Boolean) as WorkflowNode[];
+  }, [nodesMap]);
+
+  // contextValue에서 nodesMap, connections 제거, 셀렉터는 useCallback 사용
   const contextValue = useMemo<WorkflowContextType>(() => ({
     updateNode,
     handleStatusChange,
@@ -277,26 +323,18 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
     addConnection,
     removeConnection,
     replaceAll,
-    
-    // 셀렉터들
-    getNode: (nodeId: string) => nodesMap.get(nodeId),
-    getRelatedNodes: (nodeId: string) => {
-      const node = nodesMap.get(nodeId);
-      if (!node) return [];
-      
-      const relatedIds = [
-        ...(node.frontFlow || []),
-        ...(node.nextFlow || [])
-      ];
-      
-      return relatedIds.map(id => nodesMap.get(id)).filter(Boolean) as WorkflowNode[];
-    },
-    getAllNodeIds: () => Array.from(nodesMap.keys()),
-    getConnections: () => connections,
+    getNode,
+    getRelatedNodes,
+    getAllNodeIds,
+    getConnections,
     subscribeToNode,
+    currentTemplateId,
+    setCurrentTemplateId,
   }), [
     updateNode, handleStatusChange, addNode, deleteNode, 
-    addConnection, removeConnection, nodesMap, connections, replaceAll, subscribeToNode
+    addConnection, removeConnection, replaceAll, subscribeToNode,
+    getNode, getRelatedNodes, getAllNodeIds, getConnections,
+    currentTemplateId, setCurrentTemplateId
   ]);
   
   return (
@@ -308,7 +346,7 @@ export const WorkflowProvider: React.FC<WorkflowProviderProps> = ({
 
 // 선택적 구독 훅들
 export const useWorkflowContext = () => {
-  const context = useContext(WorkflowContext);
+const context = useContext(WorkflowContext);
   if (!context) {
     throw new Error('useWorkflowContext must be used within WorkflowProvider');
   }

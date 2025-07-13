@@ -1,4 +1,4 @@
-export type WorkflowNodeState = 'wait' | 'do' | 'complete' | 'fail';
+export type WorkflowNodeState = 'wait' | 'do' | 'complete' | 'fail' | 'close';
 
 export interface WorkflowNode {
   id: string;

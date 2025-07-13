@@ -21,7 +21,11 @@
     "workflow": "Workflow",
     "template": "Template",
     "personal": "Personal",
-    "container": "Container"
+    "container": "Container",
+    "Frontend": "Frontend",
+    "Backend": "Backend",
+    "CICD": "CICD",
+    "my-workflow": "My flow"
   },
   "note_edit": {
     "edit": "Edit",

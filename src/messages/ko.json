@@ -21,7 +21,11 @@
     "workflow": "워크플로우",
     "template": "템플릿",
     "personal": "개인",
-    "container": "컨테이너"
+    "container": "컨테이너",
+    "Frontend": "프론트엔드",
+    "Backend": "백엔드",
+    "CICD": "CI/CD",
+    "my-workflow": "내 플로우"
   },
   "note_edit": {
     "edit": "수정",

@@ -16,14 +16,24 @@ export const SIDEBAR_MENU: MenuItem[] = [
   },*/
   {
     clickable: false,
-    href: '/',
+    href: '/rag',
     labelKey: 'blog',
     icon: null,
     children: [
       {
         clickable: true,
-        href: '/rag',
-        labelKey: 'rag',
+        href: '/rag?tags=Front',
+        labelKey: 'Frontend',
+      },
+      {
+        clickable: true,
+        href: '/rag?tags=Back',
+        labelKey: 'Backend',
+      },
+      {
+        clickable: true,
+        href: '/rag?tags=CICD',
+        labelKey: 'CICD',
       },
       {
         clickable: true,
@@ -55,30 +65,25 @@ export const SIDEBAR_MENU: MenuItem[] = [
       // { href: '/game/mincraft', labelKey: 'mincraft' },
     ],
   },
-  {
-    clickable: true,
-    href: '/note',
-    labelKey: 'note',
-    icon: null,
-  },
-  {
-    clickable: false,
-    href: '/alarm',
-    labelKey: 'alarm',
-    icon: null,
-    children: [
-      {
-        clickable: true,
-        href: '/alarm/company',
-        labelKey: 'company',
-      },
-      {
-        clickable: true,
-        href: '/alarm/customer',
-        labelKey: 'customer',
-      },
-    ],
-  },
+  // 일시적 제한
+  // {
+  //   clickable: false,
+  //   href: '/alarm',
+  //   labelKey: 'alarm',
+  //   icon: null,
+  //   children: [
+  //     {
+  //       clickable: true,
+  //       href: '/alarm/company',
+  //       labelKey: 'company',
+  //     },
+  //     {
+  //       clickable: true,
+  //       href: '/alarm/customer',
+  //       labelKey: 'customer',
+  //     },
+  //   ],
+  // },
   {
     clickable: false,
     href: '/workflow',
@@ -89,6 +94,11 @@ export const SIDEBAR_MENU: MenuItem[] = [
         clickable: true,
         href: '/workflow/template',
         labelKey: 'template',
+      },
+      {
+        clickable: true,
+        href: '/workflow/my-workflow',
+        labelKey: 'my-workflow',
       },
     ],
   },
