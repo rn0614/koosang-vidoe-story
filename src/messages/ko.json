@@ -37,6 +37,7 @@
     "title": "대시보드",
     "description": "최근에 작성한 obsidian 노트입니다",
     "recent_my_rag_note": "최근 내 RAG 노트",
-    "recent_ai_news_from_google": "최근 AI 뉴스"
+    "recent_ai_news_from_google": "최근 AI 뉴스",
+    "ai_news_description": "크롤링한 AI 뉴스입니다."
   }
 }

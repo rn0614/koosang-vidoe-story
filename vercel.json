@@ -1,0 +1,9 @@
+{
+  "cron": [
+    {
+      "path": "/api/crawl-tech-news",
+      "schedule": "0 0 * * *",
+      "method": "POST"
+    }
+  ]
+}

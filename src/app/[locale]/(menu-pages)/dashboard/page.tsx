@@ -76,7 +76,7 @@ export default function DashboardPage() {
         <Card className="col-span-2">
           <CardHeader>
             <CardTitle>{t('dashboard.recent_ai_news_from_google')}</CardTitle>
-            <CardDescription>{t('dashboard.description')}</CardDescription>
+            <CardDescription>{t('dashboard.ai_news_description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <NewsTop3Table />

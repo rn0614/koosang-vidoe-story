@@ -37,6 +37,7 @@
     "title": "Dashboard",
     "description": "This is my obisidian note.",
     "recent_my_rag_note": "Recent My RAG Note",
-    "recent_ai_news_from_google": "Recent AI News from Google"
+    "recent_ai_news_from_google": "Recent AI News from Google",
+    "ai_news_description": "This is Crawled AI News."
   }
 }
