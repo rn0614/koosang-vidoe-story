@@ -3,6 +3,8 @@ import React, { useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
+import { SidebarMenu } from '@/components/layout/sidebar-menu';
+import { SIDEBAR_MENU } from '@/constants/menu';
 
 const MENUS = [
   { key: 'alarm', label: 'Alarm', href: '/alarm' },
@@ -44,18 +46,7 @@ export default function MenuPage() {
   return (
     <div className="mx-auto w-full max-w-md p-4 space-y-4">
       <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">메뉴</h2>
-      {MENUS.map((menu) => (
-        <Card key={menu.key} className="hover:shadow-lg transition">
-          <Link href={menu.href} onClick={(e) => handleMenuClick(e, menu)}>
-            <CardHeader>
-              <CardTitle>{menu.label}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full">이동</Button>
-            </CardContent>
-          </Link>
-        </Card>
-      ))}
+      <SidebarMenu menu={SIDEBAR_MENU} />
     </div>
   );
 } 

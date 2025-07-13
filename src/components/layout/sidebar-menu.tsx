@@ -11,7 +11,9 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
   const router = useRouter();
   const isWebView = typeof window !== 'undefined' && window.ReactNativeWebView;
 
-  const mainMenuRoutes = MAIN_MENU.map((item) => item.href);
+  const isMainMenu = (href: string) => {
+    return ['/','/dashboard','/rag','/game','/container','/menu'].includes(href);
+  };
 
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
@@ -27,7 +29,7 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
       const message = {
         type: 'ROUTER_EVENT',
         data: href,
-        navigationMode: 'tab_switch',
+        navigationMode: isMainMenu(href) ? 'tab_switch' : 'push',
         isMainMenu: true,
       };
 
@@ -39,13 +41,14 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
 
   const handleWebViewClick = useCallback(
     (e: React.MouseEvent, item: MenuItem) => {
-      if (isWebView && mainMenuRoutes.includes(item.href)) {
+      if (isWebView) {
+        e.preventDefault();
         sendMainMenuMessage(item.href);
       } else {
         router.push(item.href);
       }
     },
-    [sendMainMenuMessage],
+    [isWebView,sendMainMenuMessage],
   );
 
   return (

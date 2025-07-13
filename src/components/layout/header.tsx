@@ -14,9 +14,6 @@ export default async function Header() {
       <div className="flex w-full items-center justify-between p-3 px-5 text-sm">
         <div className="flex items-center gap-5 font-semibold">
           <HeaderMenuButton platform={platform} />
-          <Link href="/" className="font-semibold">
-            koo logo
-          </Link>
         </div>
         <div className="flex items-center gap-2">
           <HeaderAuth />
