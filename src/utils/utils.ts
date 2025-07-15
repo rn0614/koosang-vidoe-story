@@ -108,5 +108,7 @@ export function cn(...inputs: ClassValue[]) {
 
 
 export function getSupabaseImageUrl(bucket: string, filename: string) {
-  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${filename.replace(/^\/+/, '')}`;
+  const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${filename.replace(/^\/+/, '')}`;
+  console.warn(url);
+  return url;
 }
