@@ -13,10 +13,18 @@ import {
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { getSupabaseImageUrl } from '@/utils/utils';
 
 function parseTagsParam(tagsParam: string | null): string[] {
   if (!tagsParam) return [];
   return tagsParam.split(',').map((t) => t.trim()).filter(Boolean);
+}
+
+// 썸네일 경로에서 파일명만 추출해 Supabase URL로 변환
+function getThumbnailUrl(thumbnail?: string) {
+  if (!thumbnail) return undefined;
+  const filename = thumbnail.split('/').pop()!;
+  return getSupabaseImageUrl('rag-image', filename);
 }
 
 export default function DocumentList() {
@@ -167,11 +175,7 @@ export default function DocumentList() {
                   <CardContent>
                     <div className="flex aspect-[5/4] w-full items-center justify-center overflow-hidden bg-gray-800">
                       <Image
-                        src={
-                          document.metadata.thumbnail
-                            ? document.metadata.thumbnail
-                            : '/image/no-image-found.png'
-                        }
+                        src={getThumbnailUrl(document.metadata.thumbnail)|| '/image/no-image-found.png'}
                         alt={document.metadata.title}
                         width={300}
                         height={240}

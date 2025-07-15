@@ -1,3 +1,4 @@
+import { getSupabaseImageUrl } from "@/utils/utils";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
 // Excalidraw 임베드 컴포넌트
@@ -33,7 +34,12 @@ function preprocessExcalidraw(source: string): string {
 
 const components = {
   ExcalidrawEmbed, // 커스텀 컴포넌트 추가
-  img: (props: any) => <img {...props} src={props.src.replace("public", "")} loading="lazy" alt={props.alt || ""}/>, //public 주소만 제외
+  img: (props: any) => {
+    const src = props.src.startsWith('http')
+      ? props.src
+      : getSupabaseImageUrl('rag-image', props.src.split('/').pop()!);
+    return <img {...props} src={src} loading="lazy" alt={props.alt || ""} />;
+  },
   a: (props: any) => {
     // href가 없는 경우 처리
     if (!props.href) {

@@ -74,8 +74,11 @@ function decodeHtml(htmlText: string) {
 
 export async function extractLinks(url: string, linkRegex: RegExp): Promise<{ links: { url: string; text: string }[] }> {
   // 1. fetch로 html 가져오기
+  console.log('extractLinks1');
   const res = await fetch(url);
+  console.log('extractLinks2', res);
   const htmlText = await res.text();
+  console.log('extractLinks3', htmlText);
 
   // 2. 링크 추출 및 디코딩
   // const linkRegex = /<li><a href="(https?:\/\/[^\"]+)"[^>]*>([^<]+)<\/a>\s*\[[^\]]+\]\s*(?!(?:<a href="\/bruticle\/[^>]+>|\[<a href="ㅎ\\https?:\/\/news\\.youcomvinator\\.com[^>]+>\]))/g;
@@ -83,13 +86,14 @@ export async function extractLinks(url: string, linkRegex: RegExp): Promise<{ li
   const result = {
     links: [] as { url: string; text: string }[],
   };
+  console.log('extractLinks4', result);
 
   while ((match = linkRegex.exec(htmlText)) !== null) {
     const url = match[1];
     const text = decodeHtml(match[2]);
     result.links.push({ url, text });
   }
-
+  console.log('extractLinks5', result);
   // 최종 결과 출력
   console.log(`Total links extracted: ${result.links.length}`);
   console.log(JSON.stringify([result], null, 2));
@@ -100,4 +104,9 @@ export async function extractLinks(url: string, linkRegex: RegExp): Promise<{ li
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+
+export function getSupabaseImageUrl(bucket: string, filename: string) {
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${filename.replace(/^\/+/, '')}`;
 }
