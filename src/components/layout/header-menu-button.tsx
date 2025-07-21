@@ -1,6 +1,7 @@
 import { DrawerTrigger } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
+import Image from 'next/image';
 
 export default function HeaderMenuButton({ platform }: { platform: string }) {
   if (platform === 'webview') {
@@ -13,8 +14,17 @@ export default function HeaderMenuButton({ platform }: { platform: string }) {
           <span className="text-2xl">☰</span>
         </Button>
       </DrawerTrigger>
-      <Link href="/" className="font-semibold">
-        koo logo
+      <Link href="/" className="font-semibold flex items-center">
+        <Image
+          src="/image/kooLogo.png"
+          alt="Koo Logo"
+          width={50}
+          height={10}
+          style={{
+            paddingTop: '10px',
+            objectFit: 'contain',
+          }}
+        />
       </Link>
     </>
   );
