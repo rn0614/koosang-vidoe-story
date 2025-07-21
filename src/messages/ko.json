@@ -25,7 +25,11 @@
     "Frontend": "프론트엔드",
     "Backend": "백엔드",
     "CICD": "CI/CD",
-    "my-workflow": "내 플로우"
+    "my-workflow": "내 플로우",
+    "All": "전체",
+    "3D": "3D",
+    "car3D": "차3D",
+    "etc": "기타"
   },
   "note_edit": {
     "edit": "수정",

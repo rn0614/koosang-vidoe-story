@@ -22,6 +22,11 @@ export const SIDEBAR_MENU: MenuItem[] = [
     children: [
       {
         clickable: true,
+        href: '/rag',
+        labelKey: 'All',
+      },
+      {
+        clickable: true,
         href: '/rag?tags=Front',
         labelKey: 'Frontend',
       },
@@ -34,11 +39,6 @@ export const SIDEBAR_MENU: MenuItem[] = [
         clickable: true,
         href: '/rag?tags=CICD',
         labelKey: 'CICD',
-      },
-      {
-        clickable: true,
-        href: '/rag/note',
-        labelKey: 'note',
       },
     ],
   },
@@ -103,9 +103,35 @@ export const SIDEBAR_MENU: MenuItem[] = [
     ],
   },
   {
-    clickable: true,
-    href: '/container',
-    labelKey: 'container',
+    clickable: false,
+    href: '/3d',
+    labelKey: '3D',
     icon: null,
+    children: [
+      {
+        clickable: true,
+        href: '/car3D',
+        labelKey: 'car3D',
+      },
+      {
+        clickable: true,
+        href: '/container',
+        labelKey: 'container',
+        icon: null,
+      },
+    ],
+  },
+  {
+    clickable: false,
+    href: '/etc',
+    labelKey: 'etc',
+    icon: null,
+    children: [
+      {
+        clickable: true,
+        href: '/note',
+        labelKey: 'note',
+      },
+    ],
   },
 ];

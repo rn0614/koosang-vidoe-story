@@ -25,7 +25,11 @@
     "Frontend": "Frontend",
     "Backend": "Backend",
     "CICD": "CICD",
-    "my-workflow": "My flow"
+    "my-workflow": "My flow" ,
+    "All": "All",
+    "3D": "3D",
+    "car3D": "Car3D",
+    "etc": "Etc"
   },
   "note_edit": {
     "edit": "Edit",
