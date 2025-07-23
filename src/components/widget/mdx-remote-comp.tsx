@@ -1,5 +1,10 @@
+"use client";
+
 import { getSupabaseImageUrl } from "@/utils/utils";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import { MDXRemote } from "next-mdx-remote";
+import { serialize } from 'next-mdx-remote/serialize';
+import remarkGfm from 'remark-gfm';
+import { useEffect, useState } from 'react';
 
 // Excalidraw 임베드 컴포넌트
 function ExcalidrawEmbed({ filename }: { filename: string }) {
@@ -78,10 +83,34 @@ export default function MdxRenderer({
 }: {
   source: string;
 }) {
-  // excalidraw 임베딩 전처리
-  const processedSource = preprocessExcalidraw(source);
-  
+  const [serializedSource, setSerializedSource] = useState<any>(null);
+
+  useEffect(() => {
+    const processSource = async () => {
+      // excalidraw 임베딩 전처리
+      const processedSource = preprocessExcalidraw(source);
+      
+      // MDX를 serialize
+      const serialized = await serialize(processedSource, {
+        mdxOptions: {
+          remarkPlugins: [remarkGfm],
+        },
+      });
+      
+      setSerializedSource(serialized);
+    };
+
+    processSource();
+  }, [source]);
+
+  if (!serializedSource) {
+    return <div>로딩중...</div>;
+  }
+
   return (
-    <MDXRemote source={processedSource} components={components}/>
+    <MDXRemote 
+      {...serializedSource} 
+      components={components}
+    />
   );
 }
