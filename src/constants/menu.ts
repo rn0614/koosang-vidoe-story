@@ -40,6 +40,11 @@ export const SIDEBAR_MENU: MenuItem[] = [
         href: '/rag?tags=CICD',
         labelKey: 'CICD',
       },
+      {
+        clickable: true,
+        href: '/rag?tags=문제해결',
+        labelKey: '문제해결',
+      },
     ],
   },
   /*{
