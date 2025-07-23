@@ -43,7 +43,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
       {
         clickable: true,
         href: '/rag?tags=문제해결',
-        labelKey: '문제해결',
+        labelKey: 'problem',
       },
     ],
   },
