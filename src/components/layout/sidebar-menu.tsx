@@ -12,7 +12,9 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
   const isWebView = typeof window !== 'undefined' && window.ReactNativeWebView;
 
   const isMainMenu = (href: string) => {
-    return ['/','/dashboard','/rag','/game','/container','/menu'].includes(href);
+    // 쿼리스트링을 제거한 기본 경로만 체크
+    const basePath = href.split('?')[0];
+    return ['/','/dashboard','/rag','/game','/3d','/menu'].includes(basePath);
   };
 
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});

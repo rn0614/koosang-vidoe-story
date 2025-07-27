@@ -8,7 +8,10 @@ export async function middleware(request: NextRequest) {
   await updateSession(request);
 
   // 국제화 라우팅 제외, middleware 는 적용해야하면서 국제화 라우팅 제외
-  if (!request.nextUrl.pathname.startsWith('/api')) {
+  if (
+    !request.nextUrl.pathname.startsWith('/api') &&
+    !request.nextUrl.pathname.startsWith('/assets')
+  ) {
     return createMiddleware(routing)(request);
   }
   return;
