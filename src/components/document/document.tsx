@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useInfiniteDocuments } from '@/hooks/useDocumentsInfinite';
 import { Link } from '@/i18n/navigation';
 import { useRef, useCallback, useMemo } from 'react';
@@ -14,10 +14,14 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getSupabaseImageUrl } from '@/utils/utils';
+import { TagWithCount, Document } from '@/shared/types/document';
 
 function parseTagsParam(tagsParam: string | null): string[] {
   if (!tagsParam) return [];
-  return tagsParam.split(',').map((t) => t.trim()).filter(Boolean);
+  return tagsParam
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean);
 }
 
 // 썸네일 경로에서 파일명만 추출해 Supabase URL로 변환
@@ -33,24 +37,43 @@ export default function DocumentList() {
   const tagsParam = searchParams.get('tags');
   const selectedTags = useMemo(() => parseTagsParam(tagsParam), [tagsParam]);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteDocuments({ tags: selectedTags });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteDocuments({ tags: selectedTags });
 
   // API에서 받은 documents와 tags
   const documents = data ? data.pages.flatMap((page) => page.documents) : [];
-  const tags = data && data.pages.length > 0 ? data.pages[0].tags : [];
+
+  // 태그별 출현 횟수 계산
+  const tagsWithCount = useMemo((): TagWithCount[] => {
+    if (!data || data.pages.length === 0) return [];
+
+    const tagCounts = data.pages
+      .flatMap((page) => page.documents)
+      .map((doc) => doc.metadata?.tags || [])
+      .flat()
+      .reduce(
+        (acc, tag) => {
+          acc[tag] = (acc[tag] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
+    return Object.entries(tagCounts)
+      .map(([tag, count]) => ({
+        tag,
+        count: count as number,
+      }))
+      .sort((a, b) => b.count - a.count); // count 기준 내림차순 정렬
+  }, [data]);
 
   // WebView 감지
-  const isWebView = typeof window !== 'undefined' && (window as any).ReactNativeWebView;
+  const isWebView =
+    typeof window !== 'undefined' && (window as any).ReactNativeWebView;
 
   // WebView 메시지 전송 함수
   const sendWebViewMessage = useCallback(
-    (document: any) => {
+    (document: Document) => {
       if (isWebView) {
         const message = {
           type: 'ROUTER_EVENT',
@@ -140,14 +163,16 @@ export default function DocumentList() {
           >
             전체
           </Button>
-          {tags.map((tag: string) => (
+          {tagsWithCount.map((tagWithCount) => (
             <Button
-              key={tag}
-              variant={selectedTags.includes(tag) ? 'default' : 'outline'}
-              onClick={() => handleTagClick(tag)}
+              key={tagWithCount.tag}
+              variant={
+                selectedTags.includes(tagWithCount.tag) ? 'default' : 'outline'
+              }
+              onClick={() => handleTagClick(tagWithCount.tag)}
               className="relative"
             >
-              {tag}
+              {tagWithCount.tag} ({tagWithCount.count})
             </Button>
           ))}
         </div>
@@ -175,7 +200,10 @@ export default function DocumentList() {
                   <CardContent>
                     <div className="flex aspect-[5/4] w-full items-center justify-center overflow-hidden bg-gray-800">
                       <Image
-                        src={getThumbnailUrl(document.metadata.thumbnail)|| '/image/no-image-found.png'}
+                        src={
+                          getThumbnailUrl(document.metadata.thumbnail) ||
+                          '/image/no-image-found.png'
+                        }
                         alt={document.metadata.title}
                         width={300}
                         height={240}

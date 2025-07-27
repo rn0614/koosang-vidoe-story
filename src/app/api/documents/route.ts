@@ -58,12 +58,23 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // 현재 문서들의 태그 목록 추출
-  const tagsSet = new Set<string>(documents.map(doc => doc.metadata?.tags).flat());
-  const tags = Array.from(tagsSet);
+  // 전체 문서에서 태그별 출현 횟수 계산
+  const tagCounts = documents
+    .map(doc => doc.metadata?.tags || [])
+    .flat()
+    .reduce((acc, tag) => {
+      acc[tag] = (acc[tag] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+  // 태그와 출현 횟수를 배열로 변환
+  const tagsWithCount = Object.entries(tagCounts).map(([tag, count]) => ({
+    tag,
+    count: count as number
+  })).sort((a, b) => b.count - a.count); // count 기준 내림차순 정렬
 
   // hasMore: 다음 페이지가 있는지 여부 (필터링된 count 기준)
   const hasMore = documents.length === pageSize && (filteredCount ? to + 1 < filteredCount : true);
 
-  return NextResponse.json({ documents, hasMore, count: filteredCount, totalCount, recentCount, tags });
+  return NextResponse.json({ documents, hasMore, count: filteredCount, totalCount, recentCount, tags: tagsWithCount });
 }
