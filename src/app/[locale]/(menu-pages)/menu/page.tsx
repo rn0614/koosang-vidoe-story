@@ -1,8 +1,5 @@
 'use client';
 import React, { useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
 import { SidebarMenu } from '@/components/layout/sidebar-menu';
 import { SIDEBAR_MENU } from '@/constants/menu';
 
