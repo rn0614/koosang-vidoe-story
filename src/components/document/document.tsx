@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getSupabaseImageUrl } from '@/utils/utils';
 import { TagWithCount, Document } from '@/shared/types/document';
+import { Loader2 } from 'lucide-react';
 
 function parseTagsParam(tagsParam: string | null): string[] {
   if (!tagsParam) return [];
@@ -177,7 +178,12 @@ export default function DocumentList() {
           ))}
         </div>
       </div>
-      {documents.length === 0 ? (
+      {isLoading && (
+        <div className="flex justify-center">
+          <Loader2 className="h-4 w-4 animate-spin" />
+        </div>
+      )}
+      {!isLoading && documents.length === 0 ? (
         <div className="text-gray-400 dark:text-gray-500">노트가 없습니다.</div>
       ) : (
         <div className="flex flex-1 flex-col gap-4">
