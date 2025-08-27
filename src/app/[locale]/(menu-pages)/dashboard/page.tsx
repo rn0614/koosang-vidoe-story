@@ -1,21 +1,21 @@
-import { AiCarousel } from '@/components/home/ai-carousel';
-import { RagTop3Table } from '@/components/home/rag-top3';
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+// FSD Pattern imports - ordered by layer hierarchy
 import { useTranslations } from 'next-intl';
 import { Metadata } from 'next';
-import { RagTrendChart } from '@/components/home/rag-trend-chart';
-import { AiImageTrendChart } from '@/components/home/ai-image-trend-chart';
-import { NewsCountCard } from '@/components/home/news-count-card';
-import { NewsTop3Table } from '@/components/home/news-top3';
-import { RagPostCountCard } from '@/components/home/rag-post-count-card';
-import { AiImageCountCard } from '@/components/home/ai-image-count-card';
+
+// Shared Layer
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
+
+// Features Layer
+import {
+  AiCarousel,
+  AiImageCountCard,
+  AiImageTrendChart,
+  NewsCountCard,
+  NewsTop3Table,
+  RagPostCountCard,
+  RagTop3Table,
+  RagTrendChart,
+} from '~/features/dashboard';
 export const metadata: Metadata = {
   title: 'Dashboard | 서비스명',
   description: '대시보드에서 최근 활동, 통계, AI 뉴스 등을 확인하세요.',

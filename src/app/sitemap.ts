@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/shared/lib/supabase/server";
 
 type SitemapItem = {
   url: string;

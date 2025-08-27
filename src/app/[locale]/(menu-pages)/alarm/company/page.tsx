@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { useCompanies } from '@/hooks/useCompanies';
-import { CompanyView } from '@/components/alarm/company-view';
+import { Card, CardContent } from '@/shared/ui/card';
+import { useCompanies } from '@/features/alarm/hooks/useCompanies';
+import { CompanyView } from '@/features/alarm/components/company-view';
 
 export default function CompanyAlarmPage() {
   const {

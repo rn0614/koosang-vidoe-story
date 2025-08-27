@@ -1,0 +1,366 @@
+---
+description: Next.js + Supabase + FSD Architecture Rules
+globs: 
+alwaysApply: true
+---
+
+# Project Context
+Modern web application using Next.js (App Router) + Supabase + Feature-Sliced Design architecture.
+
+## Technology Stack
+- **Framework**: Next.js 14 (App Router)
+- **Backend**: Supabase (Database, Auth, Storage, Edge Functions)
+- **State Management**: Zustand
+- **Data Fetching**: React Query (TanStack Query)
+- **Forms**: React Hook Form + Zod validation
+- **UI**: shadcn/ui + Tailwind CSS
+- **DnD**: react-dnd
+- **Testing**: Jest + React Testing Library
+
+---
+
+## 🔴 CRITICAL RULES - Never Violate
+
+### Security & Data Protection
+```typescript
+// ❌ FORBIDDEN
+const userData = localStorage.getItem('user') // Store sensitive data in localStorage
+const query = `SELECT * FROM users WHERE id = ${userId}` // SQL injection risk
+await supabase.from('users').select('*').eq('id', userId).single() // Without RLS consideration
+
+// ✅ REQUIRED  
+const schema = z.object({ userId: z.string().uuid() })
+const { userId } = schema.parse(request.body) // Always validate inputs
+const { data, error } = await supabase.from('users').select('*').eq('id', userId) // RLS handles security
+if (error) throw new Error(`Database error: ${error.message}`)
+```
+
+### TypeScript Enforcement
+```typescript
+// ❌ FORBIDDEN
+export const fetchUser = async (id) => { // No types
+  const data: any = await api.get(`/users/${id}`) // Using 'any'
+  return data
+}
+
+// ✅ REQUIRED
+interface User {
+  id: string
+  email: string
+  created_at: string
+}
+
+export const fetchUser = async (id: string): Promise<User | null> => {
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).single()
+  if (error) return null
+  return data
+}
+```
+
+---
+
+## 🟡 REQUIRED RULES - Must Follow
+
+### Directory Structure (FSD + Next.js Hybrid)
+
+- **src**: Source root directory
+- **src/app**: Next.js App Router (pages, layouts, loading, error, etc.)
+- **src/components/ui**: shadcn/ui base components (button, input, dialog, etc.)
+- **src/constants**: Global constants and configuration values
+- **src/hooks**: Reusable custom hooks across features
+- **src/lib**: Global utility functions, helpers, and configurations
+- **src/types**: Global TypeScript type definitions and interfaces
+- **src/supabase**: Supabase client configuration and database types
+- **src/features/[featureName]/components/***: Feature-specific UI components
+- **src/features/[featureName]/hooks/***: Feature-specific custom hooks  
+- **src/features/[featureName]/lib/***: Feature-specific utilities and helpers
+- **src/features/[featureName]/types/***: Feature-specific TypeScript types
+- **src/features/[featureName]/constants/***: Feature-specific constants
+- **src/features/[featureName]/api.ts**: Feature API functions and data fetching
+- **src/features/[featureName]/store.ts**: Feature-specific Zustand store (optional)
+- **src/widgets/[widgetName]**: Composite UI blocks (header, sidebar, footer, etc.)
+- **src/entities/[entityName]**: Business data models and related operations
+
+### Component Pattern (Mandatory)
+```typescript
+// ✅ REQUIRED PATTERN
+interface ComponentProps {
+  title: string
+  onAction?: () => void
+  className?: string
+}
+
+export const Component = ({ title, onAction, className }: ComponentProps) => {
+  return (
+    <div className={cn("base-styles", className)}>
+      <h1>{title}</h1>
+      {onAction && <Button onClick={onAction}>Action</Button>}
+    </div>
+  )
+}
+
+// Export types alongside components
+export type { ComponentProps }
+```
+
+### Supabase Integration Pattern
+```typescript
+// ✅ REQUIRED: Consistent API Response
+interface ApiResponse<T> {
+  data: T | null
+  error: string | null
+  count?: number
+}
+
+// ✅ REQUIRED: Database operation pattern
+export const fetchUsers = async (): Promise<ApiResponse<User[]>> => {
+  try {
+    const { data, error, count } = await supabase
+      .from('users')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+    
+    if (error) throw error
+    return { data: data || [], error: null, count: count || 0 }
+  } catch (error) {
+    return { data: null, error: error.message }
+  }
+}
+
+// ✅ REQUIRED: React Query integration
+export const useUsers = () => {
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
+```
+
+### State Management (Zustand Pattern)
+```typescript
+// ✅ REQUIRED PATTERN
+interface UserStore {
+  users: User[]
+  isLoading: boolean
+  error: string | null
+  
+  // Actions
+  fetchUsers: () => Promise<void>
+  addUser: (user: Omit<User, 'id'>) => Promise<void>
+  updateUser: (id: string, updates: Partial<User>) => Promise<void>
+}
+
+export const useUserStore = create<UserStore>((set, get) => ({
+  users: [],
+  isLoading: false,
+  error: null,
+  
+  fetchUsers: async () => {
+    set({ isLoading: true, error: null })
+    const result = await fetchUsers()
+    set({ 
+      users: result.data || [], 
+      error: result.error,
+      isLoading: false 
+    })
+  },
+  
+  // Implement other actions...
+}))
+```
+
+### Import Organization (Strict Order)
+```typescript
+// 1. React and Next.js
+import React from 'react'
+import { NextPage } from 'next'
+import { useRouter } from 'next/navigation'
+
+// 2. External libraries
+import { useQuery } from '@tanstack/react-query'
+import { create } from 'zustand'
+
+// 3. Internal (FSD layer order: shared -> entities -> features -> widgets -> app)
+import { Button } from '~/shared/ui/button'
+import { User } from '~/entities/user'
+import { UserProfile } from '~/features/user-profile'
+import { Header } from '~/widgets/header'
+
+// 4. Relative imports
+import './component.css'
+```
+
+---
+
+## 🔵 PREFERRED RULES - Best Practices
+
+### Performance Optimization
+```typescript
+// Use React.memo for expensive components
+export const ExpensiveComponent = React.memo(({ data }: Props) => {
+  const processedData = useMemo(() => heavyCalculation(data), [data])
+  return <div>{processedData}</div>
+})
+
+// Optimize React Query
+const useOptimizedQuery = (id: string) => {
+  return useQuery({
+    queryKey: ['entity', id],
+    queryFn: () => fetchEntity(id),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 15 * 60 * 1000,    // 15 minutes  
+  })
+}
+```
+
+### Error Handling
+```typescript
+// Preferred error boundary pattern
+export const FeatureErrorBoundary = ({ children }: { children: React.ReactNode }) => (
+  <ErrorBoundary
+    fallback={<ErrorFallback />}
+    onError={(error, errorInfo) => {
+      console.error('Feature error:', error)
+      // Report to monitoring service
+    }}
+  >
+    {children}
+  </ErrorBoundary>
+)
+```
+
+---
+
+## Database Schema Reference
+
+```typescript
+// Core types for RLS understanding
+interface UserProfile {
+  id: string              // UUID, Primary Key
+  email: string
+  role: 'user' | 'admin' | 'moderator'
+  created_at: string
+}
+
+interface Post {
+  id: string
+  user_id: string         // FK to users.id
+  title: string
+  content: string
+  is_published: boolean   // For public/private content
+  created_at: string
+}
+```
+
+### RLS Patterns (Supabase)
+```sql
+-- User owns their data
+CREATE POLICY "users_own_profile" ON user_profiles
+FOR ALL USING (auth.uid() = id);
+
+-- Public published content
+CREATE POLICY "public_published_posts" ON posts  
+FOR SELECT USING (is_published = true);
+
+-- Users manage their posts
+CREATE POLICY "users_manage_posts" ON posts
+FOR ALL USING (auth.uid() = user_id);
+
+-- Admin full access  
+CREATE POLICY "admin_full_access" ON posts
+FOR ALL USING (
+  EXISTS (
+    SELECT 1 FROM user_profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+);
+```
+
+---
+
+## Decision Trees
+
+### "Should I use Server or Client Component?"
+```
+Is it for initial page data?
+├─ YES → Server Component
+└─ NO → Does it need user interaction?
+    ├─ YES → Client Component
+    └─ NO → Does it need browser APIs?
+        ├─ YES → Client Component  
+        └─ NO → Server Component
+```
+
+### "Where should this code go?" (FSD)
+```
+Is it reusable across features?
+├─ YES → shared/
+└─ NO → Is it business logic?
+    ├─ YES → features/[name]/
+    └─ NO → Is it a composite UI block?
+        ├─ YES → widgets/
+        └─ NO → Is it a data model?
+            ├─ YES → entities/
+            └─ NO → app/ (if app-specific)
+```
+
+---
+
+## Absolute Don'ts
+
+Never do these:
+- Use `any` type (use `unknown` or create proper interfaces)
+- Disable TypeScript strict mode
+- Store sensitive data in localStorage/sessionStorage
+- Skip input validation (always use Zod schemas)
+- Bypass Supabase RLS without proper justification
+- Mix business logic directly in UI components
+- Use useEffect for data fetching (prefer React Query)
+- Ignore error states in UI components
+- Create deeply nested component hierarchies (> 3 levels)
+- Use class components (use functional components + hooks)
+
+## Testing Requirements
+
+```typescript
+// Required test pattern for API functions
+describe('fetchUsers', () => {
+  it('should return users data', async () => {
+    const result = await fetchUsers()
+    
+    expect(result).toHaveProperty('data')
+    expect(result).toHaveProperty('error')
+    expect(Array.isArray(result.data)).toBe(true)
+  })
+  
+  it('should handle errors gracefully', async () => {
+    // Mock error scenario
+    const result = await fetchUsers()
+    
+    if (result.error) {
+      expect(result.data).toBeNull()
+      expect(typeof result.error).toBe('string')
+    }
+  })
+})
+
+// Required component test pattern
+describe('Component', () => {
+  it('renders with required props', () => {
+    render(<Component title="Test Title" />)
+    expect(screen.getByText('Test Title')).toBeInTheDocument()
+  })
+})
+```
+
+## Context for Code Generation
+
+When generating code, always consider:
+1. **Which FSD layer does this belong to?** (shared/features/widgets/entities)
+2. **Is authentication required?** (affects API calls and RLS)
+3. **What's the error handling strategy?**
+4. **Should this be a Server or Client Component?**
+5. **What TypeScript interfaces are needed?**
+6. **Does this need React Query integration?**
+7. **Are there performance considerations?**

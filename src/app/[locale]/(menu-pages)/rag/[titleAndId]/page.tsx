@@ -1,4 +1,4 @@
-import MdxRenderer from '@/components/widget/mdx-remote-comp';
+import {MdxRemoteComp} from '@/widgets/common/mdx-remote-comp';
 import { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: { titleAndId: string } }): Promise<Metadata> {
@@ -54,7 +54,7 @@ export default async function DocumentPage({
     <>
       <div className="drak markdown-body rounded-lg p-4">
         <h1>{document.metadata.title}</h1>
-        <MdxRenderer source={document.content} />
+        <MdxRemoteComp source={document.content} />
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/shared/lib/i18n/navigation';
 
 export default function WorkflowCreatePage() {
   const [templates, setTemplates] = useState<any[]>([]);

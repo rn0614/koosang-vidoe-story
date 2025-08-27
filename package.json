@@ -5,7 +5,10 @@
     "build": "next build",
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx,js,jsx,json,css,scss}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx,js,jsx,json,css,scss}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx,js,jsx,json,css,scss}\"",
+    "posting-sync": "node posting-script/syncMarkdownToSupabase.js",
+    "posting-sync-file": "node posting-script/syncSpecificFile.js",
+    "posting-sync-pattern": "node posting-script/syncSpecificFile.js --pattern"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.0",
@@ -66,6 +69,7 @@
     "@types/react-dom": "18.3.1",
     "@types/three": "^0.176.0",
     "@types/uuid": "^10.0.0",
+    "dotenv": "^16.3.1",
     "openai": "^4.98.0",
     "postcss": "8.4.49",
     "prettier": "3.5.3",

@@ -1,5 +1,5 @@
 import { ArrowUpRight, InfoIcon } from 'lucide-react';
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/shared/lib/i18n/navigation';
 
 export function SmtpMessage() {
   return (

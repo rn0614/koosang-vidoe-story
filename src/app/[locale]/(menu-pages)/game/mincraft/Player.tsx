@@ -6,7 +6,7 @@ import { useFrame } from "@react-three/fiber"
 import { useKeyboardControls, Line } from "@react-three/drei"
 import { CapsuleCollider, RigidBody, useRapier } from "@react-three/rapier"
 import { Axe } from "./Axe"
-import { usePlayerStore } from "@/store/playerStore"
+import { usePlayerStore } from "@/features/game"
 
 const SPEED = 5
 const AIR_SPEED = 3.5 // 공중 속도를 높여서 차이를 줄임

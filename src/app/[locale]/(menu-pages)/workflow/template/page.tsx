@@ -2,16 +2,16 @@
 'use client';
 import React, { useState, useCallback } from 'react';
 import { Plus } from 'lucide-react';
-import { StateExplanation } from '@/components/workflow/state-eplanation';
-import { WorkflowCanvas } from '@/components/workflow/workflow-canvas';
-import { WorkflowProvider, useWorkflowContext } from '@/contexts/WorkflowContext';
+import { StateExplanation } from '@/features/workflow/components/state-eplanation';
+import { WorkflowCanvas } from '@/features/workflow/components/workflow-canvas';
+import { WorkflowProvider, useWorkflowContext } from '@/features/workflow/context';
 import {
   workflowConnectionMock,
   workflowNodeMock,
 } from '@/__mocks__/work-flow.mock';
-import { WorkflowConnection, WorkflowNode } from '@/shared/types/workflow';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import { WorkflowConnection, WorkflowNode } from '@/entities/workflow/types';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/shared/ui/dropdown-menu';
+import { Button } from '@/shared/ui/button';
 
 // 템플릿 타입
 interface WorkflowTemplate {

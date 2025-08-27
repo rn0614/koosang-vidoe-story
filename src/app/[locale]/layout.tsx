@@ -1,14 +1,14 @@
 import React from 'react';
 import { NextIntlClientProvider } from 'next-intl';
-import { ResponsiveSidebar } from '@/components/layout/responsive-sidebar';
-import { Drawer, DrawerTrigger } from '@/components/ui/drawer';
-import QueryProvider from '@/provider/query-provider';
+import { ResponsiveSidebar } from '@/widgets/layout/responsive-sidebar';
+import { Drawer, DrawerTrigger } from '@/shared/ui/drawer';
+import QueryProvider from '@/shared/lib/provider/query-provider';
 import { ThemeProvider } from 'next-themes';
 import { getMessages } from 'next-intl/server';
 import { Metadata } from 'next';
-import { Toaster } from '@/components/ui/sonner';
-import Footer from '@/components/layout/footer';
-import Header from '@/components/layout/header';
+import { Toaster } from '@/shared/ui/sonner';
+import Footer from '@/widgets/layout/footer';
+import Header from '@/widgets/layout/header';
 
 export const metadata: Metadata = {
   title: 'Blog',

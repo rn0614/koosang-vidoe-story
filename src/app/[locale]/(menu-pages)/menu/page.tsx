@@ -1,7 +1,7 @@
 'use client';
 import React, { useCallback } from 'react';
-import { SidebarMenu } from '@/components/layout/sidebar-menu';
-import { SIDEBAR_MENU } from '@/constants/menu';
+import { SidebarMenu } from '@/widgets/layout/sidebar-menu';
+import { SIDEBAR_MENU } from '@/shared/constants/menu';
 
 const MENUS = [
   { key: 'alarm', label: 'Alarm', href: '/alarm' },

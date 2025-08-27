@@ -1,5 +1,5 @@
-import { createClient } from '@/utils/supabase/server';
-import {Link} from '@/i18n/navigation';
+import { createClient } from '@/shared/lib/supabase/server';
+import {Link} from '@/shared/lib/i18n/navigation';
 
 export default async function GamePage() {
   const supabase = await createClient();

@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect, DragEvent } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import { Checkbox } from "@/shared/ui/checkbox"
+import { Badge } from "@/shared/ui/badge"
+import { Button } from "@/shared/ui/button"
 import { Eye, Settings, GripVertical } from "lucide-react"
 import {
   movementData,

@@ -3,11 +3,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
-import { StateExplanation } from '@/components/workflow/state-eplanation';
-import { WorkflowCanvas } from '@/components/workflow/workflow-canvas';
-import { WorkflowProvider, useWorkflowContext } from '@/contexts/WorkflowContext';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import { StateExplanation } from '@/features/workflow/components/state-eplanation';
+import { WorkflowCanvas } from '@/features/workflow/components/workflow-canvas';
+import { WorkflowProvider, useWorkflowContext } from '@/features/workflow';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/shared/ui/dropdown-menu';
+import { Button } from '@/shared/ui/button';
 
 // 내부 에디터 컴포넌트 (Context 내부에서 실행)
 const FlowEditorContent = () => {

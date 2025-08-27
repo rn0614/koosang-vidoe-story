@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/utils/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useUpdateQuestionTemplate } from '@/hooks/useUpdateQuestionTemplate';
-import { useDeleteQuestionTemplate } from '@/hooks/useDeleteQuestionTemplate';
+import { Card, CardContent } from '@/shared/ui/card';
+import { Button } from '@/shared/ui/button';
+import { Badge } from '@/shared/ui/badge';
+import { createClient } from '@/shared/lib/supabase/client';
+import { useToast } from '@/shared/hooks/use-toast';
+import { Dialog, DialogContent } from '@/shared/ui/dialog';
+import { useUpdateQuestionTemplate } from '@/features/alarm/hooks/useUpdateQuestionTemplate';
+import { useDeleteQuestionTemplate } from '@/features/alarm/hooks/useDeleteQuestionTemplate';
 
 export default function NotificationSchedulePage() {
   const { scheduleId } = useParams();

@@ -1,11 +1,11 @@
 'use client';
 
-import { Link } from '@/i18n/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Link } from '@/shared/lib/i18n/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+import { Button } from '@/shared/ui/button';
 import { Car, Package } from 'lucide-react';
 import { useCallback, useState, useEffect } from 'react';
-import { sendWebViewMessage, isWebView } from '@/utils/mobile-router';
+import { sendWebViewMessage, isWebView } from '@/shared/lib/mobile-router';
 
 export default function Page() {
   const [isWebViewEnv, setIsWebViewEnv] = useState(false);

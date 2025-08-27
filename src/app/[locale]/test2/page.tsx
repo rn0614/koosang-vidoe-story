@@ -14,6 +14,13 @@ export default function Test2PageClient() {
           width="100%"
         />
       </div>
+      <button onClick={() => {
+        fetch('/api/crawl-tech-news', {
+          method: 'POST',
+        })
+      }}>
+        crawl
+      </button>
     </div>
   );
 }

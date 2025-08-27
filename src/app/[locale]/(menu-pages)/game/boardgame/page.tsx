@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { detectPlatform } from '@/utils/user-agent';
+import { detectPlatform } from '@/shared/lib/user-agent';
 
 // 플랫폼 감지 함수 (클라이언트 사이드)
 

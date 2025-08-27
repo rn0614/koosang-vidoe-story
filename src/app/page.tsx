@@ -1,5 +1,3 @@
-import {Link} from '@/i18n/navigation';
-
 export default async function Home() {
   return (
     <main className="flex flex-1 flex-col gap-6 px-4">

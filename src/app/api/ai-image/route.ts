@@ -1,6 +1,6 @@
 // src/app/api/ai-image/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/shared/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();

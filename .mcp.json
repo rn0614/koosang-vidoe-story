@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "context7":{
+        "type": "stdio",
+        "url": "http://mcp.context7.com/sse"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "env": {}
+    }
+  }
+}

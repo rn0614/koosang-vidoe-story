@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server'; // supabase 클라이언트 유틸
-import { extractLinks } from '@/utils/utils';
+import { createClient } from '@/shared/lib/supabase/server'; // supabase 클라이언트 유틸
+import { extractLinks } from '@/shared/lib/utils';
 
 export async function POST() {
   // 1. 크롤링 및 링크 추출

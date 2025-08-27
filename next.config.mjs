@@ -22,14 +22,14 @@ const nextConfig = {
   },
   experimental: {
     outputFileTracingIncludes: {
-      '../src/lib/content.ts': ['../../posts/**'],
-      '../../src/lib/content.ts': ['../../../posts/**'],
-      [path.resolve('src/lib/content.ts')]: [path.resolve('posts/**')],
+      '../src/shared/lib/content.ts': ['../../posts/**'],
+      '../../src/shared/lib/content.ts': ['../../../posts/**'],
+      [path.resolve('src/shared/lib/content.ts')]: [path.resolve('posts/**')],
     },
   },
 };
 
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin('./src/shared/lib/i18n/request.ts');
 const withMDX = createMDX({
   // Add markdown plugins here, as desired
   options: {

@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/shared/lib/supabase/server';
 import { InfoIcon } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
