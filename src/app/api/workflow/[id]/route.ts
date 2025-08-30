@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   console.log('row', row);
   const { data, error } = await supabase
-    .from('tb_pr_workflow_json')
+    .from('tb_pr_workflow_template_json')
     .upsert([row], { onConflict: 'id' })
     .select();
   if (error) {

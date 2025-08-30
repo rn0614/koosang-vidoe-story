@@ -19,7 +19,9 @@ export { createWorkflowStore, type WorkflowStore } from './store';
 export type * from './types';
 
 // API
-export { templateApi, workflowApi, nodeApi } from './api';
+export { templateApi } from './api/templateApi';
+export { workflowApi } from './api/workflowApi';
+export { nodeApi } from './api/nodeApi';
 
 // Utils
 export { activationRules } from './lib/activation-rules';

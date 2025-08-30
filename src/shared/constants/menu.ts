@@ -102,7 +102,7 @@ export const SIDEBAR_MENU: MenuItem[] = [
       },
       {
         clickable: true,
-        href: '/workflow/my-workflow',
+        href: '/workflow',
         labelKey: 'my-workflow',
       },
     ],

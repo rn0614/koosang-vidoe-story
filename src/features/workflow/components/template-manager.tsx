@@ -55,7 +55,7 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({
   const handleLoadTemplate = useCallback(async (template: Workflow) => {
     try {
       await loadTemplate(template);
-      onTitleChange(template.name);
+      onTitleChange(template.title);
       setShowTemplateList(false);
       alert('템플릿이 적용되었습니다!');
     } catch (error) {
@@ -126,10 +126,10 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({
                     onClick={() => handleLoadTemplate(template)}
                     className="flex-1 text-left px-2 py-1 hover:bg-gray-100 rounded"
                   >
-                    {template.name}
+                    {template.title}
                   </button>
                   <button
-                    onClick={() => handleDeleteTemplate(template.id, template.name)}
+                    onClick={() => handleDeleteTemplate(template.id, template.title)}
                     className="px-2 py-1 text-red-600 hover:bg-red-100 rounded text-sm"
                   >
                     삭제

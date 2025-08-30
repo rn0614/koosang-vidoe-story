@@ -20,7 +20,7 @@ export default function WorkflowCreatePage() {
 
   // 내 워크플로우, 승인자로 포함된 워크플로우 불러오기
   useEffect(() => {
-    fetch('/api/workflow/my-workflow')
+    fetch('/api/workflow')
       .then(res => res.json())
       .then(data => {
         setMyWorkflows(data.workflow || []);
@@ -42,7 +42,7 @@ export default function WorkflowCreatePage() {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch('/api/workflow/my-workflow', {
+      const res = await fetch('/api/workflow', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

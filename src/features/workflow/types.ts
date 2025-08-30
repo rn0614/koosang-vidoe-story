@@ -1,9 +1,13 @@
 // features/workflow/types.ts
 export type WorkflowNodeState = 'wait' | 'do' | 'complete' | 'fail' | 'close';
 
+
+
+
 export interface Workflow {
   id: number;
-  name: string;
+  title: string;
+  created_at: string;
   template?: {
     nodes: WorkflowNode[];
     connections: WorkflowConnection[];
@@ -49,18 +53,10 @@ export interface ConnectionState {
   tempLine: { x: number; y: number } | null;
 }
 
-// Template related types
-export interface TemplateFormData {
+// Workflow related types
+export interface WorkflowFormData {
+  id?: number;
   name: string;
   nodes: WorkflowNode[];
   connections: WorkflowConnection[];
-}
-
-export interface WorkflowInstance {
-  id?: number;
-  templateId: number;
-  name: string;
-  status: 'draft' | 'active' | 'completed' | 'failed';
-  createdAt?: string;
-  updatedAt?: string;
 }

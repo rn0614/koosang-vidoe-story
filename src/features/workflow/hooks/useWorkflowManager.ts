@@ -1,11 +1,11 @@
 // features/workflow/hooks/useTemplateManager.ts
 import { useState, useCallback, useEffect } from 'react';
-import { templateApi } from '@/features/workflow/api/templateApi';
+import { workflowApi } from '@/features/workflow/api/workflowApi';
 import { useWorkflowTemplate, useWorkflowStore } from '../context';
 import type { Workflow, WorkflowNode } from '../types';
 
-export const useTemplateManager = () => {
-  const [templates, setTemplates] = useState<Workflow[]>([]);
+export const useWorkflowManager = () => {
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -21,8 +21,8 @@ export const useTemplateManager = () => {
     setError(null);
     
     try {
-      const fetchedTemplates = await templateApi.getTemplatesList();
-      setTemplates(fetchedTemplates);
+      const fetchedWorkflows = await workflowApi.getWorkflowList();
+      setWorkflows(fetchedWorkflows);
     } catch (err) {
       setError(err instanceof Error ? err.message : '템플릿 목록을 불러오는데 실패했습니다.');
     } finally {
@@ -53,7 +53,7 @@ export const useTemplateManager = () => {
         connections,
       };
       
-      await templateApi.saveTemplate(templateData);
+      await workflowApi.saveWrokflow(templateData);
       await refreshTemplates(); // 목록 갱신
     } catch (err) {
       setError(err instanceof Error ? err.message : '템플릿 저장에 실패했습니다.');
@@ -69,12 +69,9 @@ export const useTemplateManager = () => {
     setError(null);
     
     try {
-      const loadedTemplate = await templateApi.getTemplate(template.id);
-
-      console.log('loadedTemplate', loadedTemplate);
       setCurrentTemplateId(template.id);
-      const nodes = loadedTemplate.template?.nodes || [];
-      const connections = loadedTemplate.template?.connections || [];
+      const nodes = template.template?.nodes || [];
+      const connections = template.template?.connections || [];
       
       // Zustand store의 replaceAll 사용
       store.getState().replaceAll(nodes, connections);
@@ -92,7 +89,7 @@ export const useTemplateManager = () => {
     setError(null);
     
     try {
-      await templateApi.deleteTemplate(templateId);
+      await workflowApi.deleteWorkflow(templateId);
       // 현재 편집 중인 템플릿이 삭제된 경우 ID 초기화
       if (currentTemplateId === templateId) {
         setCurrentTemplateId(null);
@@ -106,7 +103,7 @@ export const useTemplateManager = () => {
   }, [currentTemplateId, setCurrentTemplateId]);
 
   return {
-    templates,
+    workflows,
     isLoading,
     error,
     refreshTemplates,

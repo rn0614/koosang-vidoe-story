@@ -4,7 +4,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import type { WorkflowNode, WorkflowConnection, WorkflowNodeState } from './types';
 import { activationRules } from './lib/activation-rules';
 import { nodeFactory } from './lib/node-factory';
-import { nodeApi } from './api';
+import { nodeApi } from './api/nodeApi';
 import { logUserAction } from '@/shared/lib/logger';
 
 interface WorkflowState {
