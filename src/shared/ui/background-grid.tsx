@@ -1,14 +1,18 @@
-// components/workflow/BackgroundGrid.tsx
+// shared/ui/background-grid.tsx
 import React from 'react';
 
 interface BackgroundGridProps {
   canvasOffset: { x: number; y: number };
+  className?: string;
 }
 
-export const BackgroundGrid: React.FC<BackgroundGridProps> = ({ canvasOffset }) => {
+export const BackgroundGrid: React.FC<BackgroundGridProps> = ({ 
+  canvasOffset,
+  className = "absolute opacity-20"
+}) => {
   return (
     <div
-      className="absolute opacity-20"
+      className={className}
       style={{
         left: -canvasOffset.x,
         top: -canvasOffset.y,
@@ -37,4 +41,3 @@ export const BackgroundGrid: React.FC<BackgroundGridProps> = ({ canvasOffset }) 
     </div>
   );
 };
-

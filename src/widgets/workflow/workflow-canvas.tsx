@@ -1,9 +1,9 @@
-// components/workflow/workflow-canvas.tsx
-import { useWorkflowContext, useAllNodeIds } from '@/features/workflow';
+// widgets/workflow/workflow-canvas.tsx
+import { useWorkflowStore } from '@/features/workflow';
 import React, { useRef, useCallback } from 'react';
-import { BackgroundGrid } from './BackgroundGrid';
-import { ConnectionLayer } from './ConnectionLayer';
-import { NodeLayer } from './NodeLayer';
+import { BackgroundGrid } from '@/shared/ui/background-grid';
+import { ConnectionLayer } from './connection-layer';
+import { NodeLayer } from './node-layer';
 import { useCanvasPan } from '@/features/3d-visualization/hooks/useCanvasPan';
 import { useNodeDrag } from '@/features/workflow/hooks/useNodeDrag';
 import { useConnectionDrag } from '@/features/workflow/hooks/useConnectionDrag';
@@ -20,20 +20,19 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   selectedNodeId,
   setSelectedNodeId,
 }) => {
-  console.log('[RENDER] WorkflowCanvas - Refactored');
+  console.log('[RENDER] WorkflowCanvas - Widget Layer');
   
-  const { 
-    getNode, 
-    updateNode, 
-    addConnection, 
-    removeConnection, 
-    getConnections,
-    handleStatusChange,
-    deleteNode 
-  } = useWorkflowContext();
-  
-  const nodeIds = useAllNodeIds();
-  const connections = getConnections();
+  // Zustand store subscriptions
+  const store = useWorkflowStore();
+  const nodeIds = store((state) => state.nodeIds); // ✅ 캐시된 배열 직접 구독
+  const connections = store((state) => state.connections); // ✅ 캐시된 배열 직접 구독
+  const connectionVersion = store((state) => state.connectionVersion); // ✅ Connection 리렌더링 트리거
+  const getNode = store((state) => state.getNode);
+  const updateNode = store((state) => state.updateNode);
+  const addConnection = store((state) => state.addConnection);
+  const removeConnection = store((state) => state.removeConnection);
+  const handleStatusChange = store((state) => state.handleStatusChange);
+  const deleteNode = store((state) => state.deleteNode);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // 분리된 Hook들 사용
@@ -72,6 +71,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     getNode,
     canvasOffset,
     containerRef,
+    connectionVersion, // ✅ Connection 버전 의존성 추가
   });
 
   const {

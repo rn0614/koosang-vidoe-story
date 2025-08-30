@@ -1,5 +1,5 @@
 // components/workflow/FlowNode.tsx
-import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import { Settings, Play, CheckCircle, Circle, XCircle } from 'lucide-react';
 import {
   Dialog,
@@ -9,13 +9,9 @@ import {
   DialogTrigger,
 } from '@/shared/ui/dialog';
 import { DialogFooter } from '@/shared/ui/dialog';
-import { WorkflowNode, WorkflowNodeState } from '@/shared/types/workflow';
+import { WorkflowNode, WorkflowNodeState } from '../types';
 import { logUserAction } from '@/shared/lib/logger';
-import {
-  useNodeSelector,
-  useRelatedNodes,
-  useWorkflowContext,
-} from '@/features/workflow';
+import { useWorkflowStore } from '../context';
 import { Button } from '@/shared/ui/button';
 
 // 노드 상태에 따른 색상 정의
@@ -83,10 +79,12 @@ const FlowNode = ({
   onNodeDelete,
 }: FlowNodeProps) => {
   console.log(`[RENDER] FlowNode ${nodeId}`);
-  // 🚀 선택적 구독 - 해당 노드만 구독
-  const node = useNodeSelector(nodeId) as WorkflowNode;
-  const relatedNodes = useRelatedNodes(nodeId);
-  const { updateNode, getNode } = useWorkflowContext();
+  
+  // Zustand store 구독 - 해당 노드만 선택적으로 구독
+  const store = useWorkflowStore();
+  const node = store((state) => state.getNode(nodeId)) as WorkflowNode;
+  const updateNode = store((state) => state.updateNode);
+  const getNode = store((state) => state.getNode);
 
   const [isEditing, setIsEditing] = useState(false);
   if (!node) return null;
@@ -208,7 +206,7 @@ const FlowNode = ({
                   }}
                   className="rounded p-1 hover:bg-gray-200"
                 >
-                  <Settings className="h-4 w-4 text-gray-500" />
+                  <Settings className="h-4 w-4 text-white-500" />
                 </Button>
               </DialogTrigger>
               <DialogContent

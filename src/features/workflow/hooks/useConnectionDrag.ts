@@ -1,6 +1,6 @@
 // hooks/useConnectionDrag.ts
 import { useState, useCallback } from 'react';
-import type { ConnectionState } from '@/shared/types/workflow';
+import type { ConnectionState } from '../types';
 
 interface ConnectionDragActions {
   connectionState: ConnectionState;
@@ -38,7 +38,7 @@ export const useConnectionDrag = (): ConnectionDragActions => {
 
   const handleConnectionEnd = useCallback((
     e: React.PointerEvent, 
-    addConnection: (from: string, to: string) => void
+    addConnection?: (from: string, to: string) => void
   ) => {
     if (!connectionState.isConnecting || !connectionState.startNodeId) return;
 
@@ -48,7 +48,8 @@ export const useConnectionDrag = (): ConnectionDragActions => {
     if (
       connectionPoint &&
       connectionPoint.dataset.type === 'input' &&
-      connectionPoint.dataset.nodeId !== connectionState.startNodeId
+      connectionPoint.dataset.nodeId !== connectionState.startNodeId &&
+      addConnection
     ) {
       const targetNodeId = connectionPoint.dataset.nodeId!;
       addConnection(connectionState.startNodeId, targetNodeId);

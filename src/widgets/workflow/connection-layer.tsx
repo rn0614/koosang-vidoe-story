@@ -1,7 +1,7 @@
-// components/workflow/ConnectionLayer.tsx
+// widgets/workflow/connection-layer.tsx
 import React from 'react';
-import Connection from '@/features/workflow/components/Connection';
-import type { WorkflowConnection, ConnectionState } from '@/shared/types/workflow';
+import { Connection } from '@/features/workflow/components/Connection';
+import type { WorkflowConnection, ConnectionState } from '@/features/workflow/types';
 import { getConnectionCoordinates, getTempConnectionStartCoords } from '@/shared/lib/coordinateUtils';
 
 interface ConnectionLayerProps {
@@ -86,4 +86,3 @@ export const ConnectionLayer: React.FC<ConnectionLayerProps> = ({
     </svg>
   );
 };
-

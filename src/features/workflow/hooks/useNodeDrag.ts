@@ -1,12 +1,12 @@
 // hooks/useNodeDrag.ts
 import { useState, useCallback, useRef } from 'react';
-import type { DragState } from '@/shared/types/workflow';
+import type { DragState } from '../types';
 
 interface NodeDragActions {
   dragState: DragState;
   handleDragStart: (nodeId: string, e: React.MouseEvent, getNode: (id: string) => any, canvasOffset: { x: number; y: number }, containerRef: React.RefObject<HTMLDivElement>) => void;
   updateDragPosition: (nodeId: string, x: number, y: number) => void;
-  endDrag: () => void;
+  endDrag: (updateNode?: (nodeId: string, updates: any) => void) => void;
 }
 
 export const useNodeDrag = (): NodeDragActions => {
@@ -49,7 +49,13 @@ export const useNodeDrag = (): NodeDragActions => {
     pendingDrag.current = { nodeId, x, y };
   }, []);
 
-  const endDrag = useCallback(() => {
+  const endDrag = useCallback((updateNode?: (nodeId: string, updates: any) => void) => {
+    // Apply pending position update if exists
+    if (pendingDrag.current && updateNode) {
+      const { nodeId, x, y } = pendingDrag.current;
+      updateNode(nodeId, { x, y });
+    }
+    
     setDragState({
       isDragging: false,
       dragNodeId: null,

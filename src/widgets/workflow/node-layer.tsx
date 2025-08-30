@@ -1,7 +1,7 @@
-// components/workflow/NodeLayer.tsx
+// widgets/workflow/node-layer.tsx
 import React from 'react';
 import FlowNode from '@/features/workflow/components/FlowNode';
-import type { WorkflowNodeState, DragState } from '@/shared/types/workflow';
+import type { WorkflowNodeState, DragState } from '@/features/workflow/types';
 
 interface NodeLayerProps {
   visibleNodeIds: string[];
@@ -50,4 +50,3 @@ export const NodeLayer: React.FC<NodeLayerProps> = ({
     </>
   );
 };
-

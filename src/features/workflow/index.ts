@@ -1,14 +1,26 @@
-// Workflow feature exports
-export { BackgroundGrid } from './components/BackgroundGrid';
-export { ConnectionLayer } from './components/ConnectionLayer';
+// features/workflow exports
 export { default as FlowNode } from './components/FlowNode';
-export { NodeLayer } from './components/NodeLayer';
-export { StateExplanation } from './components/state-eplanation';
-export { WorkflowCanvas } from './components/workflow-canvas';
+export { Connection, TempConnection } from './components/Connection';
+export { TemplateManager } from './components/template-manager';
+export { WorkflowEditor } from './components/workflow-editor';
 
-// Context
-export { WorkflowProvider, useWorkflowContext, useAllNodeIds, useRelatedNodes, useNodeSelector} from './context';
+// Context & Store
+export { WorkflowProvider, useWorkflowTemplate, useWorkflowStore } from './context';
 
 // Hooks
 export { useConnectionDrag } from './hooks/useConnectionDrag';
 export { useNodeDrag } from './hooks/useNodeDrag';
+export { useTemplateManager } from './hooks/useTemplateManager';
+
+// Store
+export { createWorkflowStore, type WorkflowStore } from './store';
+
+// Types
+export type * from './types';
+
+// API
+export { templateApi, workflowApi, nodeApi } from './api';
+
+// Utils
+export { activationRules } from './lib/activation-rules';
+export { nodeFactory } from './lib/node-factory';

@@ -1,6 +1,6 @@
-// components/Connection.jsx - 연결선 컴포넌트
-import { ConnectionState, WorkflowNode } from '@/shared/types/workflow';
+// features/workflow/components/Connection.tsx - 연결선 기능 컴포넌트
 import React from 'react';
+
 type ConnectionProps = {
   from: {
     id: string;
@@ -16,7 +16,7 @@ type ConnectionProps = {
 };
 
 // 기본 연결선 컴포넌트
-const Connection = ({ from, to, onDelete }: ConnectionProps) => {
+export const Connection = ({ from, to, onDelete }: ConnectionProps) => {
   const handleDelete = () => {
     onDelete();
   };
@@ -79,97 +79,3 @@ export const TempConnection = ({
     />
   );
 };
-
-// SVG 마커 정의 컴포넌트
-export const ConnectionMarkers = () => {
-  return (
-    <defs>
-      <marker
-        id="arrowhead"
-        markerWidth="10"
-        markerHeight="7"
-        refX="9"
-        refY="3.5"
-        orient="auto"
-      >
-        <polygon points="0 0, 10 3.5, 0 7" fill="#6B7280" />
-      </marker>
-      <marker
-        id="arrowhead-blue"
-        markerWidth="10"
-        markerHeight="7"
-        refX="9"
-        refY="3.5"
-        orient="auto"
-      >
-        <polygon points="0 0, 10 3.5, 0 7" fill="#3B82F6" />
-      </marker>
-    </defs>
-  );
-};
-
-// 연결선 컨테이너 컴포넌트
-export const ConnectionContainer = ({
-  connections,
-  nodes,
-  connectionState,
-  onDeleteConnection,
-  getConnectionCoordinates,
-}: {
-  connections: ConnectionProps[];
-  nodes: WorkflowNode[];
-  connectionState: ConnectionState;
-  onDeleteConnection: (fromId: string, toId: string) => void;
-  getConnectionCoordinates: (
-    fromId: string,
-    toId: string,
-  ) => {
-    from: { id: string; x: number; y: number };
-    to: { id: string; x: number; y: number };
-  } | null;
-}) => {
-  console.log('inner_connections', connections);
-  return (
-    <svg
-      className="pointer-events-none absolute"
-      style={{ left: 0, top: 0, width: '100%', height: '100%', zIndex: 1 }}
-    >
-      <ConnectionMarkers />
-
-      {/* 기존 연결선들 */}
-      {connections.map((conn, index) => {
-        const coords = getConnectionCoordinates(conn.from.id, conn.to.id);
-        return coords ? (
-          <Connection
-            key={`${conn.from}-${conn.to}-${index}`}
-            from={coords.from}
-            to={coords.to}
-            onDelete={() => onDeleteConnection(conn.from.id, conn.to.id)}
-          />
-        ) : null;
-      })}
-
-      {/* 임시 연결선 (드래그 중) */}
-      {connectionState.tempLine && connectionState.startNodeId && (
-        <TempConnection
-          startX={(() => {
-            const startNode = nodes.find(
-              (n) => n.id === connectionState.startNodeId,
-            );
-            return startNode ? startNode.x + 200 + 8 : 0;
-          })()}
-          startY={(() => {
-            const startNode = nodes.find(
-              (n) => n.id === connectionState.startNodeId,
-            );
-            return startNode ? startNode.y + 150 / 2 : 0;
-          })()}
-          endX={connectionState.tempLine.x}
-          endY={connectionState.tempLine.y}
-        />
-      )}
-    </svg>
-  );
-};
-
-export default Connection;

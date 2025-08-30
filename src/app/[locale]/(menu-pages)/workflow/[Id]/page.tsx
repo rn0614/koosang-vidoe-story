@@ -5,13 +5,17 @@ import { useParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { StateExplanation } from '@/features/workflow/components/state-eplanation';
 import { WorkflowCanvas } from '@/features/workflow/components/workflow-canvas';
-import { WorkflowProvider, useWorkflowContext } from '@/features/workflow';
+import { WorkflowProvider, useWorkflowStore } from '@/features/workflow';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/shared/ui/dropdown-menu';
 import { Button } from '@/shared/ui/button';
 
 // 내부 에디터 컴포넌트 (Context 내부에서 실행)
 const FlowEditorContent = () => {
-  const { addNode, getAllNodeIds, getNode, getConnections, replaceAll } = useWorkflowContext();
+  const store = useWorkflowStore();
+  const addNode = store((state) => state.addNode);
+  const nodeIds = store((state) => state.nodeIds); // ✅ 캐시된 배열 직접 구독
+  const getNode = store((state) => state.getNode);
+  const getConnections = store((state) => state.getConnections);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [workflowTitle, setWorkflowTitle] = useState('');
   const [workflowId, setWorkflowId] = useState<string | null>(null);
@@ -33,9 +37,9 @@ const FlowEditorContent = () => {
   // 템플릿 저장 함수 (예시)
   const saveTemplate = useCallback(async () => {
     try {
-      const nodeIds = getAllNodeIds();
-      const nodes = nodeIds.map(id => getNode(id)).filter(Boolean) as NonNullable<ReturnType<typeof getNode>>[];
-      const connections = getConnections();
+      const state = store.getState();
+      const nodes = nodeIds.map(id => state.getNode(id)).filter(Boolean) as NonNullable<ReturnType<typeof state.getNode>>[];
+      const connections = state.getConnections();
 
       // 진행중인 노드만 추출
       const currentNodes = nodes
@@ -62,7 +66,7 @@ const FlowEditorContent = () => {
     } catch (err) {
       alert('저장에 실패했습니다.');
     }
-  }, [workflowTitle, workflowId, getAllNodeIds, getNode, getConnections]);
+  }, [workflowTitle, workflowId, nodeIds, store]);
 
   return (
     <div className="w-full h-full overflow-hidden bg-gray-100">

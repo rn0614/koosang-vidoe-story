@@ -1,6 +1,6 @@
 // hooks/useVirtualRendering.ts
 import { useMemo } from 'react';
-import type { WorkflowConnection } from '@/shared/types/workflow';
+import type { WorkflowConnection } from '@/features/workflow/types';
 
 interface VirtualRenderingResult {
   coordinateCache: Map<string, { x: number; y: number }>;
@@ -15,6 +15,7 @@ interface UseVirtualRenderingProps {
   getNode: (nodeId: string) => any;
   canvasOffset: { x: number; y: number };
   containerRef: React.RefObject<HTMLDivElement>;
+  connectionVersion?: number; // ✅ Connection 리렌더링 트리거
 }
 
 export const useVirtualRendering = ({
@@ -23,6 +24,7 @@ export const useVirtualRendering = ({
   getNode,
   canvasOffset,
   containerRef,
+  connectionVersion,
 }: UseVirtualRenderingProps): VirtualRenderingResult => {
   // 좌표 캐시 시스템
   const coordinateCache = useMemo(() => {
@@ -34,7 +36,7 @@ export const useVirtualRendering = ({
       }
     });
     return cache;
-  }, [nodeIds, getNode, canvasOffset]);
+  }, [nodeIds, getNode, canvasOffset, connectionVersion]); // ✅ connectionVersion 의존성 추가
 
   // 가시 영역 계산
   const viewportBounds = useMemo(() => {

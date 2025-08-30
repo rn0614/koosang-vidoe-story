@@ -1,4 +1,5 @@
-import { CheckCircle, Circle, Play } from 'lucide-react';
+// widgets/workflow/state-explanation.tsx
+import { CheckCircle, Circle, Play, XCircle } from 'lucide-react';
 
 export const StateExplanation = () => {
   return (
@@ -15,6 +16,10 @@ export const StateExplanation = () => {
         <div className="flex items-center gap-2">
           <CheckCircle className="h-3 w-3 text-gray-500" />
           <span>완료</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <XCircle className="h-3 w-3 text-red-500" />
+          <span>실패</span>
         </div>
       </div>
     </div>
