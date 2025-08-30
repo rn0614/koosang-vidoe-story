@@ -8,6 +8,7 @@ interface NodeLayerProps {
   getNode: (nodeId: string) => any;
   selectedNodeId: string | null;
   dragState: DragState;
+  ghostPosition: { x: number; y: number } | null; // ✅ Ghost 위치
   onNodeSelect: (nodeId: string) => void;
   onConnectionStart: (nodeId: string, e: React.MouseEvent) => void;
   onDragStart: (nodeId: string, e: React.MouseEvent) => void;
@@ -20,6 +21,7 @@ export const NodeLayer: React.FC<NodeLayerProps> = ({
   getNode,
   selectedNodeId,
   dragState,
+  ghostPosition, // ✅ Ghost 위치
   onNodeSelect,
   onConnectionStart,
   onDragStart,
@@ -32,19 +34,46 @@ export const NodeLayer: React.FC<NodeLayerProps> = ({
         const node = getNode(nodeId);
         if (!node) return null;
         
+        const isDragging = dragState.isDragging && dragState.dragNodeId === nodeId;
+        
+        // console.log(`[NODE_LAYER] Rendering ${nodeId} - isDragging: ${isDragging}, ghostPosition:`, ghostPosition);
+        
         return (
-          <div key={nodeId} data-node={nodeId}>
-            <FlowNode
-              nodeId={nodeId}
-              onNodeSelect={onNodeSelect}
-              onConnectionStart={onConnectionStart}
-              onDragStart={onDragStart}
-              onStatusChange={onStatusChange}
-              isSelected={selectedNodeId === nodeId}
-              isDragging={dragState.isDragging && dragState.dragNodeId === nodeId}
-              onNodeDelete={onNodeDelete}
-            />
-          </div>
+          <React.Fragment key={nodeId}>
+            {/* ✅ 원래 위치의 노드 (드래그 중이면 반투명) */}
+            <div data-node={nodeId}>
+              <FlowNode
+                nodeId={nodeId}
+                onNodeSelect={onNodeSelect}
+                onConnectionStart={onConnectionStart}
+                onDragStart={onDragStart}
+                onStatusChange={onStatusChange}
+                isSelected={selectedNodeId === nodeId}
+                isDragging={isDragging}
+                onNodeDelete={onNodeDelete}
+                isGhost={false}
+              />
+            </div>
+            
+            {/* ✅ Ghost 노드 (드래그 중일 때만 렌더링) */}
+            {isDragging && ghostPosition && (
+              <div data-node={`${nodeId}-ghost`} style={{ position: 'relative', zIndex: 10000 }}>
+                {/* {console.log(`[GHOST_RENDER] NodeLayer - nodeId: ${nodeId}, isDragging: ${isDragging}, ghostPosition:`, ghostPosition)} */}
+                <FlowNode
+                  nodeId={nodeId}
+                  onNodeSelect={onNodeSelect}
+                  onConnectionStart={onConnectionStart}
+                  onDragStart={onDragStart}
+                  onStatusChange={onStatusChange}
+                  isSelected={false}
+                  isDragging={false}
+                  onNodeDelete={onNodeDelete}
+                  isGhost={true}
+                  ghostPosition={ghostPosition}
+                />
+              </div>
+            )}
+          </React.Fragment>
         );
       })}
     </>

@@ -20,7 +20,6 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
   selectedNodeId,
   setSelectedNodeId,
 }) => {
-  console.log('[RENDER] WorkflowCanvas - Widget Layer');
   
   // Zustand store subscriptions
   const store = useWorkflowStore();
@@ -48,8 +47,9 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
 
   const {
     dragState,
+    ghostPosition, // ✅ Ghost 위치
     handleDragStart: baseDragStart,
-    updateDragPosition,
+    updateGhostPosition, // ✅ Ghost 위치 업데이트
     endDrag,
   } = useNodeDrag();
 
@@ -84,9 +84,10 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     setSelectedNodeId(nodeId);
   }, [setSelectedNodeId]);
 
+  // ✅ handleDragStart 의존성 최적화
   const handleDragStart = useCallback((nodeId: string, e: React.MouseEvent) => {
     baseDragStart(nodeId, e, getNode, canvasOffset, containerRef);
-  }, [baseDragStart, getNode, canvasOffset]);
+  }, [baseDragStart, getNode, canvasOffset, containerRef]);
 
   const handleDeleteConnection = useCallback((fromId: string, toId: string) => {
     removeConnection(fromId, toId);
@@ -101,7 +102,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    // 노드 드래그 처리
+    // ✅ 노드 드래그 처리 - Ghost 위치만 업데이트 (RAF로 throttle됨)
     if (dragState.isDragging && dragState.dragNodeId) {
       const newPos = calculateDragPosition(
         e.clientX, 
@@ -110,7 +111,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
         dragState.offset, 
         canvasOffset
       );
-      scheduleNodeUpdate(dragState.dragNodeId, newPos.x, newPos.y, updateNode);
+      updateGhostPosition(newPos.x, newPos.y); // ✅ RAF 내부에서 처리됨
     }
     
     // 캔버스 팬 처리
@@ -132,9 +133,8 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     panStart, 
     connectionState, 
     canvasOffset,
-    scheduleNodeUpdate,
+    updateGhostPosition, // ✅ updateGhostPosition 의존성 추가
     schedulePanUpdate,
-    updateNode,
     updatePanDelta,
     updatePanStart,
     updateConnectionLine
@@ -144,14 +144,14 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     // 연결 처리
     handleConnectionEnd(e, addConnection);
     
-    // 상태 정리
-    endDrag();
+    // ✅ 상태 정리 - Drop할 때 실제 노드 위치 업데이트
+    endDrag(updateNode); // updateNode 함수 전달하여 drop할 때만 위치 업데이트
     endConnection();
     endPan();
     
     // 포인터 캡처 해제
     (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
-  }, [handleConnectionEnd, addConnection, endDrag, endConnection, endPan]);
+  }, [handleConnectionEnd, addConnection, endDrag, endConnection, endPan, updateNode]);
 
   return (
     <div
@@ -191,6 +191,7 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
           getNode={getNode}
           selectedNodeId={selectedNodeId}
           dragState={dragState}
+          ghostPosition={ghostPosition} // ✅ Ghost 위치 전달
           onNodeSelect={handleNodeSelect}
           onConnectionStart={handleConnectionStart}
           onDragStart={handleDragStart}

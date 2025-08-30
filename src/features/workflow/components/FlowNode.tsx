@@ -78,7 +78,7 @@ const FlowNode = ({
   onStatusChange,
   onNodeDelete,
 }: FlowNodeProps) => {
-  console.log(`[RENDER] FlowNode ${nodeId}`);
+  // console.log(`[RENDER] FlowNode ${nodeId} - isGhost: ${isGhost}, ghostPosition:`, ghostPosition);
   
   // Zustand store 구독 - 해당 노드만 선택적으로 구독
   const store = useWorkflowStore();
@@ -145,7 +145,7 @@ const FlowNode = ({
     <>
       <div
         ref={nodeRef}
-        className={`relative min-w-[200px] cursor-move select-none rounded-lg border-2 bg-white p-4 shadow-md ${getNodeStateColor(node.state)} ${isSelected ? 'ring-2 ring-blue-500' : ''} ${isDragging && !isGhost ? 'z-50 opacity-50' : ''} ${isGhost ? 'pointer-events-none z-[9999] opacity-80' : ''} hover:shadow-lg`}
+        className={`relative min-w-[200px] cursor-move select-none rounded-lg border-2 bg-white p-4 shadow-md ${getNodeStateColor(node.state)} ${isSelected ? 'ring-2 ring-blue-500' : ''} ${isDragging && !isGhost ? 'z-50 opacity-30' : ''} ${isGhost ? 'pointer-events-none z-[9999] opacity-80' : ''} hover:shadow-lg`}
         style={{
           position: 'absolute',
           left: isGhost && ghostPosition ? ghostPosition.x : node.x,
@@ -530,6 +530,10 @@ export default React.memo(FlowNode, (prevProps, nextProps) => {
   // 선택/드래그 상태가 다르면 리렌더링 필요
   if (prevProps.isSelected !== nextProps.isSelected) return false;
   if (prevProps.isDragging !== nextProps.isDragging) return false;
+
+  // ✅ Ghost 관련 props 비교 추가
+  if (prevProps.isGhost !== nextProps.isGhost) return false;
+  if (prevProps.ghostPosition !== nextProps.ghostPosition) return false;
 
   // 다른 props들은 함수이므로 참조 비교만 함
   // (useCallback으로 안정화된 경우에만 동작)

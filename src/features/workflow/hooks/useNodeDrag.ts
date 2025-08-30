@@ -1,15 +1,18 @@
 // hooks/useNodeDrag.ts
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { DragState } from '../types';
 
 interface NodeDragActions {
   dragState: DragState;
+  ghostPosition: { x: number; y: number } | null; // ✅ Ghost 노드 위치
   handleDragStart: (nodeId: string, e: React.MouseEvent, getNode: (id: string) => any, canvasOffset: { x: number; y: number }, containerRef: React.RefObject<HTMLDivElement>) => void;
-  updateDragPosition: (nodeId: string, x: number, y: number) => void;
+  updateGhostPosition: (x: number, y: number) => void; // ✅ Ghost 위치 업데이트
   endDrag: (updateNode?: (nodeId: string, updates: any) => void) => void;
 }
 
 export const useNodeDrag = (): NodeDragActions => {
+  // console.log('[RENDER] useNodeDrag');
+
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     dragNodeId: null,
@@ -17,8 +20,11 @@ export const useNodeDrag = (): NodeDragActions => {
     offset: { x: 0, y: 0 },
   });
 
-  const pendingDrag = useRef<{ nodeId: string; x: number; y: number } | null>(null);
+  // ✅ useRef로 RAF 관리 및 성능 최적화
+  const rafIdRef = useRef<number | null>(null);
+  const [ghostPosition, setGhostPosition] = useState<{ x: number; y: number } | null>(null);
 
+  // ✅ 안정화된 handleDragStart
   const handleDragStart = useCallback((
     nodeId: string, 
     e: React.MouseEvent, 
@@ -45,30 +51,60 @@ export const useNodeDrag = (): NodeDragActions => {
     });
   }, []);
 
-  const updateDragPosition = useCallback((nodeId: string, x: number, y: number) => {
-    pendingDrag.current = { nodeId, x, y };
-  }, []);
-
-  const endDrag = useCallback((updateNode?: (nodeId: string, updates: any) => void) => {
-    // Apply pending position update if exists
-    if (pendingDrag.current && updateNode) {
-      const { nodeId, x, y } = pendingDrag.current;
-      updateNode(nodeId, { x, y });
+  // ✅ RAF로 throttle된 ghost position 업데이트
+  const updateGhostPosition = useCallback((x: number, y: number) => {
+    // 이전 RAF 요청 취소
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
     }
     
+    // 새로운 RAF 요청
+    rafIdRef.current = requestAnimationFrame(() => {
+      setGhostPosition({ x, y });
+      rafIdRef.current = null;
+    });
+  }, []);
+
+  // ✅ 안정화된 endDrag
+  const endDrag = useCallback((updateNode?: (nodeId: string, updates: any) => void) => {
+    // RAF 요청 취소
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+    
+    // ✅ Drop할 때만 실제 노드 위치 업데이트
+    if (dragState.dragNodeId && ghostPosition && updateNode) {
+      updateNode(dragState.dragNodeId, { 
+        x: ghostPosition.x, 
+        y: ghostPosition.y 
+      });
+    }
+    
+    // 상태 초기화
     setDragState({
       isDragging: false,
       dragNodeId: null,
       startPos: { x: 0, y: 0 },
       offset: { x: 0, y: 0 },
     });
-    pendingDrag.current = null;
+    setGhostPosition(null);
+  }, [dragState.dragNodeId, ghostPosition]);
+
+  // ✅ cleanup RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
   }, []);
 
   return {
     dragState,
+    ghostPosition,
     handleDragStart,
-    updateDragPosition,
+    updateGhostPosition,
     endDrag,
   };
 };
