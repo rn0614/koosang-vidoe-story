@@ -1,7 +1,6 @@
 // Global reusable hooks
 export { useToast } from './use-toast';
 export { useIsMobile } from './useIsMobile';
-export { useNews } from './useNews';
 
 // Note: Feature-specific hooks have been moved to their respective features
 // - Alarm hooks: features/alarm/hooks/

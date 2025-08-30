@@ -1,5 +1,5 @@
 "use client";
-import { useNews } from "@/shared/hooks/useNews";
+import { useNews } from "@/features/news/useNews";
 import { Link } from "@/shared/lib/i18n/navigation";
 
 export function NewsTop3Table() {

@@ -2,9 +2,8 @@ import React, { useRef, useReducer, useMemo, useCallback } from 'react';
 import { Box, Text } from '@react-three/drei';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
-import { BoxData, BoxMethods, StabilityInfo } from '@/shared/types/boxPosition';
+import { BoxMethods } from '@/entities/box/types';
 import { useBoxesStore } from '@/features/3d-visualization';
-import { shallow } from 'zustand/shallow';
 
 interface AnimatedBoxProps {
   boxId: string;

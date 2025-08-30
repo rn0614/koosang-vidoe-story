@@ -1,5 +1,5 @@
 'use client';
-import { useInfiniteDocuments } from '@/shared/hooks/useDocumentsInfinite';
+import { useDocumentsInfinite } from '@/features/rag/hooks/useDocumentsInfinite';
 import { Link } from '@/shared/lib/i18n/navigation';
 import { useRef, useCallback, useMemo } from 'react';
 import {
@@ -39,7 +39,7 @@ export default function DocumentList() {
   const selectedTags = useMemo(() => parseTagsParam(tagsParam), [tagsParam]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteDocuments({ tags: selectedTags });
+    useDocumentsInfinite({ tags: selectedTags });
 
   // API에서 받은 documents와 tags
   const documents = data ? data.pages.flatMap((page) => page.documents) : [];

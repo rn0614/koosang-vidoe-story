@@ -24,7 +24,6 @@ import GridFloor from '@/features/3d-visualization/components/container/grid-flo
 import Lighting from '@/features/3d-visualization/components/container/lighting';
 import BoxInfoCard from '@/features/3d-visualization/components/container/boxInfo-card';
 import SelectedBoxDisplay from '@/features/3d-visualization/components/container/selected-box-display';
-import BoxStatusDisplay from '@/features/3d-visualization/components/container/box-status-display';
 import { BoxData, BoxMethods } from '@/shared/types/boxPosition';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 

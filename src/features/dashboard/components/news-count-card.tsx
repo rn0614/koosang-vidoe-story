@@ -1,7 +1,7 @@
 "use client";
 import { StatCard } from "@/widgets/common/state-card";
 import { Newspaper } from "lucide-react";
-import { useNews } from "@/shared/hooks";
+import { useNews } from "@/features/news/useNews";
 
 export function NewsCountCard() {
   const { news, isLoading } = useNews({ recentDays: 7, limit: 1000 });

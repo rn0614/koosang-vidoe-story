@@ -1,5 +1,5 @@
 "use client";
-import { useDocumentsWeekly } from "@/shared/hooks/useDocumentsWeekly";
+import { useDocumentsWeekly } from "@/features/rag/hooks/useDocumentsWeekly";
 
 export function RagTrendChart() {
   const { weekly, isLoading, error } = useDocumentsWeekly(4);

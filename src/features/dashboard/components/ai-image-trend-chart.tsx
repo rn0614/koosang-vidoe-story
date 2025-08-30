@@ -1,5 +1,5 @@
 "use client";
-import { useAIImage } from "@/shared/hooks/useAIImage";
+import { useAIImage } from "@/features/dashboard/hooks/useAIImage";
 
 interface DayData {
   day: string;

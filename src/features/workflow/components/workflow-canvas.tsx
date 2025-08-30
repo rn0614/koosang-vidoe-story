@@ -4,11 +4,11 @@ import React, { useRef, useCallback } from 'react';
 import { BackgroundGrid } from './BackgroundGrid';
 import { ConnectionLayer } from './ConnectionLayer';
 import { NodeLayer } from './NodeLayer';
-import { useCanvasPan } from '@/shared/hooks/useCanvasPan';
+import { useCanvasPan } from '@/features/3d-visualization/hooks/useCanvasPan';
 import { useNodeDrag } from '@/features/workflow/hooks/useNodeDrag';
 import { useConnectionDrag } from '@/features/workflow/hooks/useConnectionDrag';
-import { useVirtualRendering } from '@/shared/hooks/useVirtualRendering';
-import { useRAFThrottling } from '@/shared/hooks/useRAFThrottling';
+import { useVirtualRendering } from '@/features/3d-visualization/hooks/useVirtualRendering';
+import { useRAFThrottling } from '@/features/3d-visualization/hooks/useRAFThrottling';
 import { getCanvasRelativePosition, calculateDragPosition } from '@/shared/lib/coordinateUtils';
 
 interface WorkflowCanvasProps {

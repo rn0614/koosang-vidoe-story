@@ -1,5 +1,5 @@
 "use client";
-import { useDocuments } from "@/shared/hooks/useDocuments";
+import { useDocuments } from "@/features/rag/hooks/useDocuments";
 import { Link } from "@/shared/lib/i18n/navigation";
 
 export function RagTop3Table() {

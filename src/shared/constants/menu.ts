@@ -4,7 +4,6 @@ export const MAIN_MENU: MenuItem[] = [
   { href: '/rag', labelKey: 'rag' },
   { href: '/alarm', labelKey: 'alarm' },
   { href: '/game', labelKey: 'game' },
-  { href: '/note', labelKey: 'note' },
   { href: '/3d', labelKey: '3D' },
 ];
 
@@ -132,12 +131,6 @@ export const SIDEBAR_MENU: MenuItem[] = [
     href: '/etc',
     labelKey: 'etc',
     icon: null,
-    children: [
-      {
-        clickable: true,
-        href: '/note',
-        labelKey: 'note',
-      },
-    ],
+    children: [],
   },
 ];
