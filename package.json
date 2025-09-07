@@ -8,7 +8,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx,js,jsx,json,css,scss}\"",
     "posting-sync": "node posting-script/syncMarkdownToSupabase.js",
     "posting-sync-file": "node posting-script/syncSpecificFile.js",
-    "posting-sync-pattern": "node posting-script/syncSpecificFile.js --pattern"
+    "posting-sync-pattern": "node posting-script/syncSpecificFile.js --pattern",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.0",
@@ -53,6 +54,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-multi-backend": "^9.0.0",
     "react-dom": "^18.3.1",
+    "react-error-boundary": "^6.0.0",
     "react-hook-form": "^7.56.1",
     "react-player": "^2.16.0",
     "remark-gfm": "^4.0.1",
@@ -62,6 +64,7 @@
     "zustand": "^5.0.4"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.5.2",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/lodash": "^4.17.16",
     "@types/node": "22.10.2",
@@ -69,6 +72,7 @@
     "@types/react-dom": "18.3.1",
     "@types/three": "^0.176.0",
     "@types/uuid": "^10.0.0",
+    "cross-env": "^10.0.0",
     "dotenv": "^16.3.1",
     "openai": "^4.98.0",
     "postcss": "8.4.49",
