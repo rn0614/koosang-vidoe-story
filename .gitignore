@@ -48,3 +48,5 @@ next-env.d.ts
 posting-script/*
 
 posting
+
+fail-rag.json

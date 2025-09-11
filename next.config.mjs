@@ -2,6 +2,7 @@ import remarkGfm from 'remark-gfm';
 import createMDX from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
 import path from 'path';
+import bundleAnalyzer from '@next/bundle-analyzer';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -29,7 +30,10 @@ const nextConfig = {
   },
 };
 
+// intl 플러그인
 const withNextIntl = createNextIntlPlugin('./src/shared/lib/i18n/request.ts');
+
+// mdx 플러그인
 const withMDX = createMDX({
   // Add markdown plugins here, as desired
   options: {
@@ -38,5 +42,10 @@ const withMDX = createMDX({
   },
 });
 
+// 번들 분석 플러그인
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
 // Wrap MDX and Next.js config with each other
-export default withMDX(withNextIntl(nextConfig));
+export default withMDX(withNextIntl(withBundleAnalyzer(nextConfig)));
