@@ -3,18 +3,10 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Button } from '@/shared/ui/button';
-import { Badge } from '@/shared/ui/badge';
-import { Separator } from '@/shared/ui/separator';
 import { ScrollArea } from '@/shared/ui/scroll-area';
 import {
-  AlertCircle,
   Move3D,
-  Camera,
-  RotateCcw,
-  ZoomIn,
-  Hand,
   Plus,
-  Navigation,
 } from 'lucide-react';
 import { useBoxesStore } from '@/features/3d-visualization';
 import AnimatedBox from '@/features/3d-visualization/components/container/animated-box';
@@ -32,8 +24,8 @@ const BoxManagementContent: React.FC = () => {
   const [nextBoxId, setNextBoxId] = useState<number>(10);
 
   // 🎯 박스 개수만 구독 (새 박스 추가/삭제시에만 변경)
-  const boxCount = useBoxesStore(state => state.boxes.size);
-  
+  const boxCount = useBoxesStore((state) => state.boxes.size);
+
   // 🎯 boxIds는 박스 개수 변경시에만 재계산 (성능 최적화)
   const boxIds = useMemo(() => {
     console.log('📋 boxIds 재계산');
@@ -61,28 +53,36 @@ const BoxManagementContent: React.FC = () => {
     }
   }, []);
 
-  const handleMoveToOtherPosition = useCallback(async (
-    boxId: string,
-    x: number,
-    z: number,
-  ): Promise<void> => {
-    const ref = useBoxesStore.getState().getBoxRef(boxId);
-    if (ref && ref.current) {
-      try {
-        console.log(`🚚 ${boxId} 시퀀셜 이동 시작: (${x}, ${z})`);
-        await ref.current.moveToOtherPosition(x, z);
-        console.log(`✅ ${boxId} 시퀀셜 이동 완료`);
-      } catch (error) {
-        console.error(`❌ ${boxId} 이동 실패:`, error);
+  const handleMoveToOtherPosition = useCallback(
+    async (boxId: string, x: number, z: number): Promise<void> => {
+      const ref = useBoxesStore.getState().getBoxRef(boxId);
+      if (ref && ref.current) {
+        try {
+          console.log(`🚚 ${boxId} 시퀀셜 이동 시작: (${x}, ${z})`);
+          await ref.current.moveToOtherPosition(x, z);
+          console.log(`✅ ${boxId} 시퀀셜 이동 완료`);
+        } catch (error) {
+          console.error(`❌ ${boxId} 이동 실패:`, error);
+        }
       }
-    }
-  }, []);
+    },
+    [],
+  );
 
   const generateRandomColor = useCallback((): string => {
     const colors = [
-      '#4299e1', '#48bb78', '#ed8936', '#9f7aea', 
-      '#f56565', '#38b2ac', '#d69e2e', '#e53e3e', 
-      '#805ad5', '#667eea', '#f093fb', '#4facfe',
+      '#4299e1',
+      '#48bb78',
+      '#ed8936',
+      '#9f7aea',
+      '#f56565',
+      '#38b2ac',
+      '#d69e2e',
+      '#e53e3e',
+      '#805ad5',
+      '#667eea',
+      '#f093fb',
+      '#4facfe',
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   }, []);
@@ -90,12 +90,19 @@ const BoxManagementContent: React.FC = () => {
   const handleAddBox = useCallback((): void => {
     const newBoxId = `BOX-${String(nextBoxId).padStart(3, '0')}`;
     const conveyorY = 15;
-    
+
     console.log(`➕ 새 박스 추가: ${newBoxId}`);
-    
+
     const { findNearestAvailablePosition, addBox } = useBoxesStore.getState();
-    const conveyorPosition = findNearestAvailablePosition(0, conveyorY, 0, 2, 2, 2);
-    
+    const conveyorPosition = findNearestAvailablePosition(
+      0,
+      conveyorY,
+      0,
+      2,
+      2,
+      2,
+    );
+
     const newBox: BoxData = {
       id: newBoxId,
       x: conveyorPosition.x,
@@ -107,7 +114,7 @@ const BoxManagementContent: React.FC = () => {
       color: generateRandomColor(),
       ref: React.createRef<BoxMethods>(),
     };
-    
+
     addBox(newBox);
     setNextBoxId((prev) => prev + 1);
   }, [nextBoxId, generateRandomColor]);
@@ -122,17 +129,20 @@ const BoxManagementContent: React.FC = () => {
   }, []);
 
   // 🚀 핸들러들을 완전히 안정적으로 만들기 (의존성 최소화)
-  const stableHandlers = useMemo(() => ({
-    onSelect: handleSelectBox,
-    onMoveToConveyor: handleMoveToConveyor,
-    onDropToBottom: handleDropToBottom,
-    onMoveToOtherPosition: handleMoveToOtherPosition,
-  }), []); // 🎯 빈 의존성 배열로 완전히 고정
+  const stableHandlers = useMemo(
+    () => ({
+      onSelect: handleSelectBox,
+      onMoveToConveyor: handleMoveToConveyor,
+      onDropToBottom: handleDropToBottom,
+      onMoveToOtherPosition: handleMoveToOtherPosition,
+    }),
+    [],
+  ); // 🎯 빈 의존성 배열로 완전히 고정
 
   const isMobile = useIsMobile();
 
   return (
-    <div className="fixed inset-0 w-full h-[100dvh] bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
+    <div className="fixed inset-0 h-[100dvh] w-full overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800">
       <Canvas
         camera={{ position: [20, 15, 20], fov: 75 }}
         style={{
@@ -146,16 +156,12 @@ const BoxManagementContent: React.FC = () => {
         <GridFloor />
         <OccupiedAreaIndicator />
         <ConveyorBelt />
-        
+
         {/* 🚀 최적화된 박스 렌더링: 각 박스는 독립적으로 리렌더링 */}
         {boxIds.map((boxId) => (
-          <AnimatedBox
-            key={boxId}
-            boxId={boxId}
-            onSelect={handleSelectBox}
-          />
+          <AnimatedBox key={boxId} boxId={boxId} onSelect={handleSelectBox} />
         ))}
-        
+
         <OrbitControls
           enablePan={true}
           enableZoom={true}
@@ -165,9 +171,9 @@ const BoxManagementContent: React.FC = () => {
           maxDistance={50}
         />
       </Canvas>
-      
+
       {/* 🎨 UI 패널 */}
-      <Card className="absolute right-4 bottom-4 w-80 bg-background/80 shadow-xl backdrop-blur-sm">
+      <Card className="absolute bottom-4 right-4 w-80 bg-background/80 shadow-xl backdrop-blur-sm">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2">
             <Move3D className="h-5 w-5" />

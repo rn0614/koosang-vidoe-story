@@ -50,7 +50,7 @@ export function QuestionTemplateCreateForm({ companyId, onCreated, loading }: Qu
     const { error } = await supabase
       .from('question_templates')
       .insert({
-        company_id: companyId,
+        company_id: Number(companyId),
         template_name: form.template_name,
         question_text: form.question_text,
         question_type: form.question_type,

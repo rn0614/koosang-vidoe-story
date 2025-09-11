@@ -6,30 +6,36 @@ source: https://sketchfab.com/models/0d62f4d3676545c88ec8523213c055dd
 title: Minecraft Diamond Axe
 */
 
-import { useGLTF } from "@react-three/drei"
-import * as THREE from "three"
+import { useGLTF } from '@react-three/drei';
+import type { Mesh, Material } from 'three';
 
 type GLTFResult = {
   nodes: {
-    Mesh_1001_1: THREE.Mesh
-    Mesh_1001_2: THREE.Mesh
-  }
+    Mesh_1001_1: Mesh;
+    Mesh_1001_2: Mesh;
+  };
   materials: {
-    material_2: THREE.Material
-    material_3: THREE.Material
-  }
-}
+    material_2: Material;
+    material_3: Material;
+  };
+};
 
 export function Axe(props: any) {
-  const { nodes, materials } = useGLTF("/assets/axe.glb") as unknown as GLTFResult
+  const { nodes, materials } = useGLTF(
+    '/assets/axe.glb',
+  ) as unknown as GLTFResult;
   return (
     <group dispose={null} {...props}>
       <group rotation={[0, Math.PI / 1.8, -0.3]} scale={0.5}>
-        <mesh geometry={nodes.Mesh_1001_1.geometry} material={materials.material_2} />
-        <mesh geometry={nodes.Mesh_1001_2.geometry} material={materials.material_3} />
+        <mesh
+          geometry={nodes.Mesh_1001_1.geometry}
+          material={materials.material_2}
+        />
+        <mesh
+          geometry={nodes.Mesh_1001_2.geometry}
+          material={materials.material_3}
+        />
       </group>
     </group>
-  )
+  );
 }
-
-

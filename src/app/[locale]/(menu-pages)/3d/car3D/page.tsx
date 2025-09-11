@@ -1,9 +1,9 @@
 'use client';
 
-import React, { Suspense, useRef, useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
-import * as THREE from 'three';
+import { Vector3, Euler, Object3D, Mesh, Material } from 'three';
 import {
   COLORS,
   COLORABLE_PARTS,
@@ -39,7 +39,7 @@ const InteriorAnimator: React.FC<InteriorAnimatorProps> = ({
 };
 
 function renderNode(
-  node: THREE.Object3D,
+  node: Object3D,
   partColors: Record<string, string>,
   onPartClick: (name: string) => void,
   wheelRotation: number,
@@ -66,7 +66,7 @@ function renderNode(
   );
 
   if (isRenderableMesh) {
-    const mesh = node as THREE.Mesh;
+    const mesh = node as Mesh;
     // 로그 출력
     console.log('[렌더링 mesh]', {
       name: node.name,
@@ -76,7 +76,7 @@ function renderNode(
       children: node.children.length,
     });
     // material 복제(공유 방지)
-    let material: THREE.Material | THREE.Material[];
+    let material: Material | Material[];
     if (Array.isArray(mesh.material)) {
       material = mesh.material.map((mat) => mat.clone());
       material.forEach((mat: any) => {
@@ -102,7 +102,7 @@ function renderNode(
     const isRotatable = ROTATABLE_PARTS.includes(node.name);
     // 바퀴 회전 적용 (Z축)
     const wheelEuler = isRotatable
-      ? new THREE.Euler(0, 0, wheelRotation, 'XYZ')
+      ? new Euler(0, 0, wheelRotation, 'XYZ')
       : undefined;
 
     // 도어/인테리어 회전 적용
@@ -343,9 +343,9 @@ const DoorAnimator: React.FC<DoorAnimatorProps> = ({
 
 // 카메라 위치 관리를 위한 컴포넌트
 const CameraController: React.FC<{
-  cameraPosition: THREE.Vector3;
-  cameraRotation: THREE.Euler;
-  onCameraChange: (position: THREE.Vector3, rotation: THREE.Euler) => void;
+  cameraPosition: Vector3;
+  cameraRotation: Euler;
+  onCameraChange: (position: Vector3, rotation: Euler) => void;
 }> = ({ cameraPosition, cameraRotation, onCameraChange }) => {
   const { camera } = useThree();
 
@@ -390,21 +390,14 @@ const Car3DPage: React.FC = () => {
   const [isSkyboxMode, setIsSkyboxMode] = useState(false);
 
   // 카메라 위치 상태 추가
-  const [cameraPosition, setCameraPosition] = useState(
-    new THREE.Vector3(0, 1.5, 5),
-  );
-  const [cameraRotation, setCameraRotation] = useState(
-    new THREE.Euler(0, 0, 0),
-  );
+  const [cameraPosition, setCameraPosition] = useState(new Vector3(0, 1.5, 5));
+  const [cameraRotation, setCameraRotation] = useState(new Euler(0, 0, 0));
 
   // interior 크기 애니메이션 상태 추가
   const [interiorScale, setInteriorScale] = useState(1.0);
 
   // 카메라 변경 핸들러
-  const handleCameraChange = (
-    position: THREE.Vector3,
-    rotation: THREE.Euler,
-  ) => {
+  const handleCameraChange = (position: Vector3, rotation: Euler) => {
     setCameraPosition(position);
     setCameraRotation(rotation);
   };

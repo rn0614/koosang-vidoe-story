@@ -1,17 +1,17 @@
-import React from 'react'
-import * as THREE from 'three'
-import { useFrame } from '@react-three/fiber'
+import React from 'react';
+import { Mesh, Vector3, Euler, BufferGeometry, Material } from 'three';
+import { useFrame } from '@react-three/fiber';
 
 interface WheelProps {
-  geometry: THREE.BufferGeometry
-  material: THREE.Material | THREE.Material[]
-  position: THREE.Vector3 | [number, number, number]
-  rotation?: THREE.Euler
-  scale: THREE.Vector3 | [number, number, number]
-  name: string
-  onClick?: (e: any) => void
-  wheelRotation: number
-  isRotating: boolean
+  geometry: BufferGeometry;
+  material: Material | Material[];
+  position: Vector3 | [number, number, number];
+  rotation?: Euler;
+  scale: Vector3 | [number, number, number];
+  name: string;
+  onClick?: (e: any) => void;
+  wheelRotation: number;
+  isRotating: boolean;
 }
 
 export const Wheel: React.FC<WheelProps> = ({
@@ -25,15 +25,15 @@ export const Wheel: React.FC<WheelProps> = ({
   wheelRotation,
   isRotating,
 }) => {
-  const meshRef = React.useRef<THREE.Mesh>(null)
+  const meshRef = React.useRef<Mesh>(null);
 
   // 애니메이션: 회전값을 직접 적용
   useFrame(() => {
     if (meshRef.current) {
       // Z축 회전
-      meshRef.current.rotation.z = wheelRotation
+      meshRef.current.rotation.z = wheelRotation;
     }
-  })
+  });
 
   return (
     <mesh
@@ -48,5 +48,5 @@ export const Wheel: React.FC<WheelProps> = ({
       castShadow
       receiveShadow
     />
-  )
-}
+  );
+};
