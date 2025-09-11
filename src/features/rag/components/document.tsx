@@ -202,7 +202,7 @@ export default function DocumentList() {
                     <div className="flex aspect-[5/4] w-full items-center justify-center overflow-hidden bg-gray-800">
                       <Image
                         src={
-                          getImageUrl(document.metadata.thumbnail) ||
+                          getImageUrl(document.metadata.thumbnail)?.[0] ||
                           '/image/no-image-found.png'
                         }
                         alt={document.metadata.title}
