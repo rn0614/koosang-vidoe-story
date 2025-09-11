@@ -106,9 +106,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getImageUrl(thumbnail?: string) {
-  if (!thumbnail) return undefined;
-  const filename = thumbnail.split('/').pop()!;
+export function getImageUrl(imageUrl?: string) {
+  console.warn('getImageUrl', imageUrl);
+  if (!imageUrl) return undefined;
+  const filename = imageUrl.split('/').pop()!;
   
   // 파일명이 '-'로 구분되어 있다면 앞부분(타임스탬프)과 확장자만 추출
   // 예: "202501121211ABCD-한글파일명.png" -> "202501121211ABCD.png"
@@ -117,10 +118,10 @@ export function getImageUrl(thumbnail?: string) {
     const firstPart = parts[0]; // 타임스탬프 부분
     const extension = filename.split('.').pop(); // 확장자
     const processedFilename = `${firstPart}.${extension}`;
-    return getSupabaseImageUrl('rag-image', processedFilename);
+    return [getSupabaseImageUrl('rag-image', processedFilename), parts[1]];
   }
   
-  return getSupabaseImageUrl('rag-image', filename);
+  return [getSupabaseImageUrl('rag-image', filename), filename];
 }
 
 

@@ -37,6 +37,7 @@ const components = {
   ExcalidrawEmbed, // 커스텀 컴포넌트 추가
   img: (props: any) => {
     let src = props.src;
+    console.warn('here',src);
     
     // 이미 완전한 URL인 경우 그대로 사용
     if (src.startsWith('http')) {
@@ -45,9 +46,9 @@ const components = {
     
     // 파일명에서 ID 추출
     const fileName = src.split('/').pop()!;
-    const imageURL = getImageUrl(fileName);
+    const [imageURL, alt] = getImageUrl(fileName) || ['', ''];
         
-    return <img {...props} src={imageURL} loading="lazy" alt={props.alt || ""} />;
+    return <img {...props} src={imageURL} loading="lazy" alt={alt || ""} />;
   },
   a: (props: any) => {
     // href가 없는 경우 처리
