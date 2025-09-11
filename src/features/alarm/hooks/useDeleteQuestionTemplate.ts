@@ -12,7 +12,7 @@ export function useDeleteQuestionTemplate(companyId?: number | string) {
           deleted_at: new Date().toISOString(),
           delete_yn: true,
         })
-        .eq('id', id)
+        .eq('id', Number(id))
         .neq('delete_yn', true)
         .select()
         .single();

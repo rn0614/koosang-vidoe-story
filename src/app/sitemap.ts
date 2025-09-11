@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { createClient } from "@/shared/lib/supabase/server";
+import { DocumentMetadata } from "@/shared/types/document-metadata";
 
 type SitemapItem = {
   url: string;
@@ -25,20 +26,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // 2. sitemap 배열 생성
   const ragPages = (docs ?? []).map((doc) => {
+    // metadata를 DocumentMetadata 타입으로 캐스팅
+    const metadata = doc.metadata as DocumentMetadata | null;
+    
     // titleAndId는 보통 slug--id 형태이거나, 그냥 id일 수 있음
     // metadata.title 또는 metadata.slug가 있다면 활용
-    const title = doc.metadata?.title ?? "";
+    const title = metadata?.title ?? "";
     // slug가 있다면 slug--id, 없다면 id만
-    const titleAndId = doc.metadata?.title
-      ? `${doc.metadata.title}--${doc.id}`
+    const titleAndId = metadata?.title
+      ? `${metadata.title}--${doc.id}`
       : doc.id;
 
     return {
       url: `${baseUrl}/rag/${encodeURIComponent(titleAndId)}`,
-      lastModified: doc.metadata?.updated_at
-        ? new Date(doc.metadata.updated_at)
+      lastModified: metadata?.updatedAt
+        ? new Date(metadata.updatedAt)
         : new Date(),
-      changeFrequency: "weekly",
+      changeFrequency: "weekly" as const,
       priority: 0.8,
     } as SitemapItem;
   });

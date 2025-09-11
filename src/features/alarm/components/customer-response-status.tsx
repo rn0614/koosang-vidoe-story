@@ -22,11 +22,11 @@ export function CustomerResponseStatus({ companyId }: CustomerResponseStatusProp
         const { data: customers, error: customerError } = await supabase
           .from('customers')
           .select('id, name')
-          .eq('company_id', companyId)
+          .eq('company_id', Number(companyId))
           .eq('is_active', true);
 
         if (customerError) throw customerError;
-
+/*
         // 2. 각 고객별 최근 응답 조회 (병렬)
         const results = await Promise.all(
           (customers || []).map(async (customer: any) => {
@@ -62,6 +62,8 @@ export function CustomerResponseStatus({ companyId }: CustomerResponseStatusProp
           })
         );
         setRows(results);
+
+        */
       } catch (err: any) {
         setError(err.message || '에러 발생');
       } finally {

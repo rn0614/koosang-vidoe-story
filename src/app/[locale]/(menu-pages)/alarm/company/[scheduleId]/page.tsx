@@ -29,7 +29,7 @@ export default function NotificationSchedulePage() {
       const { data, error } = await supabase
         .from('question_templates')
         .select('*')
-        .eq('id', scheduleId)
+        .eq('id', Number(scheduleId))
         .neq('delete_yn', true)
         .single();
       setLoading(false);

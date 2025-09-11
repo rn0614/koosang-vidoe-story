@@ -9,7 +9,7 @@ export function useQuestionTemplates(companyId: number | string | undefined) {
       const { data, error } = await supabase
         .from('question_templates')
         .select('*')
-        .eq('company_id', companyId)
+        .eq('company_id', Number(companyId))
         .eq('is_active', true)
         .neq('delete_yn', true)
         .order('created_at', { ascending: false });

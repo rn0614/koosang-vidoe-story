@@ -1,3 +1,5 @@
+import { DocumentMetadata } from './document-metadata';
+
 type TagWithCount = {
   tag: string;
   count: number;
@@ -10,15 +12,7 @@ type Document = {
   tags: string[];
   createdAt: string;
   updatedAt: string;
-  metadata: {
-    title: string;
-    content: string;
-    tags: string[];
-    createdAt: string;
-    updatedAt: string;
-    excerpt: string;
-    thumbnail: string;
-  };
+  metadata: DocumentMetadata;
 };
 
 export type { TagWithCount, Document };

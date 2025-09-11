@@ -5,9 +5,18 @@ import { Badge } from '@/shared/ui/badge';
 import { Link } from '@/shared/lib/i18n/navigation';
 import { useToast } from '@/shared/hooks/use-toast';
 import { createClient } from '@/shared/lib/supabase/client';
+import { Database } from '@/shared/types/database.types';
+
+// 타입 정의
+type QuestionTemplate = Database['public']['Tables']['question_templates']['Row'];
+type Customer = Database['public']['Tables']['customers']['Row'];
+type NotificationScheduleInsert = Database['public']['Tables']['notification_schedules']['Insert'];
+
+// 쿼리 결과 타입 정의
+type CustomerSelectResult = Pick<Customer, 'id' | 'name'>;
 
 interface QuestionTemplateListProps {
-  templates: any[];
+  templates: QuestionTemplate[];
   companyId: number | string | undefined;
 }
 
@@ -17,7 +26,7 @@ export function QuestionTemplateList({ templates, companyId }: QuestionTemplateL
 
 
   // 바로 보내기 기능
-  const handleSendNow = useCallback(async (template: any) => {
+  const handleSendNow = useCallback(async (template: QuestionTemplate) => {
     if (!companyId || !template) {
       toast({ title: '오류', description: '회사 또는 템플릿이 선택되지 않았습니다.', variant: 'destructive' });
       return;
@@ -26,7 +35,7 @@ export function QuestionTemplateList({ templates, companyId }: QuestionTemplateL
       const { data: customers, error: customerError } = await supabase
         .from('customers')
         .select('id, name')
-        .eq('company_id', companyId)
+        .eq('company_id', Number(companyId))
         .eq('is_active', true)
         .eq('notification_enabled', true);
       if (customerError) throw customerError;
@@ -34,12 +43,14 @@ export function QuestionTemplateList({ templates, companyId }: QuestionTemplateL
         toast({ title: '알림', description: '알림을 받을 수 있는 활성 고객이 없습니다.', variant: 'destructive' });
         return;
       }
-      toast({ title: '알림', description: `${customers.map((customer: any) => customer.name).join(', ')} 고객에게 알림을 발송합니다.`, variant: 'destructive' });
+      toast({ title: '알림', description: `${customers.map((customer: CustomerSelectResult) => customer.name).join(', ')} 고객에게 알림을 발송합니다.`, variant: 'destructive' });
       const now = new Date();
       const currentDate = now.toISOString().split('T')[0];
       const currentTime = now.toTimeString().slice(0, 5);
-      const notificationSchedules = customers.map((customer: any) => ({
-        company_id: companyId,
+      
+      // 타입 안전한 notificationSchedules 생성
+      const notificationSchedules: NotificationScheduleInsert[] = customers.map((customer: CustomerSelectResult) => ({
+        company_id: Number(companyId), // number 타입으로 변환
         customer_id: customer.id,
         question_template_id: template.id,
         prescription_id: null,
@@ -50,6 +61,7 @@ export function QuestionTemplateList({ templates, companyId }: QuestionTemplateL
         expires_at: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
         retry_count: 0,
       }));
+      
       const { error: insertError } = await supabase
         .from('notification_schedules')
         .insert(notificationSchedules);
@@ -59,7 +71,7 @@ export function QuestionTemplateList({ templates, companyId }: QuestionTemplateL
       console.error('즉시 발송 오류:', err);
       toast({ title: '발송 실패', description: '알림 발송 중 오류가 발생했습니다: ' + err.message, variant: 'destructive' });
     }
-  }, [supabase, toast]);
+  }, [supabase, toast, companyId]);
 
 
 
@@ -72,7 +84,7 @@ export function QuestionTemplateList({ templates, companyId }: QuestionTemplateL
   }
   return (
     <div className="space-y-4">
-      {templates.map((template: any) => (
+      {templates.map((template: QuestionTemplate) => (
         <Card key={template.id} className="border-l-4 border-l-blue-500">
           <CardContent className="pt-4">
             <div className="mb-2 flex items-start justify-between">
@@ -106,17 +118,17 @@ export function QuestionTemplateList({ templates, companyId }: QuestionTemplateL
             <p className="mb-3 text-muted-foreground">
               {template.question_text}
             </p>
-            {template.options && (
+            {template.options && Array.isArray(template.options) && (
               <div className="mb-3 flex flex-wrap gap-2">
-                {template.options.map((option: string, idx: number) => (
+                {template.options.map((option: any, idx: number) => (
                   <Badge key={idx} variant="outline">
-                    {option}
+                    {String(option)}
                   </Badge>
                 ))}
               </div>
             )}
             <div className="text-sm text-muted-foreground">
-              생성: {new Date(template.created_at).toLocaleString('ko-KR')}
+              생성: {template.created_at ? new Date(template.created_at).toLocaleString('ko-KR') : 'N/A'}
             </div>
           </CardContent>
         </Card>
