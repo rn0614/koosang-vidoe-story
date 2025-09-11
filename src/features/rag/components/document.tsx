@@ -13,8 +13,9 @@ import {
 import Image from 'next/image';
 import { Button } from '@/shared/ui/button';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { getSupabaseImageUrl } from '@/shared/lib/utils';
+import { getImageUrl } from '@/shared/lib/utils';
 import { TagWithCount, Document } from '@/shared/types/document';
+import { DocumentMetadata } from '@/shared/types/document-metadata';
 import { Loader2 } from 'lucide-react';
 
 function parseTagsParam(tagsParam: string | null): string[] {
@@ -25,12 +26,6 @@ function parseTagsParam(tagsParam: string | null): string[] {
     .filter(Boolean);
 }
 
-// 썸네일 경로에서 파일명만 추출해 Supabase URL로 변환
-function getThumbnailUrl(thumbnail?: string) {
-  if (!thumbnail) return undefined;
-  const filename = thumbnail.split('/').pop()!;
-  return getSupabaseImageUrl('rag-image', filename);
-}
 
 export default function DocumentList() {
   const searchParams = useSearchParams();
@@ -207,7 +202,7 @@ export default function DocumentList() {
                     <div className="flex aspect-[5/4] w-full items-center justify-center overflow-hidden bg-gray-800">
                       <Image
                         src={
-                          getThumbnailUrl(document.metadata.thumbnail) ||
+                          getImageUrl(document.metadata.thumbnail) ||
                           '/image/no-image-found.png'
                         }
                         alt={document.metadata.title}

@@ -106,6 +106,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function getImageUrl(thumbnail?: string) {
+  if (!thumbnail) return undefined;
+  const filename = thumbnail.split('/').pop()!;
+  
+  // 파일명이 '-'로 구분되어 있다면 앞부분(타임스탬프)과 확장자만 추출
+  // 예: "202501121211ABCD-한글파일명.png" -> "202501121211ABCD.png"
+  if (filename.includes('-')) {
+    const parts = filename.split('-');
+    const firstPart = parts[0]; // 타임스탬프 부분
+    const extension = filename.split('.').pop(); // 확장자
+    const processedFilename = `${firstPart}.${extension}`;
+    return getSupabaseImageUrl('rag-image', processedFilename);
+  }
+  
+  return getSupabaseImageUrl('rag-image', filename);
+}
+
 
 export function getSupabaseImageUrl(bucket: string, filename: string) {
   const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${filename.replace(/^\/+/, '')}`;

@@ -1,14 +1,13 @@
 import { ArrowDownRight } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { ArrowUpRight } from "lucide-react"
-
 
 interface StatCardProps {
     title: string;
-    value: number;
+    value: number|string;
     description: string;
     icon: React.ReactNode;
-    trend: "up" | "down";
+    trend?: "up" | "down";
 }
 
 export function StatCard({ title, value, description, icon, trend }: StatCardProps) {
@@ -21,9 +20,10 @@ export function StatCard({ title, value, description, icon, trend }: StatCardPro
         <CardContent>
           <div className="text-2xl font-bold">{value}</div>
           <p className="text-xs text-muted-foreground flex items-center mt-1">
-            {trend === "up" ? (
+            {trend === "up" && (
               <ArrowUpRight className="mr-1 h-4 w-4 text-green-500" />
-            ) : (
+            )}
+            {trend === "down" && (
               <ArrowDownRight className="mr-1 h-4 w-4 text-red-500" />
             )}
             {description}

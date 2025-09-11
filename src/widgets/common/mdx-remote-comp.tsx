@@ -1,4 +1,4 @@
-import { getSupabaseImageUrl } from "@/shared/lib/utils";
+import { getImageUrl, getSupabaseImageUrl } from "@/shared/lib/utils";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from 'remark-gfm';
 
@@ -36,10 +36,18 @@ function preprocessExcalidraw(source: string): string {
 const components = {
   ExcalidrawEmbed, // 커스텀 컴포넌트 추가
   img: (props: any) => {
-    const src = props.src.startsWith('http')
-      ? props.src
-      : getSupabaseImageUrl('rag-image', props.src.split('/').pop()!);
-    return <img {...props} src={src} loading="lazy" alt={props.alt || ""} />;
+    let src = props.src;
+    
+    // 이미 완전한 URL인 경우 그대로 사용
+    if (src.startsWith('http')) {
+      return <img {...props} src={src} loading="lazy" alt={props.alt || ""} />;
+    }
+    
+    // 파일명에서 ID 추출
+    const fileName = src.split('/').pop()!;
+    const imageURL = getImageUrl(fileName);
+        
+    return <img {...props} src={imageURL} loading="lazy" alt={props.alt || ""} />;
   },
   a: (props: any) => {
     // href가 없는 경우 처리

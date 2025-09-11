@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-export function useNews({ limit = 4, recentDays }: { limit?: number; recentDays?: number } = {}) {
+export function useNews({ limit = 4, recentDays=7 }: { limit?: number; recentDays?: number } = {}) {
   const queryKey = ['news', limit, recentDays];
   const queryFn = async () => {
     let url = `/api/crawl-tech-news?limit=${limit}`;
