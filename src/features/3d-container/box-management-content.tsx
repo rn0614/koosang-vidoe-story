@@ -8,14 +8,14 @@ import {
   Move3D,
   Plus,
 } from 'lucide-react';
-import { useBoxesStore } from '@/features/3d-visualization';
-import AnimatedBox from '@/features/3d-visualization/components/container/animated-box';
-import OccupiedAreaIndicator from '@/features/3d-visualization/components/container/occupied-area-indicator';
-import ConveyorBelt from '@/features/3d-visualization/components/container/conveyor-belt';
-import GridFloor from '@/features/3d-visualization/components/container/grid-floor';
-import Lighting from '@/features/3d-visualization/components/container/lighting';
-import BoxInfoCard from '@/features/3d-visualization/components/container/boxInfo-card';
-import SelectedBoxDisplay from '@/features/3d-visualization/components/container/selected-box-display';
+import { useBoxesStore } from '@/features/3d-container';
+import AnimatedBox from '@/features/3d-container/animated-box';
+import OccupiedAreaIndicator from '@/features/3d-container/occupied-area-indicator';
+import ConveyorBelt from '@/features/3d-container/conveyor-belt';
+import GridFloor from '@/features/3d-container/grid-floor';
+import Lighting from '@/features/3d-container/lighting';
+import BoxInfoCard from '@/features/3d-container/boxInfo-card';
+import SelectedBoxDisplay from '@/features/3d-container/selected-box-display';
 import { BoxData, BoxMethods } from '@/shared/types/boxPosition';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 
@@ -119,14 +119,6 @@ const BoxManagementContent: React.FC = () => {
     setNextBoxId((prev) => prev + 1);
   }, [nextBoxId, generateRandomColor]);
 
-  const handleCanvasClick = useCallback((): void => {
-    // 🚀 selectedBoxId 구독하지 않으므로 getState()로 현재 값 확인
-    const currentSelectedBoxId = useBoxesStore.getState().selectedBoxId;
-    if (currentSelectedBoxId) {
-      console.log('🚫 박스 선택 해제');
-      useBoxesStore.getState().setSelectedBoxId(null);
-    }
-  }, []);
 
   // 🚀 핸들러들을 완전히 안정적으로 만들기 (의존성 최소화)
   const stableHandlers = useMemo(

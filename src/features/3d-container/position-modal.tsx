@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/di
 import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { AlertCircle, AlertTriangle, Move3D, Expand, Navigation } from 'lucide-react';
 import { BoxData, BoxPosition } from '@/shared/types/boxPosition';
-import { useBoxesStore } from '@/features/3d-visualization';
+import { useBoxesStore } from '@/features/3d-container';
 
 interface PositionModalProps {
   box: BoxData | null;

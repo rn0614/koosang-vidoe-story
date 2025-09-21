@@ -3,7 +3,7 @@ import { Box, Text } from '@react-three/drei';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
 import { Mesh, Vector3 } from 'three';
 import { BoxMethods } from '@/entities/box/types';
-import { useBoxesStore } from '@/features/3d-visualization';
+import { useBoxesStore } from '@/features/3d-container';
 
 interface AnimatedBoxProps {
   boxId: string;

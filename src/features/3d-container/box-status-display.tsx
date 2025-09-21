@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from '@/shared/ui/badge';
-import { useBoxesStore } from '@/features/3d-visualization';
+import { useBoxesStore } from '@/features/3d-container';
 
 // 🎯 박스 상태 표시만 담당하는 별도 컴포넌트
 const BoxStatusDisplay: React.FC = () => {

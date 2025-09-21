@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { CheckCircle, XCircle, Move3D, ArrowUp, ArrowDown, Navigation } from 'lucide-react';
 import PositionModal from './position-modal';
-import { useBoxesStore } from '@/features/3d-visualization';
+import { useBoxesStore } from '@/features/3d-container';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 
 interface BoxInfoCardProps {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@react-three/drei';
-import { useBoxesStore } from '@/features/3d-visualization';
+import { useBoxesStore } from '@/features/3d-container';
 
 const OccupiedAreaIndicator: React.FC = () => {
   const { getAllBoxIds, getBox } = useBoxesStore();

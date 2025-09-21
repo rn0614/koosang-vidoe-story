@@ -1,5 +1,5 @@
 import React from 'react';
-import { useBoxesStore } from '@/features/3d-visualization';
+import { useBoxesStore } from '@/features/3d-container';
 
 // 🎯 선택된 박스 ID만 표시하는 별도 컴포넌트
 const SelectedBoxDisplay: React.FC = () => {
