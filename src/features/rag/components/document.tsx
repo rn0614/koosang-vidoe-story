@@ -15,7 +15,6 @@ import { Button } from '@/shared/ui/button';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getImageUrl } from '@/shared/lib/utils';
 import { TagWithCount, Document } from '@/shared/types/document';
-import { DocumentMetadata } from '@/shared/types/document-metadata';
 import { Loader2 } from 'lucide-react';
 
 function parseTagsParam(tagsParam: string | null): string[] {
@@ -25,7 +24,6 @@ function parseTagsParam(tagsParam: string | null): string[] {
     .map((t) => t.trim())
     .filter(Boolean);
 }
-
 
 export default function DocumentList() {
   const searchParams = useSearchParams();
@@ -146,11 +144,7 @@ export default function DocumentList() {
   };
 
   return (
-    <div className="mx-auto w-full p-4">
-      <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100">
-        RAG 적용 노트
-      </h3>
-      {/* 태그 필터 UI */}
+    <>
       <div className="sticky top-16 z-20 mb-2 py-2">
         <div className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto rounded-lg bg-gray-100/80 px-2 py-2 shadow-sm transition dark:bg-gray-800/80">
           <Button
@@ -228,6 +222,6 @@ export default function DocumentList() {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }

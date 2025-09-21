@@ -29,3 +29,4 @@ export type JsonToDocumentMetadata<T> = T extends Record<string, any>
       thumbnail?: string;
     } & Omit<T, 'title' | 'description' | 'excerpt' | 'tags' | 'createdAt' | 'updatedAt' | 'slug' | 'author' | 'category' | 'thumbnail'>
   : DocumentMetadata;
+
