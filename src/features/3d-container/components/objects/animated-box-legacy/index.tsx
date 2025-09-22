@@ -3,7 +3,8 @@ import { Box, Text } from '@react-three/drei';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
 import { Mesh, Vector3 } from 'three';
 import { BoxMethods } from '@/entities/box/types';
-import { useBoxesStore } from '@/features/3d-container';
+import { useContainerStore } from '@/entities/container';
+import { BoxPhysics } from '@/entities/box/model/physics';
 
 interface AnimatedBoxProps {
   boxId: string;
@@ -85,23 +86,18 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
     [onSelect, boxId],
   );
 
-  // 🚀 핵심 최적화: 이 박스의 데이터만 구독
-  const boxData = useBoxesStore(
+  // 🚀 핵심 최적화: 이 박스의 데이터만 구독 (회전값 포함)
+  const boxData = useContainerStore(
     useCallback((state) => state.boxes.get(boxId), [boxId]),
   );
 
   // 🚀 선택 상태만 별도 구독
-  const isSelected = useBoxesStore(
+  const isSelected = useContainerStore(
     useCallback((state) => state.selectedBoxId === boxId, [boxId]),
   );
 
   // 🚀 스토어 메서드들은 한 번만 가져오기 (리렌더링과 무관)
-  const {
-    findMinimumYPosition,
-    checkBoxStability,
-    findNearestAvailablePosition,
-    moveBox,
-  } = useBoxesStore.getState();
+  const { updateBoxPosition } = useContainerStore.getState();
 
   const meshRef = useRef<Mesh>(null);
 
@@ -120,15 +116,18 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
   // 🎯 stabilityInfo는 useMemo로 계산 (박스 위치/크기 변경시에만 재계산)
   const stabilityInfo = useMemo(() => {
     console.log(`🔍 ${boxId} 안정성 검사 재계산`);
-    return checkBoxStability(
+    const allBoxes = useContainerStore.getState().boxes;
+    return BoxPhysics.checkBoxStability(
       boxData.x,
       boxData.y,
       boxData.z,
       boxData.lenX,
       boxData.lenY,
       boxData.lenZ,
+      allBoxes,
       boxData.id,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     boxData.x,
     boxData.y,
@@ -137,13 +136,18 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
     boxData.lenY,
     boxData.lenZ,
     boxData.id,
-    checkBoxStability,
+    // checkBoxStability 함수 참조 제외
   ]);
 
   // 박스 중심 좌표 계산 (렌더링용)
   const centerX = boxData.x - boxData.lenX / 2;
   const centerY = boxData.y - boxData.lenY / 2;
   const centerZ = boxData.z - boxData.lenZ / 2;
+  
+  // 회전값 계산 (도 → 라디안)
+  const rotationX = (boxData.rotX || 0) * (Math.PI / 180);
+  const rotationY = (boxData.rotY || 0) * (Math.PI / 180);
+  const rotationZ = (boxData.rotZ || 0) * (Math.PI / 180);
 
   // 박스 데이터가 변경되면 targetPosition 업데이트
   React.useEffect(() => {
@@ -161,7 +165,8 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
     if (!moveState.isAnimating && moveState.isSequentialMoving) {
       handleMovementPhaseComplete();
     }
-  }, [moveState.isAnimating, moveState.isSequentialMoving]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moveState.isAnimating, moveState.isSequentialMoving]); // handleMovementPhaseComplete 의존성 제외
 
   // 시퀀셜 이동 단계별 처리
   const handleMovementPhaseComplete = useCallback(() => {
@@ -169,13 +174,15 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
       case 'to_conveyor': {
         dispatch({ type: 'SET_PHASE', phase: 'on_conveyor' });
         const conveyorY = 15;
-        const targetOnConveyor = findNearestAvailablePosition(
+        const allBoxes = useContainerStore.getState().boxes;
+        const targetOnConveyor = BoxPhysics.findNearestAvailablePosition(
           moveState.finalTargetX,
           conveyorY,
           moveState.finalTargetZ,
           boxData.lenX,
           boxData.lenY,
           boxData.lenZ,
+          allBoxes,
           boxData.id,
         );
         moveToPosition(
@@ -189,12 +196,14 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
         dispatch({ type: 'SET_PHASE', phase: 'dropping' });
         const currentX = moveState.targetPosition[0];
         const currentZ = moveState.targetPosition[2];
-        const minY = findMinimumYPosition(
+        const allBoxes = useContainerStore.getState().boxes;
+        const minY = BoxPhysics.findMinimumYPosition(
           currentX,
           currentZ,
           boxData.lenX,
           boxData.lenY,
           boxData.lenZ,
+          allBoxes,
           boxData.id,
         );
         moveToPosition(currentX, minY, currentZ);
@@ -208,7 +217,8 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
         break;
       }
     }
-  }, [moveState, boxData, findNearestAvailablePosition, findMinimumYPosition]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moveState.movementPhase, moveState.finalTargetX, moveState.finalTargetZ, moveState.targetPosition, moveState.sequentialResolve, boxData.id, boxData.lenX, boxData.lenY, boxData.lenZ]); // moveState 전체 객체 제외
 
   // 🎯 3D 애니메이션 프레임 처리
   useFrame((state, delta) => {
@@ -227,9 +237,13 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
         dispatch({ type: 'SET_ANIMATING', payload: false });
 
         // 🚀 스토어 업데이트: 애니메이션 완료 후 실제 위치를 스토어에 반영
+        // 스토어의 현재 박스 위치와 비교하여 실제로 변경된 경우에만 업데이트
         const [x, y, z] = moveState.targetPosition;
-        console.log(`💾 ${boxId} 위치 스토어 업데이트: (${x}, ${y}, ${z})`);
-        moveBox(boxId, x, y, z);
+        const currentBoxData = useContainerStore.getState().boxes.get(boxId);
+        if (currentBoxData && (currentBoxData.x !== x || currentBoxData.y !== y || currentBoxData.z !== z)) {
+          console.log(`💾 ${boxId} 위치 스토어 업데이트: (${x}, ${y}, ${z})`);
+          updateBoxPosition(boxId, x, y, z);
+        }
       }
     }
   });
@@ -248,56 +262,53 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
 
     const currentX = moveState.targetPosition[0];
     const currentZ = moveState.targetPosition[2];
-    const minY = findMinimumYPosition(
+    const allBoxes = useContainerStore.getState().boxes;
+    const minY = BoxPhysics.findMinimumYPosition(
       currentX,
       currentZ,
       boxData.lenX,
       boxData.lenY,
       boxData.lenZ,
+      allBoxes,
       boxData.id,
     );
     moveToPosition(currentX, minY, currentZ);
-  }, [
-    moveState.isSequentialMoving,
-    moveState.targetPosition,
-    boxData,
-    findMinimumYPosition,
-    moveToPosition,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moveState.isSequentialMoving, moveState.targetPosition[0], moveState.targetPosition[2], boxData.id, boxData.lenX, boxData.lenY, boxData.lenZ]); // 함수 참조 제외
 
   const moveToConveyor = useCallback((): void => {
     if (moveState.isSequentialMoving) return;
 
     const conveyorY = 15;
-    const conveyorPosition = findNearestAvailablePosition(
+    const allBoxes = useContainerStore.getState().boxes;
+    const conveyorPosition = BoxPhysics.findNearestAvailablePosition(
       boxData.x,
       conveyorY,
       boxData.z,
-      0,
-      0,
-      0,
+      boxData.lenX,
+      boxData.lenY,
+      boxData.lenZ,
+      allBoxes,
       boxData.id,
     );
     moveToPosition(conveyorPosition.x, conveyorPosition.y, conveyorPosition.z);
-  }, [
-    moveState.isSequentialMoving,
-    boxData,
-    findNearestAvailablePosition,
-    moveToPosition,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moveState.isSequentialMoving, boxData.x, boxData.z, boxData.id, boxData.lenX, boxData.lenY, boxData.lenZ]); // 함수 참조 제외
 
   const moveToOtherPosition = useCallback(
     (x: number, z: number): Promise<void> => {
       return new Promise((resolve) => {
         dispatch({ type: 'START_SEQUENTIAL', x, z, resolve });
         const conveyorY = 15;
-        const conveyorPosition = findNearestAvailablePosition(
+        const allBoxes = useContainerStore.getState().boxes;
+        const conveyorPosition = BoxPhysics.findNearestAvailablePosition(
           boxData.x,
           conveyorY,
           boxData.z,
           boxData.lenX,
           boxData.lenY,
           boxData.lenZ,
+          allBoxes,
           boxData.id,
         );
         moveToPosition(
@@ -306,8 +317,9 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
           conveyorPosition.z,
         );
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [boxData, findNearestAvailablePosition, moveToPosition],
+    [boxData.x, boxData.z, boxData.id, boxData.lenX, boxData.lenY, boxData.lenZ], // 함수 참조 제외
   );
 
   // ref 메서드들 등록
@@ -319,7 +331,8 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
       dropToBottom,
       moveToOtherPosition,
     }),
-    [moveToPosition, moveToConveyor, dropToBottom, moveToOtherPosition],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [boxId], // 함수 참조 대신 boxId만 의존성으로 설정
   );
 
   // 색상/상태 텍스트 계산
@@ -366,6 +379,7 @@ const AnimatedBoxComponent: React.FC<AnimatedBoxProps> = ({
       <Box
         ref={meshRef}
         position={[centerX, centerY, centerZ]}
+        rotation={[rotationX, rotationY, rotationZ]}
         args={[boxData.lenX, boxData.lenY, boxData.lenZ]}
         onClick={handleCardClick}
       >

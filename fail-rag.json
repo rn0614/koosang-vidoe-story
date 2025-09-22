@@ -1,3 +1,296 @@
 {
-    "fail-rag": []
+    "fail-rag": [
+        {
+            "title": "Android Studio 삭제 후 재설치 관련",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Android Studio 삭제 후 재설치 관련.md"
+        },
+        {
+            "title": "API 설계 원칙",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\API 설계 원칙.md"
+        },
+        {
+            "title": "Arrray 내장 메서드",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Arrray 내장 메서드.md"
+        },
+        {
+            "title": "COMMIT MESSAGE규칙",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\COMMIT MESSAGE규칙.md"
+        },
+        {
+            "title": "Console 로그 관련한 내용",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Console 로그 관련한 내용.md"
+        },
+        {
+            "title": "CSS 기본 텍스트 스타일링",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\CSS 기본 텍스트 스타일링.md"
+        },
+        {
+            "title": "css선택자",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\css선택자.md"
+        },
+        {
+            "title": "Cursor rule 관련",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Cursor rule 관련.md"
+        },
+        {
+            "title": "DBeaver 단축키",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\DBeaver 단축키.md"
+        },
+        {
+            "title": "DB정규화 문제",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\DB정규화 문제.md"
+        },
+        {
+            "title": "Debounce와 Throttle",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Debounce와 Throttle.md"
+        },
+        {
+            "title": "dependencies 에 내 프로젝트 명 계속 생성됨",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\dependencies 에 내 프로젝트 명 계속 생성됨.md"
+        },
+        {
+            "title": "Docker Compose YAML 파일 내부 구조",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Docker Compose YAML 파일 내부 구조.md"
+        },
+        {
+            "title": "Docker Image",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Docker Image.md"
+        },
+        {
+            "title": "Docker volume",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Docker volume.md"
+        },
+        {
+            "title": "Docker 기본",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Docker 기본.md"
+        },
+        {
+            "title": "Dom과 이벤트전파",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Dom과 이벤트전파.md"
+        },
+        {
+            "title": "EC2 램 부족현상",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\EC2 램 부족현상.md"
+        },
+        {
+            "title": "github_action_obsidiain배포자동화",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\github_action_obsidiain배포자동화.md"
+        },
+        {
+            "title": "History API",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\History API.md"
+        },
+        {
+            "title": "JS 기본객체별 내장메서드 정리",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\JS 기본객체별 내장메서드 정리.md"
+        },
+        {
+            "title": "JS 기본기능 응용관련",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\JS 기본기능 응용관련.md"
+        },
+        {
+            "title": "Linux 명령어 정리",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Linux 명령어 정리.md"
+        },
+        {
+            "title": "LLM의 이해",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\LLM의 이해.md"
+        },
+        {
+            "title": "Lost Update(갱신손실) 문제",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Lost Update(갱신손실) 문제.md"
+        },
+        {
+            "title": "MCP란 무엇일까",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\MCP란 무엇일까.md"
+        },
+        {
+            "title": "MDXRemote 테이블 깨짐 문제",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\MDXRemote 테이블 깨짐 문제.md"
+        },
+        {
+            "title": "Meta Tag",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Meta Tag.md"
+        },
+        {
+            "title": "MSW + Jest + Nextjs 설정",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\MSW + Jest + Nextjs 설정.md"
+        },
+        {
+            "title": "Nextjs SEO 처리",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Nextjs SEO 처리.md"
+        },
+        {
+            "title": "Nginx를 통해 로드밸런스 적용하기",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Nginx를 통해 로드밸런스 적용하기.md"
+        },
+        {
+            "title": "Obsidian Templater에서 js로 값  실행",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Obsidian Templater에서 js로 값  실행.md"
+        },
+        {
+            "title": "PM2를 통한 무중단 배포",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\PM2를 통한 무중단 배포.md"
+        },
+        {
+            "title": "Prompt Enginering",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Prompt Enginering.md"
+        },
+        {
+            "title": "React Native 기본",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\React Native 기본.md"
+        },
+        {
+            "title": "React 상태 관리 가이드( JUSTAND )",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\React 상태 관리 가이드( JUSTAND ).md"
+        },
+        {
+            "title": "React 성능 최적화 useContext를 이용하여 부분적으로 전역변수 사용으로 불필요한 리렌더링 제거하기",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\React 성능 최적화 useContext를 이용하여 부분적으로 전역변수 사용으로 불필요한 리렌더링 제거하기.md"
+        },
+        {
+            "title": "React 의 FLUX 구조",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\React 의 FLUX 구조.md"
+        },
+        {
+            "title": "React-query",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\React-query.md"
+        },
+        {
+            "title": "REACT에서 자주 업데이트되는 데이터리스트 관리방식",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\REACT에서 자주 업데이트되는 데이터리스트 관리방식.md"
+        },
+        {
+            "title": "Rendered fewer hooks than expected 에러 관련",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Rendered fewer hooks than expected 에러 관련.md"
+        },
+        {
+            "title": "script async,defer처리",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\script async,defer처리.md"
+        },
+        {
+            "title": "Socket.io",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Socket.io.md"
+        },
+        {
+            "title": "Spring Security",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Spring Security.md"
+        },
+        {
+            "title": "SQL 응용",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\SQL 응용.md"
+        },
+        {
+            "title": "SUPBASE, GOOGLE OAUTH, VERCEL 인증 환경설정",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\SUPBASE, GOOGLE OAUTH, VERCEL 인증 환경설정.md"
+        },
+        {
+            "title": "SWAGGER",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\SWAGGER.md"
+        },
+        {
+            "title": "Templater 에서 js 선언 후 실행",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Templater 에서 js 선언 후 실행.md"
+        },
+        {
+            "title": "TEST for Vitest",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\TEST for Vitest.md"
+        },
+        {
+            "title": "Ubuntu 환경 자바 설치",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Ubuntu 환경 자바 설치.md"
+        },
+        {
+            "title": "vite 환경",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\vite 환경.md"
+        },
+        {
+            "title": "VSCode 단축키",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\VSCode 단축키.md"
+        },
+        {
+            "title": "VSCODE 문자열을 원래 문자열과 함께 특정형태 replace",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\VSCODE 문자열을 원래 문자열과 함께 특정형태 replace.md"
+        },
+        {
+            "title": "VScode_디버깅설정",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\VScode_디버깅설정.md"
+        },
+        {
+            "title": "WEB HOOK 관련",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\WEB HOOK 관련.md"
+        },
+        {
+            "title": "webClient를 이용한 외부 stream API통신",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\webClient를 이용한 외부 stream API통신.md"
+        },
+        {
+            "title": "Webview StackRouter Push",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\Webview StackRouter Push.md"
+        },
+        {
+            "title": "공유기 원격데스크톱 접속",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\공유기 원격데스크톱 접속.md"
+        },
+        {
+            "title": "관심사의 분리 원칙(Seperation Of Concern)",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\관심사의 분리 원칙(Seperation Of Concern).md"
+        },
+        {
+            "title": "다국어 설정 변경작업",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\다국어 설정 변경작업.md"
+        },
+        {
+            "title": "데이터베이스 반정규화, 테이블 설계의 딜레마",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\데이터베이스 반정규화, 테이블 설계의 딜레마.md"
+        },
+        {
+            "title": "디버그로 감싸기",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\디버그로 감싸기.md"
+        },
+        {
+            "title": "매크로부터 N8N까지",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\매크로부터 N8N까지.md"
+        },
+        {
+            "title": "멀티 스레딩",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\멀티 스레딩.md"
+        },
+        {
+            "title": "변수명 작성 가이드 접두사와 접미사 활용법칙",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\변수명 작성 가이드 접두사와 접미사 활용법칙.md"
+        },
+        {
+            "title": "실시간 데이터 전송 기술 SSE vs WebSocket",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\실시간 데이터 전송 기술 SSE vs WebSocket.md"
+        },
+        {
+            "title": "왜 yarn과 pnpm을 사용하는가",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\왜 yarn과 pnpm을 사용하는가.md"
+        },
+        {
+            "title": "웹뷰 환경에서의 이벤트 발생 순서",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\웹뷰 환경에서의 이벤트 발생 순서.md"
+        },
+        {
+            "title": "웹서비스 기획하기 템플릿",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\웹서비스 기획하기 템플릿.md"
+        },
+        {
+            "title": "이전 commit 정보 수집하기",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\이전 commit 정보 수집하기.md"
+        },
+        {
+            "title": "자동화 n8n",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\자동화 n8n.md"
+        },
+        {
+            "title": "파이썬 웹 프레임워크 FastApi",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\파이썬 웹 프레임워크 FastApi.md"
+        },
+        {
+            "title": "한 화면에서 일부 내용만 좌우 스크롤",
+            "path": "C:\\work\\cursor\\koosang-vidoe-story\\posting\\100 PARA\\140 Resources\\이전데이터\\한 화면에서 일부 내용만 좌우 스크롤.md"
+        }
+    ]
 }

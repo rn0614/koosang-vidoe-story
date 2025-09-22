@@ -1,26 +1,41 @@
-// 3D Visualization feature exports
+// ==========================================
+// 3D Container Feature Exports
+// ==========================================
 
-// Container components
-export { default as AnimatedBox } from './animated-box';
-export { default as BoxManagementContent } from './box-management-content';
-export { default as BoxStatusDisplay } from './box-status-display';
-export { default as BoxInfoCard } from './boxInfo-card';
-export { default as ConveyorBelt } from './conveyor-belt';
-export { default as GridFloor } from './grid-floor';
-export { default as Lighting } from './lighting';
-export { default as OccupiedAreaIndicator } from './occupied-area-indicator';
-export { default as PositionModal } from './position-modal';
-export { default as SelectedBoxDisplay } from './selected-box-display';
-
-// Timetable components
-export { default as DragBox } from '../timetable/drag-box';
-export { default as DropArea } from '../timetable/drop-area';
-export { default as DropWrapper } from '../timetable/drop-wrapper';
+// API
+export { containerApi } from './api/containerApi';
+export type { 
+  Container3DData, 
+  ObjectPositionData,
+  boxDataToObjectPosition,
+  objectPositionToBoxData 
+} from './api/containerApi';
 
 // Hooks
-export { useCanvasPan } from '../3d-visualization/hooks/useCanvasPan';
-export { useRAFThrottling } from '../3d-visualization/hooks/useRAFThrottling';
-export { useVirtualRendering } from '../3d-visualization/hooks/useVirtualRendering';
+export { useContainerManager } from '@/features/3d-container/hooks/useContainerManager';
+export { use3DContainer } from './hooks/use3DContainer';
+export { useContainerQuery } from './hooks/useContainerQuery';
 
-// Store
-export * from '../3d-visualization/store';
+// Components (3D Scene Elements)
+export {
+  Lighting,
+  GridFloor,
+  CameraControls,
+  ConveyorBelt,
+} from './components';
+
+// Main Components
+export { default as ThreeDContainerMain } from './components/3d-container-main';
+export { default as ThreeCanvas } from './components/canvas/3d-canvas';
+export { default as ContainerInfoPanel } from './components/panels/container-info-panel';
+export { default as BoxManagementPanel } from './components/panels/box-management-panel';
+
+// ==========================================
+// Legacy Compatibility (DEPRECATED)
+// ==========================================
+// These exports maintain backward compatibility with the old structure
+// Use the new structure: entities/box, features/3d-container, widgets/3d-container
+
+// Re-export from new structure for backward compatibility
+export { useBoxStore as useBoxesStore } from '@/entities/box';
+export { default as ThreeDContainer } from '@/widgets/3d-container';

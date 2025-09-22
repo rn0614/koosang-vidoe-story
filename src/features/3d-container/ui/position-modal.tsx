@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { AlertCircle, AlertTriangle, Move3D, Expand, Navigation } from 'lucide-react';
-import { BoxData, BoxPosition } from '@/shared/types/boxPosition';
-import { useBoxesStore } from '@/features/3d-container';
+import { BoxData, BoxPosition, BoxOperations } from '@/entities/box';
 
 interface PositionModalProps {
   box: BoxData | null;
@@ -17,19 +16,33 @@ interface PositionModalProps {
   onMoveToOtherPosition?: (boxId: string, x: number, z: number) => void;
 }
 
-const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onMove, mode = 'default', onMoveToOtherPosition }) => {
+interface ValidationResult {
+  isValid: boolean;
+  snappedPosition: BoxPosition;
+  suggestedPosition?: BoxPosition;
+  error: string;
+}
+
+/**
+ * 개선된 위치 모달 컴포넌트
+ * 비즈니스 로직을 BoxOperations로 위임
+ */
+const PositionModal: React.FC<PositionModalProps> = ({ 
+  box, 
+  isOpen, 
+  onClose, 
+  onMove, 
+  mode = 'default', 
+  onMoveToOtherPosition 
+}) => {
   const [position, setPosition] = useState<BoxPosition>({ x: 0, y: 0, z: 0 });
   const [dimensions, setDimensions] = useState<{ lenX: number; lenY: number; lenZ: number }>({ lenX: 2, lenY: 2, lenZ: 2 });
   const [validationError, setValidationError] = useState<string>('');
   const [currentBox, setCurrentBox] = useState<BoxData | null>(null);
-  const isPositionAvailable = useBoxesStore((state) => state.isPositionAvailable);
-  const findNearestAvailablePosition = useBoxesStore((state) => state.findNearestAvailablePosition);
-  const getBoxRef = useBoxesStore((state) => state.getBoxRef);
-  const updateBox = useBoxesStore((state) => state.updateBox);
   const [moveTarget, setMoveTarget] = useState<{ x: number; z: number }>({ x: 0, z: 0 });
 
-  console.log('PositionModal', box);
-  React.useEffect(() => {
+  // 모달이 열릴 때 초기값 설정
+  useEffect(() => {
     if (box && isOpen) {
       setCurrentBox(box);
       setPosition({ x: box.x, y: box.y, z: box.z });
@@ -39,18 +52,20 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
     }
   }, [box?.id, isOpen]);
 
-  interface ValidationResult {
-    isValid: boolean;
-    snappedPosition: BoxPosition;
-    suggestedPosition?: BoxPosition;
-    error: string;
-  }
-
-  const validatePosition = (x: number, y: number, z: number, lenX: number, lenY: number, lenZ: number): ValidationResult => {
+  // 위치 검증
+  const validatePosition = useCallback((
+    x: number, 
+    y: number, 
+    z: number, 
+    lenX: number, 
+    lenY: number, 
+    lenZ: number
+  ): ValidationResult => {
     const snapX = Math.round(x);
     const snapY = Math.round(y);
     const snapZ = Math.round(z);
     const minY = Math.max(2, lenY);
+    
     if (snapY < minY) {
       return {
         isValid: false,
@@ -59,104 +74,122 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
         error: `Y 좌표가 너무 낮습니다. 최소값: ${minY} (박스 하단이 바닥 레벨 2 이상이어야 함)`
       };
     }
-    if (!isPositionAvailable(snapX, snapY, snapZ, lenX, lenY, lenZ, currentBox?.id)) {
-      const nearest = findNearestAvailablePosition(snapX, snapY, snapZ, lenX, lenY, lenZ, currentBox?.id);
-      if (nearest.y > snapY) {
-        return {
-          isValid: false,
-          snappedPosition: { x: nearest.x, y: nearest.y, z: nearest.z },
-          suggestedPosition: nearest,
-          error: `해당 위치에 박스가 있어 위쪽(${nearest.y})에 쌓입니다.`
-        };
-      }
+
+    const validation = BoxOperations.validateBoxPosition(
+      snapX, snapY, snapZ, lenX, lenY, lenZ, currentBox?.id
+    );
+
+    if (!validation.isValid) {
       return {
         isValid: false,
         snappedPosition: { x: snapX, y: snapY, z: snapZ },
-        suggestedPosition: nearest,
-        error: `다른 박스와 겹칩니다. 가장 가까운 사용 가능한 위치: (${nearest.x}, ${nearest.y}, ${nearest.z})`
+        error: validation.message || '위치가 유효하지 않습니다.'
       };
     }
+
     return {
       isValid: true,
       snappedPosition: { x: snapX, y: snapY, z: snapZ },
       error: ''
     };
-  };
+  }, [currentBox?.id]);
 
-  const handleMoveInputChange = (axis: 'x' | 'z', value: string): void => {
+  // 이동 입력 변경 핸들러
+  const handleMoveInputChange = useCallback((axis: 'x' | 'z', value: string): void => {
     setMoveTarget((prev) => ({ ...prev, [axis]: parseInt(value) || 0 }));
-  };
+  }, []);
 
-  const handleMoveSubmit = (): void => {
+  // 시퀀셜 이동 제출
+  const handleMoveSubmit = useCallback((): void => {
     if (!currentBox) return;
+    
     const snapX = Math.round(moveTarget.x);
     const snapZ = Math.round(moveTarget.z);
-    if (onMoveToOtherPosition) {
-      onMoveToOtherPosition(currentBox.id, snapX, snapZ);
-    } else {
-      const ref = getBoxRef(currentBox.id);
-      if (ref && ref.current) {
-        ref.current.moveToOtherPosition(snapX, snapZ);
+    
+    try {
+      if (onMoveToOtherPosition) {
+        onMoveToOtherPosition(currentBox.id, snapX, snapZ);
+      } else {
+        BoxOperations.moveBoxToPosition(currentBox.id, snapX, snapZ);
       }
+      onClose();
+    } catch (error) {
+      console.error('Move failed:', error);
+      setValidationError('이동에 실패했습니다.');
     }
-    onClose();
-  };
+  }, [currentBox, moveTarget, onMoveToOtherPosition, onClose]);
 
-  const handleSubmit = (): void => {
+  // 기본 모달 제출
+  const handleSubmit = useCallback((): void => {
     if (!currentBox) return;
+    
     // mode==='move'일 때는 y를 무시하고 x, z만 사용
     if (mode === 'move') {
       const snapX = Math.round(position.x);
       const snapZ = Math.round(position.z);
-      const ref = getBoxRef(currentBox.id);
-      if (ref && ref.current) {
-        ref.current.moveToOtherPosition(snapX, snapZ);
+      
+      try {
+        BoxOperations.moveBoxToPosition(currentBox.id, snapX, snapZ);
+        onClose();
+      } catch (error) {
+        console.error('Move failed:', error);
+        setValidationError('이동에 실패했습니다.');
       }
-      onClose();
       return;
     }
+    
     // 기존 위치/크기 이동
-    const validation = validatePosition(position.x, position.y, position.z, dimensions.lenX, dimensions.lenY, dimensions.lenZ);
+    const validation = validatePosition(
+      position.x, position.y, position.z, 
+      dimensions.lenX, dimensions.lenY, dimensions.lenZ
+    );
+    
     if (!validation.isValid) {
       setValidationError(validation.error);
       return;
     }
+    
     const { x, y, z } = validation.snappedPosition;
     onMove(currentBox.id, x, y, z, dimensions.lenX, dimensions.lenY, dimensions.lenZ);
     onClose();
-  };
+  }, [currentBox, mode, position, dimensions, validatePosition, onMove, onClose]);
 
-  const handleUseSuggested = (): void => {
-    const validation = validatePosition(position.x, position.y, position.z, dimensions.lenX, dimensions.lenY, dimensions.lenZ);
+  // 제안된 위치 사용
+  const handleUseSuggested = useCallback((): void => {
+    const validation = validatePosition(
+      position.x, position.y, position.z, 
+      dimensions.lenX, dimensions.lenY, dimensions.lenZ
+    );
+    
     if (!validation.isValid && validation.suggestedPosition) {
       setPosition(validation.suggestedPosition);
       setValidationError('');
     }
-  };
+  }, [position, dimensions, validatePosition]);
 
-  const handlePositionChange = (axis: keyof BoxPosition, value: string): void => {
+  // 위치 변경 핸들러
+  const handlePositionChange = useCallback((axis: keyof BoxPosition, value: string): void => {
     const newPos = { ...position, [axis]: parseFloat(value) || 0 };
     setPosition(newPos);
-    const validation = validatePosition(newPos.x, newPos.y, newPos.z, dimensions.lenX, dimensions.lenY, dimensions.lenZ);
+    
+    const validation = validatePosition(
+      newPos.x, newPos.y, newPos.z, 
+      dimensions.lenX, dimensions.lenY, dimensions.lenZ
+    );
     setValidationError(validation.error);
-  };
+  }, [position, dimensions, validatePosition]);
 
-  const handleDimensionChange = (axis: 'lenX' | 'lenY' | 'lenZ', value: string): void => {
+  // 크기 변경 핸들러
+  const handleDimensionChange = useCallback((axis: 'lenX' | 'lenY' | 'lenZ', value: string): void => {
     const newDim = { ...dimensions, [axis]: Math.max(1, parseFloat(value) || 1) };
     setDimensions(newDim);
-    const validation = validatePosition(position.x, position.y, position.z, newDim.lenX, newDim.lenY, newDim.lenZ);
+    
+    const validation = validatePosition(
+      position.x, position.y, position.z, 
+      newDim.lenX, newDim.lenY, newDim.lenZ
+    );
     setValidationError(validation.error);
-  };
-
-  const handleMoveBox = (boxId: string, x: number, y: number, z: number, lenX: number, lenY: number, lenZ: number): void => {
-    // 위치 이동
-    const ref = getBoxRef(boxId);
-    if (ref && ref.current) {
-      ref.current.moveToPosition(x, y, z);
-    }
-    // 크기 변경도 zustand store에 반영
-    updateBox(boxId, x, y, z, lenX, lenY, lenZ);
-  };
+  }, [position, dimensions, validatePosition]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -167,6 +200,7 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
             박스 위치 이동 - {currentBox?.id || 'Unknown'}
           </DialogTitle>
         </DialogHeader>
+        
         {mode === 'move' ? (
           <div className="space-y-4 py-4">
             <div className="flex items-center gap-2 mb-2">
@@ -217,6 +251,7 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
                 <strong>제약 조건:</strong> Y ≥ {Math.max(2, dimensions.lenY)} (바닥 레벨), X와 Z는 음수 가능
               </AlertDescription>
             </Alert>
+            
             {validationError && (
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
@@ -233,6 +268,7 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
                 </AlertDescription>
               </Alert>
             )}
+            
             <div className="space-y-4">
               <div>
                 <Label className="text-sm font-medium">위치 좌표 (우측 상단 꼭지점)</Label>
@@ -247,7 +283,6 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
                       step="1"
                     />
                   </div>
-                  {/* mode==='move'일 때는 Y 입력란 숨김 */}
                   {mode === 'default' && (
                     <div className="space-y-1">
                       <Label htmlFor="y-pos" className="text-xs">Y</Label>
@@ -273,7 +308,7 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
                   </div>
                 </div>
               </div>
-              {/* 크기 변경은 기본 모드에서만 허용 */}
+              
               {mode === 'default' && (
                 <div>
                   <Label className="text-sm font-medium flex items-center gap-2">
@@ -318,6 +353,7 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
                 </div>
               )}
             </div>
+            
             <div className="flex gap-2 pt-4">
               <Button 
                 onClick={handleSubmit} 
@@ -338,4 +374,4 @@ const PositionModal: React.FC<PositionModalProps> = ({ box, isOpen, onClose, onM
   );
 };
 
-export default PositionModal; 
+export default PositionModal;

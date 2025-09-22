@@ -1,11 +1,9 @@
 'use client';
 import React from 'react';
-import BoxManagementContent from '@/features/3d-container/box-management-content';
+import { ContainerListPage } from '@/widgets/container-list';
 
 const Page: React.FC = () => {
-  return (
-      <BoxManagementContent />
-  );
+  return <ContainerListPage />;
 };
 
 export default Page;

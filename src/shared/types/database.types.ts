@@ -1009,6 +1009,136 @@ export type Database = {
         }
         Relationships: []
       }
+      tb_3d_container: {
+        Row: {
+          created_at: string
+          depth: number
+          description: string | null
+          height: number
+          id: string
+          is_active: boolean
+          name: string
+          settings: Json
+          updated_at: string
+          user_id: string | null
+          width: number
+        }
+        Insert: {
+          created_at?: string
+          depth?: number
+          description?: string | null
+          height?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          settings?: Json
+          updated_at?: string
+          user_id?: string | null
+          width?: number
+        }
+        Update: {
+          created_at?: string
+          depth?: number
+          description?: string | null
+          height?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          settings?: Json
+          updated_at?: string
+          user_id?: string | null
+          width?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tb_3d_container_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tb_3d_object_positions: {
+        Row: {
+          color: string
+          container_id: string
+          created_at: string
+          id: string
+          is_static: boolean
+          mass: number
+          name: string | null
+          object_id: string
+          object_type: string
+          opacity: number
+          properties: Json
+          rotation_x: number
+          rotation_y: number
+          rotation_z: number
+          size_x: number
+          size_y: number
+          size_z: number
+          updated_at: string
+          x: number
+          y: number
+          z: number
+        }
+        Insert: {
+          color?: string
+          container_id: string
+          created_at?: string
+          id?: string
+          is_static?: boolean
+          mass?: number
+          name?: string | null
+          object_id: string
+          object_type?: string
+          opacity?: number
+          properties?: Json
+          rotation_x?: number
+          rotation_y?: number
+          rotation_z?: number
+          size_x?: number
+          size_y?: number
+          size_z?: number
+          updated_at?: string
+          x?: number
+          y?: number
+          z?: number
+        }
+        Update: {
+          color?: string
+          container_id?: string
+          created_at?: string
+          id?: string
+          is_static?: boolean
+          mass?: number
+          name?: string | null
+          object_id?: string
+          object_type?: string
+          opacity?: number
+          properties?: Json
+          rotation_x?: number
+          rotation_y?: number
+          rotation_z?: number
+          size_x?: number
+          size_y?: number
+          size_z?: number
+          updated_at?: string
+          x?: number
+          y?: number
+          z?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tb_3d_object_positions_container_id_fkey"
+            columns: ["container_id"]
+            isOneToOne: false
+            referencedRelation: "tb_3d_container"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       TB_TEST_1: {
         Row: {
           created_at: string

@@ -23,6 +23,9 @@ export type BoxData = BoxDimensions & {
   id: string;
   color: string;
   ref: RefObject<BoxMethods>;
+  rotX?: number;
+  rotY?: number;
+  rotZ?: number;
 };
 
 export type BoxMethods = {
