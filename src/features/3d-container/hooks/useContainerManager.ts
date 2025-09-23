@@ -38,8 +38,10 @@ export const useContainerManager = () => {
     }
   }, []);
 
-  // 초기 컨테이너 목록 로드 (필요시에만 - refreshContainers 호출시)
-  // 단일 컨테이너 페이지에서는 리스트가 필요 없으므로 제거
+  // 초기 컨테이너 목록 로드
+  useEffect(() => {
+    refreshContainers();
+  }, [refreshContainers]);
 
   // 컨테이너 생성
   const createContainer = useCallback(async (
