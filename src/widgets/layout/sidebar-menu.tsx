@@ -54,7 +54,7 @@ export function SidebarMenu({ menu }: { menu: MenuItem[] }) {
   );
 
   return (
-    <ul className="flex flex-col gap-2 p-4">
+    <ul className="flex flex-1 flex-col gap-2 p-4">
       {menu.map((item) => {
         const hasChildren = !!item.children && item.children.length > 0;
         const isOpen = openMenus[item.href];

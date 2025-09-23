@@ -9,11 +9,8 @@ export default function HeaderMenuButton({ platform }: { platform: string }) {
   }
   return (
     <>
-      <DrawerTrigger asChild>
-        <Button variant="outline" size="icon" aria-label="메뉴 열기">
-          <span className="text-2xl">☰</span>
-        </Button>
-      </DrawerTrigger>
+      <div className="w-10 h-10">
+      </div>
       <Link href="/" className="font-semibold flex items-center">
         <Image
           src="/image/kooLogo.png"
